@@ -8,12 +8,14 @@ betris_error_t betris_init(betris_gamestate_t* gamestate)
     }
     // --- Init structure --- //
 
+    gamestate->start = 0;
+    gamestate->paused = 0;
+
     gamestate->score = 0;
     gamestate->level = 0;
     gamestate->highscore = 0;
 
-    gamestate->start = 0;
-    gamestate->paused = 0;
+    gamestate->falling_tetromino = BETRIS_TETROMINO_START[0];
 
     // Initialize playfield arrays
     for (int h = 0; h < BETRIS_WIDTH + BETRIS_HEIGHT_BUFF; h++)
@@ -25,8 +27,6 @@ betris_error_t betris_init(betris_gamestate_t* gamestate)
         }
     }
 
-    gamestate->falling_tetromino = BETRIS_TETROMINO_START[0];
-
-    // Set init value last 
+    // Set init value last for interrupts
     gamestate->initialized = BETRIS_INIT;
 }
