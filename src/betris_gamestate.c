@@ -1,4 +1,4 @@
-#include "betris_game.h"
+#include "betris_gamestate.h"
 
 // Initializes gamestate structure
 betris_error_t betris_init(betris_gamestate_t* gamestate)
