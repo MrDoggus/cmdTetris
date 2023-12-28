@@ -4,8 +4,9 @@
 
 // TODO: Check width and height of board at compile time to ensure reasonable dimensions are used
 
-#define BETRIS_WIDTH 10  // Width of tetris board
-#define BETRIS_HEIGHT 20 // Height of tetris board
+#define BETRIS_WIDTH 10         // Width of tetris board
+#define BETRIS_HEIGHT 20        // Height of tetris board
+#define BETRIS_HEIGHT_BUFF 4    // Additional row buffer at top of the board
 
 #define BETRIS_INIT 25  // Value that the 'initialized' field of 'betris_game_struct' will have when it is initialized
 
@@ -25,31 +26,27 @@ typedef struct betris_gamestate
     betris_playfield_t playfield;           // Contains only settled tetrominos
     betris_playfield_t playfield_display;   // Contains playfield merged with falling tetromino
 
-    // Falling tetromino data
+    // Falling tetromino info
     betris_tetromino_t falling_tetromino;     // Stores position of the squares of the falling tetromino
 } betris_gamestate_t;
 
-typedef struct betris_playfield
-{
-    betris_square_t board[BETRIS_HEIGHT+4][BETRIS_WIDTH];
+typedef struct betris_playfield {
+    betris_square_t arr[BETRIS_HEIGHT+BETRIS_HEIGHT_BUFF][BETRIS_WIDTH];
 } betris_playfield_t;
 
-typedef struct betris_coord
-{
+typedef struct betris_coord {
     int8_t h;  // Height
     int8_t w;  // Width
 } betris_coord_t;
 
-typedef struct betris_tetromino
-{
+typedef struct betris_tetromino{
     betris_coord_t pos[4];      // Position of the tetromino's squares
     uint8_t rot;                // Current rotation of tetromino
 
     betris_square_t color;
 } betris_tetromino_t;
 
-typedef enum 
-{
+typedef enum {
     BETRIS_BLANK    = 0,
     BETRIS_CYAN     = 1,
     BETRIS_BLUE     = 2,
@@ -66,34 +63,49 @@ typedef enum
 const betris_tetromino_t BETRIS_TETROMINO_START[8] = {
     {   // Blank
         {{-1, -1}, {-1, -1}, {-1, -1}, {-1, -1}},       // Position array
+        0,                                              // Rotation
         BETRIS_BLANK                                    // Color 
     },
     {   // Red (Z)
         {{BETRIS_HEIGHT+2, (BETRIS_WIDTH/2)-2}, {BETRIS_HEIGHT+2, (BETRIS_WIDTH/2)-1}, {BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)-1}, {BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)}},     // Position array
+        0,                                                                                                                                                              // Rotation
         BETRIS_RED                                                                                                                                                      // Color
     },
     {   // Orange (L)
         {{BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)-2}, {BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)-1}, {BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)}, {BETRIS_HEIGHT+2, (BETRIS_WIDTH/2)}},       // Position array
+        0,                                                                                                                                                              // Rotation
         BETRIS_ORANGE                                                                                                                                                   // Color
     },
     {   // Yellow (O)
         {{BETRIS_HEIGHT+2, (BETRIS_WIDTH/2)-1}, {BETRIS_HEIGHT+2, (BETRIS_WIDTH/2)}, {BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)-1}, {BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)}},       // Position array
+        0,                                                                                                                                                              // Rotation
         BETRIS_YELLOW                                                                                                                                                   // Color
     },
     {   // Green (S)
         {{BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)-2}, {BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)-1}, {BETRIS_HEIGHT+2, (BETRIS_WIDTH/2)-1}, {BETRIS_HEIGHT+2, (BETRIS_WIDTH/2)}},     // Position array
+        0,                                                                                                                                                              // Rotation
         BETRIS_GREEN                                                                                                                                                    // Color
     },
     {   // Cyan (I)
         {{BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)-2}, {BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)-1}, {BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)}, {BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)+1}},     // Position array
+        0,                                                                                                                                                              // Rotation
         BETRIS_CYAN                                                                                                                                                     // Color
     },
     {   // Blue (J)
         {{BETRIS_HEIGHT+2, (BETRIS_WIDTH/2)-2}, {BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)-2}, {BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)-1}, {BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)}},     // Position array
+        0,                                                                                                                                                              // Rotation
         BETRIS_BLUE                                                                                                                                                     // Color
     },
     {   // Purple (T)
         {{BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)-2}, {BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)-1}, {BETRIS_HEIGHT+2, (BETRIS_WIDTH/2)-1}, {BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)}},     // Position array
+        0,                                                                                                                                                              // Rotation
         BETRIS_PURPLE                                                                                                                                                   // Color
     }
 };
+
+
+typedef enum {
+    BETRIS_SUCCESS  = 0,
+    BETRIS_NULL_GAMESTATE = 1,
+    BETRIS_NOT_INITIALIZED = 2,
+} betris_error_t;

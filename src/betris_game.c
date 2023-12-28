@@ -1,28 +1,32 @@
 #include "betris_game.h"
 
-void betris_init(betris_gamestate_t* gamestate)
+betris_error_t betris_init(betris_gamestate_t* gamestate)
 {
-    // Return null board 
-    if (!board) {
-
+    // Return null board error
+    if (!gamestate) {
+        return BETRIS_NULL_GAMESTATE;
     }
     // --- Init structure --- //
 
-    retval->score = 0;
-    retval->level = 0;
-    retval->highscore = 0;
+    gamestate->score = 0;
+    gamestate->level = 0;
+    gamestate->highscore = 0;
 
-    retval->start = 0;
-    retval->paused = 0;
-    retval->initialized = BETRIS_INIT;
+    gamestate->start = 0;
+    gamestate->paused = 0;
 
-    retval->falling_tetromino = BETRIS_BLANK;
-
-    for (int h = 0; h < BETRIS_WIDTH; h++)
+    // Initialize playfield arrays
+    for (int h = 0; h < BETRIS_WIDTH + BETRIS_HEIGHT_BUFF; h++)
     {
         for (int w = 0; w < BETRIS_HEIGHT; w++)
         {
-            retval->board[h][w] = BETRIS_BLANK;
+            gamestate->playfield.arr[h][w] = BETRIS_BLANK;
+            gamestate->playfield_display.arr[h][w] = BETRIS_BLANK;
         }
     }
+
+    gamestate->falling_tetromino = BETRIS_TETROMINO_START[0];
+
+    // Set init value last 
+    gamestate->initialized = BETRIS_INIT;
 }
