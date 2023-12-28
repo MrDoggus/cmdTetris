@@ -1,5 +1,6 @@
 #include "betris_game.h"
 
+// Initializes gamestate structure
 betris_error_t betris_init(betris_gamestate_t* gamestate)
 {
     // Return null board error
