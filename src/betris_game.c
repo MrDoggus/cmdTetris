@@ -1,14 +1,11 @@
 #include "betris_game.h"
 
-void cmdTetris_init(betris_gamestate_t* board)
+void betris_init(betris_gamestate_t* gamestate)
 {
-    //retval = malloc(sizeof(cmdtetris_game_struct_t));     // Allocate memory for game instance
+    // Return null board 
+    if (!board) {
 
-    if (!retval)
-    {
-        return NULL;
     }
-
     // --- Init structure --- //
 
     retval->score = 0;
