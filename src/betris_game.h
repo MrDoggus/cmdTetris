@@ -9,7 +9,7 @@
 
 #define BETRIS_INIT 25  // Value that the 'initialized' field of 'betris_game_struct' will have when it is initialized
 
-typedef struct betris_game_struct
+typedef struct betris_gamestate
 {
     // Game state
     uint8_t initialized : 6;    // Struct is initialized
@@ -22,11 +22,17 @@ typedef struct betris_game_struct
     uint32_t highscore;
 
     // Board
-    betris_square_t board[BETRIS_HEIGHT+4][BETRIS_WIDTH];
+    betris_playfield_t playfield;           // Contains only settled tetrominos
+    betris_playfield_t playfield_display;   // Contains playfield merged with falling tetromino
 
     // Falling tetromino data
     betris_tetromino_t falling_tetromino;     // Stores position of the squares of the falling tetromino
-} betris_board_t;
+} betris_gamestate_t;
+
+typedef struct betris_playfield
+{
+    betris_square_t board[BETRIS_HEIGHT+4][BETRIS_WIDTH];
+} betris_playfield_t;
 
 typedef struct betris_coord
 {
@@ -91,6 +97,3 @@ const betris_tetromino_t BETRIS_TETROMINO_START[8] = {
         BETRIS_PURPLE                                                                                                                                                   // Color
     }
 };
-
-
-
