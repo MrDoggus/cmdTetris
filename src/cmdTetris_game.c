@@ -5,7 +5,7 @@ cmdtetris_game_struct_t* cmdTetris_init()
 {
     cmdtetris_game_struct_t* retval;      // Value to be returned
 
-    retval = malloc(sizeof(cmdtetris_game_struct_t));     // Allocate memory for game instance
+    //retval = malloc(sizeof(cmdtetris_game_struct_t));     // Allocate memory for game instance
 
     if (!retval)
     {

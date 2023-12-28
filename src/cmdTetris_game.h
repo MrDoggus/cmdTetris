@@ -1,11 +1,15 @@
 #include <stdint.h>
 
-#define TETRIS_WIDTH 10
-#define TETRIS_HEIGHT 20
+// https://tetris.wiki/Tetris_Guideline
 
-#define TETRIS_INIT 25
+// TODO: Check width and height of board at compile time to ensure reasonable dimensions are used
 
-typedef struct cmdtetris_game_struct
+#define BETRIS_WIDTH 10  // Width of tetris board
+#define BETRIS_HEIGHT 20 // Height of tetris board
+
+#define BETRIS_INIT 25  // Value that the 'initialized' field of 'betris_game_struct' will have when it is initialized
+
+typedef struct betris_game_struct
 {
     // Game state
     uint8_t initialized : 6;    // Struct is initialized
@@ -18,72 +22,73 @@ typedef struct cmdtetris_game_struct
     uint32_t highscore;
 
     // Board
-    cmdtetris_square_t board[BOARD_HEIGHT][BOARD_WIDTH];
+    betris_square_t board[BETRIS_HEIGHT+4][BETRIS_WIDTH];
 
     // Falling tetromino data
-    cmdtetris_tetromino_t falling_tetromino;     // Stores position of the squares of the falling tetromino
-} cmdtetris_board_t;
+    betris_tetromino_t falling_tetromino;     // Stores position of the squares of the falling tetromino
+} betris_board_t;
 
-typedef struct cmdtetris_coord
+typedef struct betris_coord
 {
     int8_t h;  // Height
     int8_t w;  // Width
-} cmdtetris_coord_t;
+} betris_coord_t;
 
-typedef struct cmdtetris_tetromino
+typedef struct betris_tetromino
 {
-    cmdtetris_coord_t pos[4];   //Position of the tetromino's squares
-    uint8_t rot;                //
+    betris_coord_t pos[4];      // Position of the tetromino's squares
+    uint8_t rot;                // Current rotation of tetromino
 
-    cmdtetris_square_t color;
-} cmdtetris_tetromino_t;
+    betris_square_t color;
+} betris_tetromino_t;
 
 typedef enum 
 {
-    TETRIS_BLANK    = 0,
-    TETRIS_CYAN     = 1,
-    TETRIS_BLUE     = 2,
-    TETRIS_ORANGE   = 3,
-    TETRIS_YELLOW   = 4,
-    TETRIS_GREEN    = 5,
-    TETRIS_PURPLE   = 6,
-    TETRIS_RED      = 7,
-} cmdtetris_square_t;
+    BETRIS_BLANK    = 0,
+    BETRIS_CYAN     = 1,
+    BETRIS_BLUE     = 2,
+    BETRIS_ORANGE   = 3,
+    BETRIS_YELLOW   = 4,
+    BETRIS_GREEN    = 5,
+    BETRIS_PURPLE   = 6,
+    BETRIS_RED      = 7,
+} betris_square_t;
 
 // https://tetris.fandom.com/wiki/SRS
 
-const cmdtetris_tetromino_t[] TETROMINO_START = {
+// Array of starting positions for the 7 tetrominos
+const betris_tetromino_t BETRIS_TETROMINO_START[8] = {
     {   // Blank
         {{-1, -1}, {-1, -1}, {-1, -1}, {-1, -1}},       // Position array
-        TETRIS_BLANK                                    // Color 
+        BETRIS_BLANK                                    // Color 
     },
     {   // Red (Z)
-        {{23, 3}, {23, 4}, {22, 4}, {22, 5}},           // Position array
-        TETRIS_RED
+        {{BETRIS_HEIGHT+2, (BETRIS_WIDTH/2)-2}, {BETRIS_HEIGHT+2, (BETRIS_WIDTH/2)-1}, {BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)-1}, {BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)}},     // Position array
+        BETRIS_RED                                                                                                                                                      // Color
     },
     {   // Orange (L)
-        {{22, 3}, {22, 4}, {22, 5}, {23, 5}},           // Position array
-        TETRIS_ORANGE
+        {{BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)-2}, {BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)-1}, {BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)}, {BETRIS_HEIGHT+2, (BETRIS_WIDTH/2)}},       // Position array
+        BETRIS_ORANGE                                                                                                                                                   // Color
     },
     {   // Yellow (O)
-        {{23, 4}, {23, 5}, {22, 4}, {22, 5}},           // Position array
-        TETRIS_YELLOW
+        {{BETRIS_HEIGHT+2, (BETRIS_WIDTH/2)-1}, {BETRIS_HEIGHT+2, (BETRIS_WIDTH/2)}, {BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)-1}, {BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)}},       // Position array
+        BETRIS_YELLOW                                                                                                                                                   // Color
     },
     {   // Green (S)
-        {{22, 3}, {22, 4}, {23, 4}, {23, 5}},           // Position array
-        TETRIS_GREEN
+        {{BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)-2}, {BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)-1}, {BETRIS_HEIGHT+2, (BETRIS_WIDTH/2)-1}, {BETRIS_HEIGHT+2, (BETRIS_WIDTH/2)}},     // Position array
+        BETRIS_GREEN                                                                                                                                                    // Color
     },
     {   // Cyan (I)
-        {{22, 3}, {22, 4}, {22, 5}, {22, 6}},           // Position array
-        TETRIS_CYAN
+        {{BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)-2}, {BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)-1}, {BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)}, {BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)+1}},     // Position array
+        BETRIS_CYAN                                                                                                                                                     // Color
     },
     {   // Blue (J)
-        {{23, 3}, {22, 3}, {22, 4}, {22, 5}},           // Position array
-        TETRIS_BLUE
+        {{BETRIS_HEIGHT+2, (BETRIS_WIDTH/2)-2}, {BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)-2}, {BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)-1}, {BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)}},     // Position array
+        BETRIS_BLUE                                                                                                                                                     // Color
     },
     {   // Purple (T)
-        {{22, 3}, {22, 4}, {23, 4}, {22, 5}},           // Position array
-        TETRIS_PURPLE
+        {{BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)-2}, {BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)-1}, {BETRIS_HEIGHT+2, (BETRIS_WIDTH/2)-1}, {BETRIS_HEIGHT+1, (BETRIS_WIDTH/2)}},     // Position array
+        BETRIS_PURPLE                                                                                                                                                   // Color
     }
 };
 
