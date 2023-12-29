@@ -7,6 +7,7 @@ betris_error_t betris_init(betris_gamestate_t* gamestate)
     if (!gamestate) {
         return BETRIS_NULL_GAMESTATE;
     }
+    
     // --- Init structure --- //
 
     gamestate->start = 0;
@@ -19,9 +20,9 @@ betris_error_t betris_init(betris_gamestate_t* gamestate)
     gamestate->falling_tetromino = BETRIS_TETROMINO_START[0];
 
     // Initialize playfield arrays
-    for (int h = 0; h < BETRIS_WIDTH; h++)
+    for (int w = 0; w < BETRIS_HEIGHT+BETRIS_HEIGHT_BUFF; w++)
     {
-        for (int w = 0; w < BETRIS_HEIGHT + BETRIS_HEIGHT_BUFF; w++)
+        for (int h = 0; h < BETRIS_WIDTH; h++)
         {
             gamestate->playfield.arr[h][w] = BETRIS_BLANK;
             gamestate->playfield_display.arr[h][w] = BETRIS_BLANK;

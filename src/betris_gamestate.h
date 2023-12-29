@@ -1,5 +1,8 @@
 #include <stdint.h>
 
+#ifndef __BETRIS_GAMESTATE__
+#define __BETRIS_GAMESTATE__
+
 // https://tetris.wiki/Tetris_Guideline
 
 // TODO: Check width and height of board at compile time to ensure reasonable dimensions are used
@@ -105,7 +108,9 @@ const betris_tetromino_t BETRIS_TETROMINO_START[8] = {
 
 
 typedef enum {
-    BETRIS_SUCCESS  = 0,
+    BETRIS_SUCCESS = 0,
     BETRIS_NULL_GAMESTATE = 1,
     BETRIS_NOT_INITIALIZED = 2,
 } betris_error_t;
+
+#endif
