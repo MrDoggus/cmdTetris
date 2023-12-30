@@ -4,10 +4,14 @@
 #ifndef __BETRIS_CONTROL__
 #define __BETRIS_CONTROL__
 
+// --- Constants --- //
+
 /* 
  * Block transformations for clockwise rotations. 
- * Indexed [Color][Rotation][BlockIdx].
+ * Indexed [Color][CurrRotation][BlockIdx].
  * Inverse can be applied for counter-clockwise rotations. 
+ * 
+ * If there is a better way to make this more readable, I would love to know 
  */
 const betris_coord_t BETRIS_TETROMINO_ROTATE[8][4][4] = {
 
@@ -57,7 +61,20 @@ const betris_coord_t BETRIS_TETROMINO_ROTATE[8][4][4] = {
     {{{1, 1}, {0, 0}, {-1, 1}, {-1, -1}},
     {{-1, 1}, {0, 0}, {-1, -1}, {1, -1}},
     {{-1, -1}, {0, 0}, {1, -1}, {1, 1}},
-    {{1, -1}, {0, 0}, {1, 1}, {-1, 1}}},
+    {{1, -1}, {0, 0}, {1, 1}, {-1, 1}}}
 };
+
+
+// --- Function Declarations --- //
+
+/// @brief Rotates the falling tetromino clockwise
+/// @param gs Gamestate object
+/// @return Error code
+betris_error_t betris_rotcw(betris_gamestate_t* gs);
+
+/// @brief Rotates the falling tetromino counter-clockwise
+/// @param gs Gamestate object
+/// @return Error code
+betris_error_t betris_rotcntrcw(betris_gamestate_t* gs);
 
 #endif
