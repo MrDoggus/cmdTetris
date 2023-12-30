@@ -97,7 +97,7 @@ typedef struct betris_tetromino{
     betris_square_t color;
 } betris_tetromino_t;
 
-typedef enum {
+typedef enum betris_square {
     BETRIS_BLANK    = 0,
     BETRIS_CYAN     = 1,
     BETRIS_BLUE     = 2,
@@ -105,13 +105,13 @@ typedef enum {
     BETRIS_YELLOW   = 4,
     BETRIS_GREEN    = 5,
     BETRIS_PURPLE   = 6,
-    BETRIS_RED      = 7,
+    BETRIS_RED      = 7
 } betris_square_t;
 
-typedef enum {
+typedef enum betris_error {
     BETRIS_SUCCESS = 0,
     BETRIS_NULL_GAMESTATE = 1,
-    BETRIS_NOT_INITIALIZED = 2,
+    BETRIS_NOT_INITIALIZED = 2
 } betris_error_t;
 
 // --- Function Declarations --- //

@@ -77,6 +77,60 @@ betris_error_t betris_rotcntrcw(betris_gamestate_t* gs)
     return BETRIS_SUCCESS;
 }
 
+// Shifts falling tetromino to the left
+betris_error_t betris_leftshift(betris_gamestate_t* gs)
+{
+    betris_tetromino_t tmpT;
+    uint8_t shiftPossible;
+
+    // Verify gamestate object is valid
+    if (!gs) {
+        return BETRIS_NULL_GAMESTATE;
+    }
+    if (gs->initialized == BETRIS_INIT) {
+        return BETRIS_NOT_INITIALIZED;
+    }
+
+    // Check if left shift is possible
+    tmpT = gs->falling_tetromino;   // Copy tetromino
+    for (int i = 0; i < 4; i++) {   // Apply left shift
+        tmpT.pos[i].w = tmpT.pos[i].w - 1;
+    }
+    shiftPossible = betris_checkCollision(&(gs->playfield), tmpT);    // Check if there is room for shift
+
+    // Apply shift if there is room
+    if (shiftPossible) {
+        gs->falling_tetromino = tmpT;
+    }
+}
+
+// Shifts falling tetromino to the right
+betris_error_t betris_rightshift(betris_gamestate_t* gs)
+{
+    betris_tetromino_t tmpT;
+    uint8_t shiftPossible;
+
+    // Verify gamestate object is valid
+    if (!gs) {
+        return BETRIS_NULL_GAMESTATE;
+    }
+    if (gs->initialized == BETRIS_INIT) {
+        return BETRIS_NOT_INITIALIZED;
+    }
+
+    // Check if right shift is possible
+    tmpT = gs->falling_tetromino;   // Copy tetromino
+    for (int i = 0; i < 4; i++) {   // Apply right shift
+        tmpT.pos[i].w = tmpT.pos[i].w + 1;
+    }
+    shiftPossible = betris_checkCollision(&(gs->playfield), tmpT);    // Check if there is room for shift
+
+    // Apply shift if there is room
+    if (shiftPossible) {
+        gs->falling_tetromino = tmpT;
+    }
+}
+
 /// @brief Checks if a given tetromino has any collisions with the playfield
 /// @param playfield Playfield array used to check collisions with falling tetromino
 /// @param tetromino Tetromino to check collisions
