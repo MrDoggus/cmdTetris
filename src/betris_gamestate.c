@@ -27,7 +27,6 @@ betris_error_t betris_init(betris_gamestate_t* gamestate)
         for (int h = 0; h < BETRIS_WIDTH; h++)
         {
             gamestate->playfield.arr[h][w] = BETRIS_BLANK;
-            gamestate->playfield_display.arr[h][w] = BETRIS_BLANK;
         }
     }
 
