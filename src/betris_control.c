@@ -30,6 +30,9 @@ betris_error_t betris_rotcw(betris_gamestate_t* gs)
     if (gs->initialized == BETRIS_INIT) {
         return BETRIS_NOT_INITIALIZED;
     }
+    if (gs->falling_tetromino.color == BETRIS_BLANK) {
+        return BETRIS_INACTIVE_TETROMINO;
+    }
 
     // Check if rotation is possible in current position
     tmpT = gs->falling_tetromino;   // Copy tetromino
@@ -59,6 +62,9 @@ betris_error_t betris_rotcntrcw(betris_gamestate_t* gs)
     }
     if (gs->initialized == BETRIS_INIT) {
         return BETRIS_NOT_INITIALIZED;
+    }
+    if (gs->falling_tetromino.color == BETRIS_BLANK) {
+        return BETRIS_INACTIVE_TETROMINO;
     }
 
     // Check if rotation is possible in current position
@@ -90,6 +96,9 @@ betris_error_t betris_leftshift(betris_gamestate_t* gs)
     if (gs->initialized == BETRIS_INIT) {
         return BETRIS_NOT_INITIALIZED;
     }
+    if (gs->falling_tetromino.color == BETRIS_BLANK) {
+        return BETRIS_INACTIVE_TETROMINO;
+    }
 
     // Check if left shift is possible
     tmpT = gs->falling_tetromino;   // Copy tetromino
@@ -119,6 +128,9 @@ betris_error_t betris_rightshift(betris_gamestate_t* gs)
     if (gs->initialized == BETRIS_INIT) {
         return BETRIS_NOT_INITIALIZED;
     }
+    if (gs->falling_tetromino.color == BETRIS_BLANK) {
+        return BETRIS_INACTIVE_TETROMINO;
+    }
 
     // Check if right shift is possible
     tmpT = gs->falling_tetromino;   // Copy tetromino
@@ -147,6 +159,9 @@ betris_error_t betris_sdrop(betris_gamestate_t* gs)
     }
     if (gs->initialized == BETRIS_INIT) {
         return BETRIS_NOT_INITIALIZED;
+    }
+    if (gs->falling_tetromino.color == BETRIS_BLANK) {
+        return BETRIS_INACTIVE_TETROMINO;
     }
 
     // Check if soft drop is possible
@@ -179,6 +194,9 @@ betris_error_t betris_hdrop(betris_gamestate_t* gs)
     }
     if (gs->initialized == BETRIS_INIT) {
         return BETRIS_NOT_INITIALIZED;
+    }
+    if (gs->falling_tetromino.color == BETRIS_BLANK) {
+        return BETRIS_INACTIVE_TETROMINO;
     }
 
     // Drop tetromino until cant anymore
