@@ -38,7 +38,7 @@ betris_error_t betris_rotcw(betris_gamestate_t* gs)
     }
     rotPossible = betris_checkCollision(&(gs->playfield), tmpT);    // Check if there is room for rotation
 
-    // Apply transformation if there is room
+    // Apply transformation if there are no collisions
     if (rotPossible) {
         tmpT.rot = MOD4(tmpT.rot+1);    // Update rotation
         gs->falling_tetromino = tmpT;   // Update falling tetromino with transformed tetromino
@@ -68,7 +68,7 @@ betris_error_t betris_rotcntrcw(betris_gamestate_t* gs)
     }
     rotPossible = betris_checkCollision(&(gs->playfield), tmpT);    // Check if there is room for rotation
 
-    // Apply transformation if there is room
+    // Apply transformation if there are no collisions
     if (rotPossible) {
         tmpT.rot = MOD4(tmpT.rot-1);    // Update rotation
         gs->falling_tetromino = tmpT;   // Update falling tetromino with transformed tetromino
@@ -98,10 +98,12 @@ betris_error_t betris_leftshift(betris_gamestate_t* gs)
     }
     shiftPossible = betris_checkCollision(&(gs->playfield), tmpT);    // Check if there is room for shift
 
-    // Apply shift if there is room
+    // Apply shift if there are no collisions
     if (shiftPossible) {
         gs->falling_tetromino = tmpT;
     }
+
+    return BETRIS_SUCCESS;
 }
 
 // Shifts falling tetromino to the right
@@ -125,10 +127,78 @@ betris_error_t betris_rightshift(betris_gamestate_t* gs)
     }
     shiftPossible = betris_checkCollision(&(gs->playfield), tmpT);    // Check if there is room for shift
 
-    // Apply shift if there is room
+    // Apply shift if there are no collisions
     if (shiftPossible) {
         gs->falling_tetromino = tmpT;
     }
+
+    return BETRIS_SUCCESS;
+}
+
+// Performs non-locking soft drop
+betris_error_t betris_sdrop(betris_gamestate_t* gs)
+{
+    betris_tetromino_t tmpT;
+    uint8_t dropPossible;
+
+    // Verify gamestate object is valid
+    if (!gs) {
+        return BETRIS_NULL_GAMESTATE;
+    }
+    if (gs->initialized == BETRIS_INIT) {
+        return BETRIS_NOT_INITIALIZED;
+    }
+
+    // Check if soft drop is possible
+    tmpT = gs->falling_tetromino;   // Copy tetromino
+    for (int i = 0; i < 4; i++) {   // Apply soft drop 
+        tmpT.pos[i].h = tmpT.pos[i].h - 1;
+    }
+    dropPossible = betris_checkCollision(&(gs->playfield), tmpT);    // Check if there is room for shift
+
+    // Apply drop if there are no collisions
+    if (dropPossible) {
+        gs->falling_tetromino = tmpT;
+    }
+    else {  // Lock tetromino if there is a collision
+        lockTetromino(gs);
+    }
+
+    return BETRIS_SUCCESS;
+}
+
+// Performs locking hard drop
+betris_error_t betris_hdrop(betris_gamestate_t* gs)
+{
+    // betris_tetromino_t tmpT;
+    uint8_t dropPossible;
+
+    // Verify gamestate object is valid
+    if (!gs) {
+        return BETRIS_NULL_GAMESTATE;
+    }
+    if (gs->initialized == BETRIS_INIT) {
+        return BETRIS_NOT_INITIALIZED;
+    }
+
+    // Drop tetromino until cant anymore
+    do {
+        for (int i = 0; i < 4; i++) {   // Apply soft drop
+            gs->falling_tetromino.pos[i].h = gs->falling_tetromino.pos[i].h - 1;
+        }
+        dropPossible = betris_checkCollision(&(gs->playfield), gs->falling_tetromino);  // Check if there is space to drop
+    }
+    while (dropPossible);
+
+    // Apply corrective jump
+    for (int i = 0; i < 4; i++) {
+        gs->falling_tetromino.pos[i].h = gs->falling_tetromino.pos[i].h + 1;
+    }
+
+    // Lock tetromino
+    lockTetromino(gs);
+
+    return BETRIS_SUCCESS;
 }
 
 /// @brief Checks if a given tetromino has any collisions with the playfield
@@ -161,4 +231,20 @@ uint8_t betris_checkCollision(betris_playfield_t* playfield, betris_tetromino_t 
 
     // All checks passed, return 1 to declare no collisions
     return 1;
+}
+
+/// @brief Places the falling tetromino into the playfield. Afterwords, tetromino color is removed to indicate that it was placed on field. 
+/// @param gs Gamestate object
+/// @note This is a private function. Doesn't need to be included in header file.
+void lockTetromino(betris_gamestate_t* gs) 
+{
+    // Set tetromino in playfield
+    for (int i = 0; i < 4; i++) {
+        gs->playfield.arr[gs->falling_tetromino.pos[i].h][gs->falling_tetromino.pos[i].w] = gs->falling_tetromino.color;
+    }
+
+    // Clear tetromino color to indicate that it is no longer active
+    gs->falling_tetromino.color = BETRIS_BLANK;
+
+    return;
 }

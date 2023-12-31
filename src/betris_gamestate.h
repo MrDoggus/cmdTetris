@@ -74,8 +74,7 @@ typedef struct betris_gamestate
     uint32_t highscore;
 
     // Board
-    betris_playfield_t playfield;           // Contains only settled tetrominos
-    betris_playfield_t playfield_display;   // Contains playfield merged with falling tetromino
+    betris_playfield_t playfield;           // Contains only locked tetrominos
 
     // Falling tetromino info
     betris_tetromino_t falling_tetromino;     // Stores position of the squares of the falling tetromino
@@ -111,7 +110,8 @@ typedef enum betris_square {
 typedef enum betris_error {
     BETRIS_SUCCESS = 0,
     BETRIS_NULL_GAMESTATE = 1,
-    BETRIS_NOT_INITIALIZED = 2
+    BETRIS_NOT_INITIALIZED = 2,
+    BETRIS_INACTIVE_TETROMINO = 3
 } betris_error_t;
 
 // --- Function Declarations --- //

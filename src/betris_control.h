@@ -87,5 +87,14 @@ betris_error_t betris_leftshift(betris_gamestate_t* gs);
 /// @return Error code
 betris_error_t betris_rightshift(betris_gamestate_t* gs);
 
+/// @brief Performs non-locking soft drop
+/// @param gs Gamestate object
+/// @return Error code
+betris_error_t betris_sdrop(betris_gamestate_t* gs);
+
+/// @brief Performs locking hard drop
+/// @param gs Gamestate object
+/// @return Error code
+betris_error_t betris_hdrop(betris_gamestate_t* gs);
 
 #endif
