@@ -15,6 +15,7 @@
 // Used to keep rotation in the range of [0,3]
 #define MOD4(val) val & 0b0011
 
+void lockTetromino(betris_gamestate_t* gs);
 uint8_t betris_checkCollision(betris_playfield_t* playfield, betris_tetromino_t tetromino);
 
 // Rotates the falling tetromino clockwise
@@ -171,11 +172,11 @@ betris_error_t betris_sdrop(betris_gamestate_t* gs)
     }
     dropPossible = betris_checkCollision(&(gs->playfield), tmpT);    // Check if there is room for shift
 
-    // Apply drop if there are no collisions
-    if (dropPossible) {
+    
+    if (dropPossible) { // Apply drop if there are no collisions
         gs->falling_tetromino = tmpT;
     }
-    else {  // Lock tetromino if there is a collision
+    else {              // Lock tetromino if there is a collision
         lockTetromino(gs);
     }
 

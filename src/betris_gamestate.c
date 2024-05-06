@@ -30,28 +30,8 @@ betris_error_t betris_init(betris_gamestate_t* gamestate)
         }
     }
 
-    // Set init value last for interrupts
+    // Set init value last
     gamestate->initialized = BETRIS_INIT;
-}
 
-// Adds two coordinate structures
-betris_coord_t betris_addCoord(betris_coord_t left, betris_coord_t right) 
-{
-    betris_coord_t retval;
-
-    retval.h = left.h + right.h;
-    retval.w = left.w + right.w;
-
-    return retval;
-}
-
-// Subtracts two coordinate structures
-betris_coord_t betris_subCoord(betris_coord_t left, betris_coord_t right) 
-{
-    betris_coord_t retval;
-
-    retval.h = left.h - right.h;
-    retval.w = left.w - right.w;
-
-    return retval;
+    return BETRIS_SUCCESS;
 }

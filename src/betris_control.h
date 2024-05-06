@@ -13,6 +13,8 @@
  * 
  * If there is a better way to make this more readable, I would love to know 
  */
+
+
 const betris_coord_t BETRIS_TETROMINO_ROTATE[8][4][4] = {
 
     // Blank
