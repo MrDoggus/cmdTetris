@@ -71,6 +71,9 @@ betris_error_t betris_rotcw(betris_board_t* board)
         return BETRIS_COLLISION;
     }
 
+    // Invalidate ghost piece cache
+    board->gc_valid = 0;
+
     return BETRIS_SUCCESS;
 }
 
@@ -115,6 +118,9 @@ betris_error_t betris_rotcntrcw(betris_board_t* board)
         return BETRIS_COLLISION;
     }
 
+    // Invalidate ghost piece cache
+    board->gc_valid = 0;
+
     return BETRIS_SUCCESS;
 }
 
@@ -157,6 +163,9 @@ betris_error_t betris_leftshift(betris_board_t* board)
         return BETRIS_COLLISION;
     }
 
+    // Invalidate ghost piece cache
+    board->gc_valid = 0;
+
     return BETRIS_SUCCESS;
 }
 
@@ -197,6 +206,9 @@ betris_error_t betris_rightshift(betris_board_t* board)
     else {
         return BETRIS_COLLISION;
     }
+
+    // Invalidate ghost piece cache
+    board->gc_valid = 0;
 
     return BETRIS_SUCCESS;
 }
@@ -243,14 +255,27 @@ betris_error_t betris_sdrop(betris_board_t* board)
         return BETRIS_COLLISION;
     }
 
+    // No need to invalidate ghost piece cache because operation results in the same ghost position
+
     return BETRIS_SUCCESS;
 }
 
 // Performs locking hard drop
 betris_error_t betris_hdrop(betris_board_t* board)
 {
+    betris_error_t error; 
+    
     // Hard drop tetromino using genGhostCoords() to calculate the drop position 
-    betris_calcGhostCoords(board, board->fpos);
+    error = betris_calcGhostCoords(board);
+    if (error) {
+        return error;
+    }
+
+    // Set falling tetromino position to ghost piece position
+    board->fpos[0] = board->gc_pos[0];
+    board->fpos[1] = board->gc_pos[1];
+    board->fpos[2] = board->gc_pos[2];
+    board->fpos[3] = board->gc_pos[3];
 
     // Lock tetromino
     betris_lockTetromino(board);
@@ -259,7 +284,7 @@ betris_error_t betris_hdrop(betris_board_t* board)
 }
 
 // Calculates the position of the falling tetromino if it were to be hard dropped. 
-betris_error_t betris_calcGhostCoords(betris_board_t* board, betris_coord_t tetromino[4])
+betris_error_t betris_calcGhostCoords(betris_board_t* board)
 {
     int8_t dropPossible;
 
@@ -271,28 +296,37 @@ betris_error_t betris_calcGhostCoords(betris_board_t* board, betris_coord_t tetr
         return BETRIS_INACTIVE_TETROMINO;
     }
 
-    tetromino[0] = board->fpos[0];
-    tetromino[1] = board->fpos[1];
-    tetromino[2] = board->fpos[2];
-    tetromino[3] = board->fpos[3];
+    // If cache is still valid, no need to recalculate
+    if (board->gc_valid) {
+        return BETRIS_SUCCESS;
+    }
+
+    // Copy falling tetromino to cache
+    board->gc_pos[0] = board->fpos[0];
+    board->gc_pos[1] = board->fpos[1];
+    board->gc_pos[2] = board->fpos[2];
+    board->gc_pos[3] = board->fpos[3];
 
     // Drop tetromino until cant anymore
     do 
     {
         // Apply soft drop
         for (int i = 0; i < 4; i++) {   
-            tetromino[i].h = tetromino[i].h - 1;
+            board->gc_pos[i].h = board->gc_pos[i].h - 1;
         }
 
         // Check if there is space to drop
-        dropPossible = betris_collisionCheck(board, tetromino);  
+        dropPossible = betris_collisionCheck(board, board->gc_pos);
     }
     while (dropPossible);
 
     // Apply corrective jump
     for (int i = 0; i < 4; i++) {
-        tetromino[i].h = tetromino[i].h + 1;
+        board->gc_pos[i].h = board->gc_pos[i].h + 1;
     }
+
+    // Ghost piece cache is now valid
+    board->gc_valid = 1;
 
     return BETRIS_SUCCESS;
 }
@@ -349,6 +383,9 @@ void betris_lockTetromino(betris_board_t* board)
 
     // Clear tetromino color to indicate that it is no longer active
     board->fcol = BETRIS_BLANK;
+
+    // Invalidate ghost piece cache
+    board->gc_valid = 0;
 
     return;
 }

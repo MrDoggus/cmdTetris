@@ -55,9 +55,13 @@ typedef struct betris_board
     uint8_t         frot;       // Current rotation of tetromino
     betris_square_t fcol;       // Tetromino color
 
+    // Ghost piece cache
+    int8_t          gc_valid;   // True when ghost piece cache is valid
+    betris_coord_t  gc_pos[4];  // Ghost piece position data
+
     // Locked tetromino info. Used to determine if a row needs to be cleared later instead of checking every row
-    int8_t lrow_updated;        // True when lrow_list contains new values. 
-    int8_t lrow_list[4];        // List of rows that have a newly locked tetromino in playfield
+    int8_t  lrow_updated;       // True when lrow_list contains new values. 
+    int8_t  lrow_list[4];       // List of rows that have a newly locked tetromino in playfield
 } betris_board_t;
 
 // --- Function Declarations --- //

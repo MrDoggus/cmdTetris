@@ -109,6 +109,6 @@ betris_error_t betris_hdrop(betris_board_t* board);
 /// @param board Board object
 /// @param tetromino Pointer to store the calculated position. 
 /// @return Error code
-betris_error_t betris_calcGhostCoords(betris_board_t* board, betris_coord_t tetromino[4]);
+betris_error_t betris_calcGhostCoords(betris_board_t* board);
 
 #endif

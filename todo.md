@@ -1,11 +1,4 @@
-_____________________________________________________
-Betris_control changes
- - [x] Return error if control operation cannot be completed 
- - [x] Create function to find the location of the current tetromino if it were to be hard dropped. 
- - [x] When locking a tetromino, determine lines that would be cleared and communicate that info somehow
- - [x] Clean up function declarations currently not in .h file
-
-___________________________________________________
+____________________
 Create new file to store and handle gamestate information
  - [ ] Stores started or paused state here
  - [ ] Stores score, level and high score
@@ -15,7 +8,7 @@ Create new file to store and handle gamestate information
 
 ____________________________________________________
 Features
- - [ ] ghostCoords caching to avoid recalculations of the ghost position
+ - [x] ghostCoords caching to avoid recalculations of the ghost position
  - [ ] Super Rotation System 
  - [ ] Lock down
  - [ ] Holding
