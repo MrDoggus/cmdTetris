@@ -1,5 +1,5 @@
 
-#include "betris_gamestate.h"
+#include "betris_board.h"
 
 #ifndef __BETRIS_CONTROL__
 #define __BETRIS_CONTROL__
@@ -72,31 +72,31 @@ const betris_coord_t BETRIS_TETROMINO_ROTATE[8][4][4] = {
 /// @brief Rotates the falling tetromino clockwise
 /// @param gs Gamestate object
 /// @return Error code
-betris_error_t betris_rotcw(betris_gamestate_t* gs);
+betris_error_t betris_rotcw(betris_board_t* gs);
 
 /// @brief Rotates the falling tetromino counter-clockwise
 /// @param gs Gamestate object
 /// @return Error code
-betris_error_t betris_rotcntrcw(betris_gamestate_t* gs);
+betris_error_t betris_rotcntrcw(betris_board_t* gs);
 
 /// @brief Shifts falling tetromino to the left
 /// @param gs Gamestate object
 /// @return Error code
-betris_error_t betris_leftshift(betris_gamestate_t* gs);
+betris_error_t betris_leftshift(betris_board_t* gs);
 
 /// @brief Shifts falling tetromino to the right
 /// @param gs Gamestate object
 /// @return Error code
-betris_error_t betris_rightshift(betris_gamestate_t* gs);
+betris_error_t betris_rightshift(betris_board_t* gs);
 
 /// @brief Performs non-locking soft drop
 /// @param gs Gamestate object
 /// @return Error code
-betris_error_t betris_sdrop(betris_gamestate_t* gs);
+betris_error_t betris_sdrop(betris_board_t* gs);
 
 /// @brief Performs locking hard drop
 /// @param gs Gamestate object
 /// @return Error code
-betris_error_t betris_hdrop(betris_gamestate_t* gs);
+betris_error_t betris_hdrop(betris_board_t* gs);
 
 #endif
