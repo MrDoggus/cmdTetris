@@ -10,7 +10,7 @@
     #define BETRIS_WIDTH 10         
 #elif BETRIS_WIDTH <= 4
     #error invalid width, too small
-#elif BETRIS_WIDTH > 256
+#elif BETRIS_WIDTH > 127
     #error invalid width, too large
 #endif
 
@@ -19,7 +19,7 @@
     #define BETRIS_HEIGHT 20        
 #elif BETRIS_HEIGHT <= 4
     #error invalid height, too small
-#elif BETRIS_HEIGHT > 256-4
+#elif BETRIS_HEIGHT > 127-4
     #error invalid height, too large
 #endif 
 
@@ -54,6 +54,10 @@ typedef struct betris_board
     betris_coord_t  fpos[4];    // Position of tetromino's squares
     uint8_t         frot;       // Current rotation of tetromino
     betris_square_t fcol;       // Tetromino color
+
+    // Locked tetromino info. Used to determine if a row needs to be cleared later instead of checking every row
+    int8_t lrow_updated;        // True when lrow_list contains new values. 
+    int8_t lrow_list[4];        // List of rows that have a newly locked tetromino in playfield
 } betris_board_t;
 
 // --- Function Declarations --- //

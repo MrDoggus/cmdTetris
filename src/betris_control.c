@@ -17,7 +17,7 @@
 
 betris_error_t betris_calcGhostCoords(betris_board_t* board, betris_coord_t tetromino[4]);
 void betris_lockTetromino(betris_board_t* board);
-uint8_t betris_checkCollision(betris_board_t* board, betris_coord_t tetromino[4]);
+uint8_t betris_collisionCheck(betris_board_t* board, betris_coord_t tetromino[4]);
 
 // Rotates the falling tetromino clockwise
 betris_error_t betris_rotcw(betris_board_t* board) 
@@ -43,10 +43,11 @@ betris_error_t betris_rotcw(betris_board_t* board)
     for (int i = 0; i < 4; i++) {   // Apply transformation
         tmpT[i] = betris_addCoord(tmpT[i], BETRIS_TETROMINO_ROTATE[board->fcol][board->frot][i]);
     }
-    rotPossible = betris_checkCollision(board, tmpT);    // Check if there is room for rotation
+    rotPossible = betris_collisionCheck(board, tmpT);    // Check if there is room for rotation
 
     // Apply transformation if there are no collisions
-    if (rotPossible) {
+    if (rotPossible) 
+    {
         board->frot = MOD4(board->frot+1);
 
         board->fpos[0] = tmpT[0];
@@ -86,10 +87,11 @@ betris_error_t betris_rotcntrcw(betris_board_t* board)
     for (int i = 0; i < 4; i++) {   // Apply transformation
         tmpT[i] = betris_subCoord(tmpT[i], BETRIS_TETROMINO_ROTATE[board->fcol][MOD4(board->frot-1)][i]);
     }
-    rotPossible = betris_checkCollision(board, tmpT);    // Check if there is room for rotation
+    rotPossible = betris_collisionCheck(board, tmpT);    // Check if there is room for rotation
 
     // Apply transformation if there are no collisions
-    if (rotPossible) {
+    if (rotPossible) 
+    {
         board->frot = MOD4(board->frot-1);    // Update rotation
 
         board->fpos[0] = tmpT[0];
@@ -129,10 +131,11 @@ betris_error_t betris_leftshift(betris_board_t* board)
     for (int i = 0; i < 4; i++) {   // Apply left shift
         tmpT[i].w = tmpT[i].w - 1;
     }
-    shiftPossible = betris_checkCollision(board, tmpT);    // Check if there is room for shift
+    shiftPossible = betris_collisionCheck(board, tmpT);    // Check if there is room for shift
 
     // Apply shift if there are no collisions
-    if (shiftPossible) {
+    if (shiftPossible) 
+    {
         board->fpos[0] = tmpT[0];
         board->fpos[1] = tmpT[1];
         board->fpos[2] = tmpT[2];
@@ -170,7 +173,7 @@ betris_error_t betris_rightshift(betris_board_t* board)
     for (int i = 0; i < 4; i++) {   // Apply right shift
         tmpT[i].w = tmpT[i].w + 1;
     }
-    shiftPossible = betris_checkCollision(board, tmpT);    // Check if there is room for shift
+    shiftPossible = betris_collisionCheck(board, tmpT);    // Check if there is room for shift
 
     // Apply shift if there are no collisions
     if (shiftPossible) {
@@ -214,10 +217,11 @@ betris_error_t betris_sdrop(betris_board_t* board)
     }
 
     // Check if soft drop is possible
-    dropPossible = betris_checkCollision(board, tmpT);    // Check if there is room for shift
+    dropPossible = betris_collisionCheck(board, tmpT);    // Check if there is room for shift
     
     // Apply drop if there are no collisions
-    if (dropPossible) { 
+    if (dropPossible) 
+    { 
         board->fpos[0] = tmpT[0];
         board->fpos[1] = tmpT[1];
         board->fpos[2] = tmpT[2];
@@ -261,11 +265,15 @@ betris_error_t betris_calcGhostCoords(betris_board_t* board, betris_coord_t tetr
     tetromino[3] = board->fpos[3];
 
     // Drop tetromino until cant anymore
-    do {
-        for (int i = 0; i < 4; i++) {   // Apply soft drop
+    do 
+    {
+        // Apply soft drop
+        for (int i = 0; i < 4; i++) {   
             tetromino[i].h = tetromino[i].h - 1;
         }
-        dropPossible = betris_checkCollision(board, tetromino);  // Check if there is space to drop
+
+        // Check if there is space to drop
+        dropPossible = betris_collisionCheck(board, tetromino);  
     }
     while (dropPossible);
 
@@ -281,9 +289,8 @@ betris_error_t betris_calcGhostCoords(betris_board_t* board, betris_coord_t tetr
 /// @param playfield Playfield array used to check collisions with falling tetromino
 /// @param tetromino Tetromino to check collisions
 /// @return returns 1 if a collision was NOT found, returns 0 if a collision was found. 
-uint8_t betris_checkCollision(betris_board_t* board, betris_coord_t tetromino[4]) 
+uint8_t betris_collisionCheck(betris_board_t* board, betris_coord_t tetromino[4]) 
 {
-
     // Check border bounds collisions before checking playfield array
     for (int i = 0; i < 4; i++) 
     {
@@ -310,11 +317,24 @@ uint8_t betris_checkCollision(betris_board_t* board, betris_coord_t tetromino[4]
 
 /// @brief Places the falling tetromino into the playfield. Afterwords, tetromino color is removed to indicate that it was placed on field. 
 /// @param board board object
-void betris_lockTetromino(betris_board_t* board) 
+void betris_lockTetromino(betris_board_t* board)
 {
-    // Set tetromino in playfield
-    for (int i = 0; i < 4; i++) {
+    // Dont lock if a previously locked tetromino isn't handled yet
+    if (board->lrow_updated) {
+        return;
+    }
+
+    // Mark lrow list as updated
+    board->lrow_updated = 1;
+
+    // Lock the tetromino
+    for (int i = 0; i < 4; i++) 
+    {
+        // Set tetromino square in playfield
         board->pf[board->fpos[i].h][board->fpos[i].w] = board->fcol;
+
+        // Save row in lrow_list
+        board->lrow_list[i] = board->fpos[i].h;
     }
 
     // Clear tetromino color to indicate that it is no longer active
