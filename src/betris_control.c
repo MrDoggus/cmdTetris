@@ -53,6 +53,10 @@ betris_error_t betris_rotcw(betris_board_t* board)
         board->fpos[2] = tmpT[2];
         board->fpos[3] = tmpT[3];
     }
+    // Indicate that operation is not possible due to a colision
+    else {
+        return BETRIS_COLLISION;
+    }
 
     return BETRIS_SUCCESS;
 }
@@ -92,6 +96,10 @@ betris_error_t betris_rotcntrcw(betris_board_t* board)
         board->fpos[2] = tmpT[2];
         board->fpos[3] = tmpT[3];
     }
+    // Indicate that operation is not possible due to a colision
+    else {
+        return BETRIS_COLLISION;
+    }
 
     return BETRIS_SUCCESS;
 }
@@ -129,6 +137,10 @@ betris_error_t betris_leftshift(betris_board_t* board)
         board->fpos[2] = tmpT[2];
         board->fpos[3] = tmpT[3];
     }
+    // Indicate that operation is not possible due to a colision
+    else {
+        return BETRIS_COLLISION;
+    }
 
     return BETRIS_SUCCESS;
 }
@@ -165,6 +177,10 @@ betris_error_t betris_rightshift(betris_board_t* board)
         board->fpos[1] = tmpT[1];
         board->fpos[2] = tmpT[2];
         board->fpos[3] = tmpT[3];
+    }
+    // Indicate that operation is not possible due to a colision
+    else {
+        return BETRIS_COLLISION;
     }
 
     return BETRIS_SUCCESS;
@@ -206,9 +222,9 @@ betris_error_t betris_sdrop(betris_board_t* board)
         board->fpos[2] = tmpT[2];
         board->fpos[3] = tmpT[3];
     }
-    // Lock tetromino if there is a collision
+    // Indicate that operation is not possible due to a colision
     else {
-        betris_lockTetromino(board);
+        return BETRIS_COLLISION;
     }
 
     return BETRIS_SUCCESS;

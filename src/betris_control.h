@@ -66,6 +66,12 @@ const betris_coord_t BETRIS_TETROMINO_ROTATE[8][4][4] = {
     {{1, -1}, {0, 0}, {1, 1}, {-1, 1}}}
 };
 
+typedef enum betris_error {
+    BETRIS_SUCCESS = 0,
+    BETRIS_NULL_BOARD,
+    BETRIS_INACTIVE_TETROMINO,
+    BETRIS_COLLISION
+} betris_error_t;
 
 // --- Function Declarations --- //
 

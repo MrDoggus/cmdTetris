@@ -56,12 +56,6 @@ typedef struct betris_board
     betris_square_t fcol;       // Tetromino color
 } betris_board_t;
 
-typedef enum betris_error {
-    BETRIS_SUCCESS = 0,
-    BETRIS_NULL_BOARD = 1,
-    BETRIS_INACTIVE_TETROMINO = 2
-} betris_error_t;
-
 // --- Function Declarations --- //
 
 /// @brief Adds two coordinate structures
