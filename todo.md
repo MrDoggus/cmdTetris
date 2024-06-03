@@ -3,7 +3,7 @@ Betris_control changes
  - [x] Return error if control operation cannot be completed 
  - [x] Create function to find the location of the current tetromino if it were to be hard dropped. 
  - [x] When locking a tetromino, determine lines that would be cleared and communicate that info somehow
- - [ ] Clean up function declarations currently not in .h file
+ - [x] Clean up function declarations currently not in .h file
 
 ___________________________________________________
 Create new file to store and handle gamestate information

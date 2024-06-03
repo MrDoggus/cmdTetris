@@ -76,33 +76,39 @@ typedef enum betris_error {
 // --- Function Declarations --- //
 
 /// @brief Rotates the falling tetromino clockwise
-/// @param gs Gamestate object
+/// @param board Board object
 /// @return Error code
-betris_error_t betris_rotcw(betris_board_t* gs);
+betris_error_t betris_rotcw(betris_board_t* board);
 
 /// @brief Rotates the falling tetromino counter-clockwise
-/// @param gs Gamestate object
+/// @param board Board object
 /// @return Error code
-betris_error_t betris_rotcntrcw(betris_board_t* gs);
+betris_error_t betris_rotcntrcw(betris_board_t* board);
 
 /// @brief Shifts falling tetromino to the left
-/// @param gs Gamestate object
+/// @param board Board object
 /// @return Error code
-betris_error_t betris_leftshift(betris_board_t* gs);
+betris_error_t betris_leftshift(betris_board_t* board);
 
 /// @brief Shifts falling tetromino to the right
-/// @param gs Gamestate object
+/// @param board Board object
 /// @return Error code
-betris_error_t betris_rightshift(betris_board_t* gs);
+betris_error_t betris_rightshift(betris_board_t* board);
 
 /// @brief Performs non-locking soft drop
-/// @param gs Gamestate object
+/// @param board Board object
 /// @return Error code
-betris_error_t betris_sdrop(betris_board_t* gs);
+betris_error_t betris_sdrop(betris_board_t* board);
 
 /// @brief Performs locking hard drop
-/// @param gs Gamestate object
+/// @param board Board object
 /// @return Error code
-betris_error_t betris_hdrop(betris_board_t* gs);
+betris_error_t betris_hdrop(betris_board_t* board);
+
+/// @brief Calculates the position of the falling tetromino if it were to be hard dropped. 
+/// @param board Board object
+/// @param tetromino Pointer to store the calculated position. 
+/// @return Error code
+betris_error_t betris_calcGhostCoords(betris_board_t* board, betris_coord_t tetromino[4]);
 
 #endif

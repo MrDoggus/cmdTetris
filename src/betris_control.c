@@ -15,15 +15,26 @@
 // Used to keep rotation in the range of [0,3]
 #define MOD4(val) (val & 0b0011)
 
-betris_error_t betris_calcGhostCoords(betris_board_t* board, betris_coord_t tetromino[4]);
+// --- Private Function Declarations --- //
+// Don't see why a user would need to use these functions, so they are not included in the header file. 
+
+/// @brief Checks if a given tetromino has any collisions with the playfield
+/// @param board Board object 
+/// @param tetromino Tetromino to check collisions with board playfield
+/// @return returns 1 if a collision was NOT found, returns 0 if a collision was found. 
+int8_t betris_collisionCheck(betris_board_t* board, betris_coord_t tetromino[4]);
+
+/// @brief Places the falling tetromino into the playfield.
+/// @param board Board object
 void betris_lockTetromino(betris_board_t* board);
-uint8_t betris_collisionCheck(betris_board_t* board, betris_coord_t tetromino[4]);
+
+// --- Function Definitions --- //
 
 // Rotates the falling tetromino clockwise
 betris_error_t betris_rotcw(betris_board_t* board) 
 {
     betris_coord_t tmpT[4];
-    uint8_t rotPossible;
+    int8_t rotPossible;
 
     // Verify board object is valid
     if (!board) {
@@ -67,7 +78,7 @@ betris_error_t betris_rotcw(betris_board_t* board)
 betris_error_t betris_rotcntrcw(betris_board_t* board) 
 {
     betris_coord_t tmpT[4];
-    uint8_t rotPossible;
+    int8_t rotPossible;
 
     // Verify board object is valid
     if (!board) {
@@ -111,7 +122,7 @@ betris_error_t betris_rotcntrcw(betris_board_t* board)
 betris_error_t betris_leftshift(betris_board_t* board)
 {
     betris_coord_t tmpT[4];
-    uint8_t shiftPossible;
+    int8_t shiftPossible;
 
     // Verify board object is valid
     if (!board) {
@@ -153,7 +164,7 @@ betris_error_t betris_leftshift(betris_board_t* board)
 betris_error_t betris_rightshift(betris_board_t* board)
 {
     betris_coord_t tmpT[4];
-    uint8_t shiftPossible;
+    int8_t shiftPossible;
 
     // Verify board object is valid
     if (!board) {
@@ -194,7 +205,7 @@ betris_error_t betris_rightshift(betris_board_t* board)
 betris_error_t betris_sdrop(betris_board_t* board)
 {
     betris_coord_t tmpT[4];
-    uint8_t dropPossible;
+    int8_t dropPossible;
 
     // Verify board object is valid
     if (!board) {
@@ -247,9 +258,10 @@ betris_error_t betris_hdrop(betris_board_t* board)
     return BETRIS_SUCCESS;
 }
 
+// Calculates the position of the falling tetromino if it were to be hard dropped. 
 betris_error_t betris_calcGhostCoords(betris_board_t* board, betris_coord_t tetromino[4])
 {
-    uint8_t dropPossible;
+    int8_t dropPossible;
 
     // Verify board object is valid
     if (!board) {
@@ -285,11 +297,10 @@ betris_error_t betris_calcGhostCoords(betris_board_t* board, betris_coord_t tetr
     return BETRIS_SUCCESS;
 }
 
-/// @brief Checks if a given tetromino has any collisions with the playfield
-/// @param playfield Playfield array used to check collisions with falling tetromino
-/// @param tetromino Tetromino to check collisions
-/// @return returns 1 if a collision was NOT found, returns 0 if a collision was found. 
-uint8_t betris_collisionCheck(betris_board_t* board, betris_coord_t tetromino[4]) 
+
+
+// Checks if a given tetromino has any collisions with the playfield
+int8_t betris_collisionCheck(betris_board_t* board, betris_coord_t tetromino[4]) 
 {
     // Check border bounds collisions before checking playfield array
     for (int i = 0; i < 4; i++) 
@@ -315,8 +326,7 @@ uint8_t betris_collisionCheck(betris_board_t* board, betris_coord_t tetromino[4]
     return 1;
 }
 
-/// @brief Places the falling tetromino into the playfield. Afterwords, tetromino color is removed to indicate that it was placed on field. 
-/// @param board board object
+// Places the falling tetromino into the playfield. 
 void betris_lockTetromino(betris_board_t* board)
 {
     // Dont lock if a previously locked tetromino isn't handled yet
