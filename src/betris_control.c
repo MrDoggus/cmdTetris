@@ -15,6 +15,7 @@
 // Used to keep rotation in the range of [0,3]
 #define MOD4(val) (val & 0b0011)
 
+betris_error_t betris_calcGhostCoords(betris_board_t* board, betris_coord_t tetromino[4]);
 void betris_lockTetromino(betris_board_t* board);
 uint8_t betris_checkCollision(betris_board_t* board, betris_coord_t tetromino[4]);
 
@@ -24,7 +25,7 @@ betris_error_t betris_rotcw(betris_board_t* board)
     betris_coord_t tmpT[4];
     uint8_t rotPossible;
 
-    // Verify gamestate object is valid
+    // Verify board object is valid
     if (!board) {
         return BETRIS_NULL_BOARD;
     }
@@ -67,7 +68,7 @@ betris_error_t betris_rotcntrcw(betris_board_t* board)
     betris_coord_t tmpT[4];
     uint8_t rotPossible;
 
-    // Verify gamestate object is valid
+    // Verify board object is valid
     if (!board) {
         return BETRIS_NULL_BOARD;
     }
@@ -110,7 +111,7 @@ betris_error_t betris_leftshift(betris_board_t* board)
     betris_coord_t tmpT[4];
     uint8_t shiftPossible;
 
-    // Verify gamestate object is valid
+    // Verify board object is valid
     if (!board) {
         return BETRIS_NULL_BOARD;
     }
@@ -151,7 +152,7 @@ betris_error_t betris_rightshift(betris_board_t* board)
     betris_coord_t tmpT[4];
     uint8_t shiftPossible;
 
-    // Verify gamestate object is valid
+    // Verify board object is valid
     if (!board) {
         return BETRIS_NULL_BOARD;
     }
@@ -192,7 +193,7 @@ betris_error_t betris_sdrop(betris_board_t* board)
     betris_coord_t tmpT[4];
     uint8_t dropPossible;
 
-    // Verify gamestate object is valid
+    // Verify board object is valid
     if (!board) {
         return BETRIS_NULL_BOARD;
     }
@@ -233,10 +234,20 @@ betris_error_t betris_sdrop(betris_board_t* board)
 // Performs locking hard drop
 betris_error_t betris_hdrop(betris_board_t* board)
 {
-    // betris_coord_t tmpT[4];
+    // Hard drop tetromino using genGhostCoords() to calculate the drop position 
+    betris_calcGhostCoords(board, board->fpos);
+
+    // Lock tetromino
+    betris_lockTetromino(board);
+
+    return BETRIS_SUCCESS;
+}
+
+betris_error_t betris_calcGhostCoords(betris_board_t* board, betris_coord_t tetromino[4])
+{
     uint8_t dropPossible;
 
-    // Verify gamestate object is valid
+    // Verify board object is valid
     if (!board) {
         return BETRIS_NULL_BOARD;
     }
@@ -244,22 +255,24 @@ betris_error_t betris_hdrop(betris_board_t* board)
         return BETRIS_INACTIVE_TETROMINO;
     }
 
+    tetromino[0] = board->fpos[0];
+    tetromino[1] = board->fpos[1];
+    tetromino[2] = board->fpos[2];
+    tetromino[3] = board->fpos[3];
+
     // Drop tetromino until cant anymore
     do {
         for (int i = 0; i < 4; i++) {   // Apply soft drop
-            board->fpos[i].h = board->fpos[i].h - 1;
+            tetromino[i].h = tetromino[i].h - 1;
         }
-        dropPossible = betris_checkCollision(board, board->fpos);  // Check if there is space to drop
+        dropPossible = betris_checkCollision(board, tetromino);  // Check if there is space to drop
     }
     while (dropPossible);
 
     // Apply corrective jump
     for (int i = 0; i < 4; i++) {
-        board->fpos[i].h = board->fpos[i].h + 1;
+        tetromino[i].h = tetromino[i].h + 1;
     }
-
-    // Lock tetromino
-    betris_lockTetromino(board);
 
     return BETRIS_SUCCESS;
 }
@@ -296,7 +309,7 @@ uint8_t betris_checkCollision(betris_board_t* board, betris_coord_t tetromino[4]
 }
 
 /// @brief Places the falling tetromino into the playfield. Afterwords, tetromino color is removed to indicate that it was placed on field. 
-/// @param board Gamestate object
+/// @param board board object
 void betris_lockTetromino(betris_board_t* board) 
 {
     // Set tetromino in playfield
