@@ -3,8 +3,6 @@
 #ifndef __BETRIS_BOARD__
 #define __BETRIS_BOARD__
 
-// https://tetris.wiki/Tetris_Guideline
-
 // Width of tetris board
 #ifndef  BETRIS_WIDTH
     #define BETRIS_WIDTH 10         
@@ -29,7 +27,7 @@
 
 // --- Game Structures --- //
 
-typedef enum betris_square {
+typedef enum betris_color {
     BETRIS_BLANK    = 0,
     BETRIS_CYAN     = 1,
     BETRIS_BLUE     = 2,
@@ -38,7 +36,7 @@ typedef enum betris_square {
     BETRIS_GREEN    = 5,
     BETRIS_PURPLE   = 6,
     BETRIS_RED      = 7
-} betris_square_t;
+} betris_color_t;
 
 typedef struct betris_coord {
     int8_t h;  // Height
@@ -48,12 +46,12 @@ typedef struct betris_coord {
 typedef struct betris_board
 {
     // playfield, contains only locked tetrominos
-    betris_square_t pf[BETRIS_HEIGHT+BETRIS_HEIGHT_BUFF][BETRIS_WIDTH];
+    betris_color_t pf[BETRIS_HEIGHT+BETRIS_HEIGHT_BUFF][BETRIS_WIDTH];
 
     // Falling tetromino info
     betris_coord_t  fpos[4];    // Position of tetromino's squares
-    uint8_t         frot;       // Current rotation of tetromino
-    betris_square_t fcol;       // Tetromino color
+    int8_t          frot;       // Current rotation of tetromino
+    betris_color_t  fcol;       // Tetromino color
 
     // Ghost piece cache
     int8_t          gc_valid;   // True when ghost piece cache is valid

@@ -1,11 +1,3 @@
-/*
- * Rotate Clockwise
- * Rotate Counter-Clockwise
- * Soft drop
- * Locking hard drop
- * Left shift
- * Right shift
-*/
 #include "betris_control.h"
 #include "betris_board.h"
 
