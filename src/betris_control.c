@@ -23,12 +23,17 @@ void betris_lockTetromino(betris_board_t* board);
 // --- Function Definitions --- //
 
 // Rotates the falling tetromino clockwise
-betris_error_t betris_rotcw(betris_board_t* board) 
+betris_error_t betris_rotcw(betris_game_t* game) 
 {
+    betris_board_t* board;
     betris_coord_t tmpT[4];
     int8_t rotPossible;
 
-    // Verify board object is valid
+    // Error checking
+    if (!game) {
+        return BETRIS_NULL_GAME;
+    }
+    board = game->board;
     if (!board) {
         return BETRIS_NULL_BOARD;
     }
@@ -70,12 +75,17 @@ betris_error_t betris_rotcw(betris_board_t* board)
 }
 
 // Rotates the falling tetromino counter-clockwise
-betris_error_t betris_rotcntrcw(betris_board_t* board) 
+betris_error_t betris_rotcntrcw(betris_game_t* game) 
 {
+    betris_board_t* board;
     betris_coord_t tmpT[4];
     int8_t rotPossible;
 
-    // Verify board object is valid
+    // Error checking
+    if (!game) {
+        return BETRIS_NULL_GAME;
+    }
+    board = game->board;
     if (!board) {
         return BETRIS_NULL_BOARD;
     }
@@ -117,12 +127,17 @@ betris_error_t betris_rotcntrcw(betris_board_t* board)
 }
 
 // Shifts falling tetromino to the left
-betris_error_t betris_leftshift(betris_board_t* board)
+betris_error_t betris_leftshift(betris_game_t* game)
 {
+    betris_board_t* board;
     betris_coord_t tmpT[4];
     int8_t shiftPossible;
 
-    // Verify board object is valid
+    // Error checking
+    if (!game) {
+        return BETRIS_NULL_GAME;
+    }
+    board = game->board;
     if (!board) {
         return BETRIS_NULL_BOARD;
     }
@@ -162,12 +177,17 @@ betris_error_t betris_leftshift(betris_board_t* board)
 }
 
 // Shifts falling tetromino to the right
-betris_error_t betris_rightshift(betris_board_t* board)
+betris_error_t betris_rightshift(betris_game_t* game)
 {
+    betris_board_t* board;
     betris_coord_t tmpT[4];
     int8_t shiftPossible;
 
-    // Verify board object is valid
+    // Error checking
+    if (!game) {
+        return BETRIS_NULL_GAME;
+    }
+    board = game->board;
     if (!board) {
         return BETRIS_NULL_BOARD;
     }
@@ -206,12 +226,17 @@ betris_error_t betris_rightshift(betris_board_t* board)
 }
 
 // Performs non-locking soft drop
-betris_error_t betris_sdrop(betris_board_t* board)
+betris_error_t betris_sdrop(betris_game_t* game)
 {
+    betris_board_t* board;
     betris_coord_t tmpT[4];
     int8_t dropPossible;
 
-    // Verify board object is valid
+    // Error checking
+    if (!game) {
+        return BETRIS_NULL_GAME;
+    }
+    board = game->board;
     if (!board) {
         return BETRIS_NULL_BOARD;
     }
@@ -253,15 +278,19 @@ betris_error_t betris_sdrop(betris_board_t* board)
 }
 
 // Performs locking hard drop
-betris_error_t betris_hdrop(betris_board_t* board)
+betris_error_t betris_hdrop(betris_game_t* game)
 {
+    betris_board_t* board;
     betris_error_t error; 
     
     // Hard drop tetromino using genGhostCoords() to calculate the drop position 
-    error = betris_calcGhostCoords(board);
+    error = betris_calcGhostCoords(game);
     if (error) {
         return error;
     }
+
+    // game pointer is null checked in calcGhostCoords
+    board = game->board;
 
     // Set falling tetromino position to ghost piece position
     board->fpos[0] = board->gc_pos[0];
@@ -276,11 +305,16 @@ betris_error_t betris_hdrop(betris_board_t* board)
 }
 
 // Calculates the position of the falling tetromino if it were to be hard dropped. 
-betris_error_t betris_calcGhostCoords(betris_board_t* board)
+betris_error_t betris_calcGhostCoords(betris_game_t* game)
 {
+    betris_board_t* board;
     int8_t dropPossible;
 
-    // Verify board object is valid
+    // Error checking
+    if (!game) {
+        return BETRIS_NULL_GAME;
+    }
+    board = game->board;
     if (!board) {
         return BETRIS_NULL_BOARD;
     }

@@ -1,5 +1,6 @@
 
 #include "betris_board.h"
+#include "betris_game.h"
 
 #ifndef __BETRIS_CONTROL__
 #define __BETRIS_CONTROL__
@@ -66,49 +67,44 @@ const betris_coord_t BETRIS_TETROMINO_ROTATE[8][4][4] = {
     {{1, -1}, {0, 0}, {1, 1}, {-1, 1}}}
 };
 
-typedef enum betris_error {
-    BETRIS_SUCCESS = 0,
-    BETRIS_NULL_BOARD,
-    BETRIS_INACTIVE_TETROMINO,
-    BETRIS_COLLISION
-} betris_error_t;
+
 
 // --- Function Declarations --- //
 
 /// @brief Rotates the falling tetromino clockwise
 /// @param board Board object
 /// @return Error code
-betris_error_t betris_rotcw(betris_board_t* board);
+betris_error_t betris_rotcw(betris_game_t* game);
 
 /// @brief Rotates the falling tetromino counter-clockwise
 /// @param board Board object
 /// @return Error code
-betris_error_t betris_rotcntrcw(betris_board_t* board);
+betris_error_t betris_rotcntrcw(betris_game_t* game);
 
 /// @brief Shifts falling tetromino to the left
 /// @param board Board object
 /// @return Error code
-betris_error_t betris_leftshift(betris_board_t* board);
+betris_error_t betris_leftshift(betris_game_t* game);
 
 /// @brief Shifts falling tetromino to the right
 /// @param board Board object
 /// @return Error code
-betris_error_t betris_rightshift(betris_board_t* board);
+betris_error_t betris_rightshift(betris_game_t* game);
 
 /// @brief Performs non-locking soft drop
 /// @param board Board object
 /// @return Error code
-betris_error_t betris_sdrop(betris_board_t* board);
+betris_error_t betris_sdrop(betris_game_t* game);
 
 /// @brief Performs locking hard drop
 /// @param board Board object
 /// @return Error code
-betris_error_t betris_hdrop(betris_board_t* board);
+betris_error_t betris_hdrop(betris_game_t* game);
 
 /// @brief Calculates the position of the falling tetromino if it were to be hard dropped. 
 /// @param board Board object
 /// @param tetromino Pointer to store the calculated position. 
 /// @return Error code
-betris_error_t betris_calcGhostCoords(betris_board_t* board);
+betris_error_t betris_calcGhostCoords(betris_game_t* game);
 
 #endif

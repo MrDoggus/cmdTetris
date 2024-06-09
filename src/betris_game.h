@@ -3,7 +3,7 @@
 #ifndef __BETRIS_GAME__
 #define __BETRIS_GAME__
 
-#include <betris_board.h>
+#include "betris_board.h"
 
 // https://tetris.wiki/Tetris_Guideline
 
@@ -15,6 +15,13 @@
     #error invalid piece preview size, too large
 #endif
 
+typedef enum betris_error {
+    BETRIS_SUCCESS = 0,
+    BETRIS_NULL_GAME,
+    BETRIS_NULL_BOARD,
+    BETRIS_INACTIVE_TETROMINO,
+    BETRIS_COLLISION
+} betris_error_t;
 
 typedef struct betris_game
 {
