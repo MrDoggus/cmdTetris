@@ -41,6 +41,9 @@ betris_error_t betris_rotcw(betris_game_t* game)
         return BETRIS_INACTIVE_TETROMINO;
     }
 
+    // Use user input to add entropy
+    betris_rand_entropy(game, 1);
+
     // Copy tetromino
     tmpT[0] = board->fpos[0];
     tmpT[1] = board->fpos[1];
@@ -92,6 +95,9 @@ betris_error_t betris_rotcntrcw(betris_game_t* game)
     if (board->fcol == BETRIS_BLANK) {
         return BETRIS_INACTIVE_TETROMINO;
     }
+
+    // Use user input to add entropy
+    betris_rand_entropy(game, 2);
 
     // Copy tetromino
     tmpT[0] = board->fpos[0];
@@ -145,6 +151,9 @@ betris_error_t betris_leftshift(betris_game_t* game)
         return BETRIS_INACTIVE_TETROMINO;
     }
 
+    // Use user input to add entropy
+    betris_rand_entropy(game, 3);
+
     // Copy tetromino
     tmpT[0] = board->fpos[0];
     tmpT[1] = board->fpos[1];
@@ -195,6 +204,9 @@ betris_error_t betris_rightshift(betris_game_t* game)
         return BETRIS_INACTIVE_TETROMINO;
     }
 
+    // Use user input to add entropy
+    betris_rand_entropy(game, 4);
+
     // Copy tetromino
     tmpT[0] = board->fpos[0];
     tmpT[1] = board->fpos[1];
@@ -244,6 +256,9 @@ betris_error_t betris_sdrop(betris_game_t* game)
         return BETRIS_INACTIVE_TETROMINO;
     }
 
+    // Use user input to add entropy
+    betris_rand_entropy(game, 5);
+
     // Copy tetromino
     tmpT[0] = board->fpos[0];
     tmpT[1] = board->fpos[1];
@@ -288,6 +303,9 @@ betris_error_t betris_hdrop(betris_game_t* game)
     if (error) {
         return error;
     }
+
+    // Use user input to add entropy
+    betris_rand_entropy(game, 6);
 
     // game pointer is null checked in calcGhostCoords
     board = game->board;

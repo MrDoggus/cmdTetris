@@ -2,11 +2,11 @@ _______________________________________________________
 Create new file to store and handle gamestate information
  - [x] Stores started or paused state here
  - [x] Stores score, level and high score
- - [ ] Shuffle function to shuffle the tetrominos in the shuffle queue. 
+ - [x] Shuffle function to shuffle the tetrominos in the shuffle queue. 
  - [ ] Tick function, gets called repeatedly and glues game logic
+ - [ ] Use game state variables to add more variation to rng algorithm
  - [ ] Init function to initialize betris_game structure
  - [ ] Reset function to reset the game to a playable state after a previous game. 
- - [ ] Store function pointers for cunstomization. RNG algorithm for example
  - [ ] Function documentation 
 
 ____________________________________________________
@@ -23,3 +23,5 @@ Later Features
  - [ ] Lock down
  - [ ] Holding
  - [ ] Option for shuffle queue size other than 7
+ - [ ] Non constant tick length feature
+ - [ ] Custom random functions
