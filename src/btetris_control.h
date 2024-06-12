@@ -1,9 +1,9 @@
 
-#include "betris_board.h"
-#include "betris_game.h"
+#include "btetris_board.h"
+#include "btetris_game.h"
 
-#ifndef __BETRIS_CONTROL__
-#define __BETRIS_CONTROL__
+#ifndef __TETRIS_CONTROL__
+#define __TETRIS_CONTROL__
 
 
 // --- Function Declarations --- //
@@ -11,37 +11,37 @@
 /// @brief Rotates the falling tetromino clockwise
 /// @param game Game object
 /// @return Error code
-betris_error_t betris_rotcw(betris_game_t* game);
+tetris_error_t tetris_rotcw(tetris_game_t* game);
 
 /// @brief Rotates the falling tetromino counter-clockwise
 /// @param game Game object
 /// @return Error code
-betris_error_t betris_rotcntrcw(betris_game_t* game);
+tetris_error_t tetris_rotcntrcw(tetris_game_t* game);
 
 /// @brief Shifts falling tetromino to the left
 /// @param game Game object
 /// @return Error code
-betris_error_t betris_leftshift(betris_game_t* game);
+tetris_error_t tetris_leftshift(tetris_game_t* game);
 
 /// @brief Shifts falling tetromino to the right
 /// @param game Game object
 /// @return Error code
-betris_error_t betris_rightshift(betris_game_t* game);
+tetris_error_t tetris_rightshift(tetris_game_t* game);
 
 /// @brief Performs non-locking soft drop
 /// @param game Game object
 /// @return Error code
-betris_error_t betris_sdrop(betris_game_t* game);
+tetris_error_t tetris_sdrop(tetris_game_t* game);
 
 /// @brief Performs locking hard drop
 /// @param game Game object
 /// @return Error code
-betris_error_t betris_hdrop(betris_game_t* game);
+tetris_error_t tetris_hdrop(tetris_game_t* game);
 
 /// @brief Calculates the position of the falling tetromino if it were to be hard dropped. 
 /// @param game Game object
 /// @return Error code
-betris_error_t betris_calcGhostCoords(betris_game_t* game);
+tetris_error_t tetris_calcGhostCoords(tetris_game_t* game);
 
 
 // --- Constants --- //
@@ -55,7 +55,7 @@ betris_error_t betris_calcGhostCoords(betris_game_t* game);
  */
 
 
-const betris_coord_t BETRIS_TETROMINO_ROTATE[8][4][4] = {
+const tetris_coord_t TETRIS_TETROMINO_ROTATE[8][4][4] = {
 
     // Blank
     {{{0, 0}, {0, 0}, {0, 0}, {0, 0}},
