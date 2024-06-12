@@ -31,14 +31,14 @@ betris_error_t betris_rotcw(betris_game_t* game)
 
     // Error checking
     if (!game) {
-        return BETRIS_NULL_GAME;
+        return BETRIS_ERROR_NULL_GAME;
     }
     board = game->board;
     if (!board) {
-        return BETRIS_NULL_BOARD;
+        return BETRIS_ERROR_NULL_BOARD;
     }
     if (board->fcol == BETRIS_BLANK) {
-        return BETRIS_INACTIVE_TETROMINO;
+        return BETRIS_ERROR_INACTIVE_TETROMINO;
     }
 
     // Use user input to add entropy
@@ -73,7 +73,7 @@ betris_error_t betris_rotcw(betris_game_t* game)
     }
     // Indicate that operation is not possible due to a colision
     else {
-        return BETRIS_COLLISION;
+        return BETRIS_ERROR_COLLISION;
     }
 
     // Invalidate ghost piece cache
@@ -91,14 +91,14 @@ betris_error_t betris_rotcntrcw(betris_game_t* game)
 
     // Error checking
     if (!game) {
-        return BETRIS_NULL_GAME;
+        return BETRIS_ERROR_NULL_GAME;
     }
     board = game->board;
     if (!board) {
-        return BETRIS_NULL_BOARD;
+        return BETRIS_ERROR_NULL_BOARD;
     }
     if (board->fcol == BETRIS_BLANK) {
-        return BETRIS_INACTIVE_TETROMINO;
+        return BETRIS_ERROR_INACTIVE_TETROMINO;
     }
 
     // Use user input to add entropy
@@ -133,7 +133,7 @@ betris_error_t betris_rotcntrcw(betris_game_t* game)
     }
     // Indicate that operation is not possible due to a colision
     else {
-        return BETRIS_COLLISION;
+        return BETRIS_ERROR_COLLISION;
     }
 
     // Invalidate ghost piece cache
@@ -151,14 +151,14 @@ betris_error_t betris_leftshift(betris_game_t* game)
 
     // Error checking
     if (!game) {
-        return BETRIS_NULL_GAME;
+        return BETRIS_ERROR_NULL_GAME;
     }
     board = game->board;
     if (!board) {
-        return BETRIS_NULL_BOARD;
+        return BETRIS_ERROR_NULL_BOARD;
     }
     if (board->fcol == BETRIS_BLANK) {
-        return BETRIS_INACTIVE_TETROMINO;
+        return BETRIS_ERROR_INACTIVE_TETROMINO;
     }
 
     // Use user input to add entropy
@@ -186,7 +186,7 @@ betris_error_t betris_leftshift(betris_game_t* game)
     }
     // Indicate that operation is not possible due to a colision
     else {
-        return BETRIS_COLLISION;
+        return BETRIS_ERROR_COLLISION;
     }
 
     // Invalidate ghost piece cache
@@ -204,14 +204,14 @@ betris_error_t betris_rightshift(betris_game_t* game)
 
     // Error checking
     if (!game) {
-        return BETRIS_NULL_GAME;
+        return BETRIS_ERROR_NULL_GAME;
     }
     board = game->board;
     if (!board) {
-        return BETRIS_NULL_BOARD;
+        return BETRIS_ERROR_NULL_BOARD;
     }
     if (board->fcol == BETRIS_BLANK) {
-        return BETRIS_INACTIVE_TETROMINO;
+        return BETRIS_ERROR_INACTIVE_TETROMINO;
     }
 
     // Use user input to add entropy
@@ -239,7 +239,7 @@ betris_error_t betris_rightshift(betris_game_t* game)
     }
     // Indicate that operation is not possible due to a colision
     else {
-        return BETRIS_COLLISION;
+        return BETRIS_ERROR_COLLISION;
     }
 
     // Invalidate ghost piece cache
@@ -257,14 +257,14 @@ betris_error_t betris_sdrop(betris_game_t* game)
 
     // Error checking
     if (!game) {
-        return BETRIS_NULL_GAME;
+        return BETRIS_ERROR_NULL_GAME;
     }
     board = game->board;
     if (!board) {
-        return BETRIS_NULL_BOARD;
+        return BETRIS_ERROR_NULL_BOARD;
     }
     if (board->fcol == BETRIS_BLANK) {
-        return BETRIS_INACTIVE_TETROMINO;
+        return BETRIS_ERROR_INACTIVE_TETROMINO;
     }
 
     // Use user input to add entropy
@@ -296,7 +296,7 @@ betris_error_t betris_sdrop(betris_game_t* game)
     // Indicate that operation is not possible due to a colision
     else {
         betris_lockTetromino(board);
-        return BETRIS_COLLISION;
+        return BETRIS_ERROR_COLLISION;
     }
 
     // No need to invalidate ghost piece cache because operation results in the same ghost position
@@ -342,14 +342,14 @@ betris_error_t betris_calcGhostCoords(betris_game_t* game)
 
     // Error checking
     if (!game) {
-        return BETRIS_NULL_GAME;
+        return BETRIS_ERROR_NULL_GAME;
     }
     board = game->board;
     if (!board) {
-        return BETRIS_NULL_BOARD;
+        return BETRIS_ERROR_NULL_BOARD;
     }
     if (board->fcol == BETRIS_BLANK) {
-        return BETRIS_INACTIVE_TETROMINO;
+        return BETRIS_ERROR_INACTIVE_TETROMINO;
     }
 
     // If cache is still valid, no need to recalculate

@@ -8,11 +8,11 @@ betris_error_t betris_tick(betris_game_t* game)
 
     // Error checking
     if (!game) {
-        return BETRIS_NULL_GAME;
+        return BETRIS_ERROR_NULL_GAME;
     }
     board = game->board;
     if (!board) {
-        return BETRIS_NULL_GAME;
+        return BETRIS_ERROR_NULL_BOARD;
     }
 
     // Shuffle the shuffle queue 
@@ -47,7 +47,7 @@ betris_error_t betris_tick(betris_game_t* game)
         retval = betris_sdrop(game);
 
         // If there is a colision, the tetromino is now locked, can't drop it anymore 
-        if (retval == BETRIS_COLLISION) {
+        if (retval == BETRIS_ERROR_COLLISION) {
             break;
         }
     }
@@ -58,7 +58,7 @@ betris_error_t betris_rand_entropy(betris_game_t* game, int entropy)
 {
     // Error checking
     if (!game) {
-        return BETRIS_NULL_GAME;
+        return BETRIS_ERROR_NULL_GAME;
     }
     
     // Feels too simple but felt that it should be a function
@@ -73,7 +73,7 @@ betris_error_t betris_rand_swap(betris_game_t* game)
 
     // Error checking
     if (!game) {
-        return BETRIS_NULL_GAME;
+        return BETRIS_ERROR_NULL_GAME;
     }
 
     // Find swap indexes
