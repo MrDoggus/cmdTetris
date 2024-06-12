@@ -46,7 +46,7 @@ typedef enum betris_error {
 typedef struct betris_game
 {
     // Game state
-    int8_t isStarted;
+    int8_t isRunning;
 
     // Tetris board
     betris_board_t* board;
@@ -60,6 +60,10 @@ typedef struct betris_game
     int8_t          qidx;               // Position of next color in queue
     betris_color_t  queue[7];           // Queue that feeds into ppreview
     betris_color_t  shuffle_queue[7];   // Gets swapped with queue when it empties
+
+    // Timing
+    int64_t tmicro;
+    int64_t tdrop;
 
     // RNG state
     int randx;
@@ -89,7 +93,7 @@ betris_error_t betris_tick(betris_game_t* game);
 // --- CONSTANTS --- //
 
 const int64_t BETRIS_SPEED_CURVE[20] = {
-    0,
+    (1.23915737299  * 1000000) / BETRIS_TICK_PERIOD, // 1
     (1              * 1000000) / BETRIS_TICK_PERIOD, // 1
     (0.793          * 1000000) / BETRIS_TICK_PERIOD, // 2
     (0.617796       * 1000000) / BETRIS_TICK_PERIOD, // 3

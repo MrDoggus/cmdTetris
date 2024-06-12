@@ -220,7 +220,8 @@ betris_error_t betris_rightshift(betris_game_t* game)
     shiftPossible = betris_collisionCheck(board, tmpT);    // Check if there is room for shift
 
     // Apply shift if there are no collisions
-    if (shiftPossible) {
+    if (shiftPossible) 
+    {
         board->fpos[0] = tmpT[0];
         board->fpos[1] = tmpT[1];
         board->fpos[2] = tmpT[2];
@@ -284,6 +285,7 @@ betris_error_t betris_sdrop(betris_game_t* game)
     }
     // Indicate that operation is not possible due to a colision
     else {
+        betris_lockTetromino(board);
         return BETRIS_COLLISION;
     }
 
@@ -407,22 +409,9 @@ int8_t betris_collisionCheck(betris_board_t* board, betris_coord_t tetromino[4])
 // Places the falling tetromino into the playfield. 
 void betris_lockTetromino(betris_board_t* board)
 {
-    // Dont lock if a previously locked tetromino isn't handled yet
-    if (board->lrow_updated) {
-        return;
-    }
-
-    // Mark lrow list as updated
-    board->lrow_updated = 1;
-
     // Lock the tetromino
-    for (int i = 0; i < 4; i++) 
-    {
-        // Set tetromino square in playfield
+    for (int i = 0; i < 4; i++) {
         board->pf[board->fpos[i].h][board->fpos[i].w] = board->fcol;
-
-        // Save row in lrow_list
-        board->lrow_list[i] = board->fpos[i].h;
     }
 
     // Clear tetromino color to indicate that it is no longer active
