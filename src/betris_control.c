@@ -44,6 +44,11 @@ betris_error_t betris_rotcw(betris_game_t* game)
     // Use user input to add entropy
     betris_rand_entropy(game, 1);
 
+    // If falling tetromino is 'O' (yellow), rotation doesn't have an effect. No need perform computations.
+    if (board->fcol == BETRIS_YELLOW) {
+        return BETRIS_SUCCESS;
+    }
+
     // Copy tetromino
     tmpT[0] = board->fpos[0];
     tmpT[1] = board->fpos[1];
@@ -98,6 +103,11 @@ betris_error_t betris_rotcntrcw(betris_game_t* game)
 
     // Use user input to add entropy
     betris_rand_entropy(game, 2);
+    
+    // If falling tetromino is 'O' (yellow), rotation doesn't have an effect. No need perform computations.
+    if (board->fcol == BETRIS_YELLOW) {
+        return BETRIS_SUCCESS;
+    }
 
     // Copy tetromino
     tmpT[0] = board->fpos[0];

@@ -3,7 +3,7 @@ Create new file to store and handle gamestate information
  - [x] Stores started or paused state here
  - [x] Stores score, level and high score
  - [x] Shuffle function to shuffle the tetrominos in the shuffle queue. 
- - [ ] Don't rotate tetromino if tetromino is an 'o'
+ - [x] Don't rotate tetromino if tetromino is an 'o'
  - [x] Tick function: handle timing of falling tetrominoes
  - [ ] Tick function: Handle clearing rows and corresponding scoring 
  - [ ] Tick function: handle pulling tetrominoes from queue when previous tetormino is locked
