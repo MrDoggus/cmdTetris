@@ -23,7 +23,6 @@
 
 #define TETRIS_HEIGHT_BUFF 4    // Additional row buffer at top of the board
 
-#define TETRIS_INIT 25  // Value that the 'initialized' field of 'tetris_game_struct' will have when it is initialized
 
 // --- Game Structures --- //
 
@@ -93,10 +92,10 @@ const tetris_coord_t TETRIS_TETROMINO_START[8][4] = {
         {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)},
     },
     {   // Orange (L)
+        {TETRIS_HEIGHT+2, (TETRIS_WIDTH/2)},
         {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)-2}, 
         {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)-1}, 
         {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)}, 
-        {TETRIS_HEIGHT+2, (TETRIS_WIDTH/2)},
     },
     {   // Yellow (O)
         {TETRIS_HEIGHT+2, (TETRIS_WIDTH/2)-1}, 
@@ -105,15 +104,15 @@ const tetris_coord_t TETRIS_TETROMINO_START[8][4] = {
         {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)},
     },
     {   // Green (S)
-        {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)-2}, 
-        {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)-1}, 
         {TETRIS_HEIGHT+2, (TETRIS_WIDTH/2)-1}, 
         {TETRIS_HEIGHT+2, (TETRIS_WIDTH/2)},
-    },
-    {   // Purple (T)
         {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)-2}, 
         {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)-1}, 
+    },
+    {   // Purple (T)
         {TETRIS_HEIGHT+2, (TETRIS_WIDTH/2)-1}, 
+        {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)-2}, 
+        {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)-1}, 
         {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)},
     },
     {   // Red (Z)
