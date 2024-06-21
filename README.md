@@ -9,3 +9,4 @@ The vision for this project is to make it easy to implement Tetris on a given co
 Since this library can be potentially be used in a wide array of devices, implementation of the game logic will avoid standard functions that can potentially invoke system calls. 
 Actions such as allocating game structures will be up to the frontend application's implementation. 
 
+> **Note**: The code in this repository is currently untested
