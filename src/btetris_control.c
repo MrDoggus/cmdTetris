@@ -430,5 +430,10 @@ void tetris_lockTetromino(tetris_board_t* board)
     // Invalidate ghost piece cache
     board->gc_valid = 0;
 
+    // Update playfield height
+    if (board->pf_height < board->fpos[0].h) {
+        board->pf_height = board->fpos[0].h;
+    }
+
     return;
 }

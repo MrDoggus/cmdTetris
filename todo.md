@@ -7,10 +7,10 @@ Create new file to store and handle gamestate information
  - [x] Rename error enum names to make it more clear that its for an error. ex: TETRIS_COLLISION -> TETRIS_ERROR_COLLISION
  - [x] Rename betris to something else
  - [x] Tick function: handle timing of falling tetrominoes
- - [ ] Tick function: Handle clearing rows and corresponding scoring 
+ - [x] Tick function: Handle clearing rows
  - [ ] Tick function: handle pulling tetrominoes from queue when previous tetormino is locked
+ - [ ] Tick function: Handle row clear and combo scoring 
  - [ ] Tick function: handle leveling
- - [ ] Tick function: Handle combo scoring 
  - [ ] Tick function: Handle game over
  - [ ] Use game state variables to add more variation to rng algorithm
  - [ ] Init function to initialize tetris_game structure

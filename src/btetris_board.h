@@ -46,6 +46,7 @@ typedef struct tetris_board
 {
     // playfield, contains only locked tetrominos
     tetris_color_t pf[TETRIS_HEIGHT+TETRIS_HEIGHT_BUFF][TETRIS_WIDTH];
+    int8_t pf_height;   // Index of heighest row in playfield
 
     // Falling tetromino info
     tetris_coord_t  fpos[4];    // Position of tetromino's squares
@@ -55,6 +56,7 @@ typedef struct tetris_board
     // Ghost piece cache
     int8_t          gc_valid;   // True when ghost piece cache is valid
     tetris_coord_t  gc_pos[4];  // Ghost piece position data
+ 
 } tetris_board_t;
 
 // --- Function Declarations --- //
