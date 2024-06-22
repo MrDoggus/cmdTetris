@@ -3,6 +3,66 @@
 
 #define MOD4(val) (val & 0b0011)
 
+tetris_error_t tetris_reset(tetris_game_t* game)
+{
+    tetris_board_t* board;
+
+    // Error checking
+    if (!game) {
+        return TETRIS_ERROR_NULL_GAME;
+    }
+    board = game->board;
+    if (!board) {
+        return TETRIS_ERROR_NULL_BOARD;
+    }
+
+
+    // --- Reset board struct --- //
+
+    for (int h = 0; h < board->pf_height; h++)
+    {
+        for (int w = 0; w < TETRIS_WIDTH; w++) 
+        {
+            board->pf[h][w] = TETRIS_BLANK;
+        }
+    }
+    board->pf_height = 0;
+
+    board->fpos[0] = (tetris_coord_t){-1, -1};
+    board->fpos[1] = (tetris_coord_t){-1, -1};
+    board->fpos[2] = (tetris_coord_t){-1, -1};
+    board->fpos[3] = (tetris_coord_t){-1, -1};
+
+    board->frot = 0;
+    board->fcol = TETRIS_BLANK;
+
+    board->gc_valid = 0;
+    board->gc_pos[0] = (tetris_coord_t){-1, -1};
+    board->gc_pos[1] = (tetris_coord_t){-1, -1};
+    board->gc_pos[2] = (tetris_coord_t){-1, -1};
+    board->gc_pos[3] = (tetris_coord_t){-1, -1};
+
+
+    // --- Initialize game struct --- //
+
+    game->isRunning = 0;
+
+    game->level = 0;
+    game->score = 0;
+    game->combo = -1;
+    game->lines = 0;
+
+    for (int i = 0; i < TETRIS_PP_SIZE; i++) {
+        game->ppreview[i] = TETRIS_BLANK;
+    }
+    game->qidx = 0;
+
+    game->tmicro = 0;
+    game->tdrop = 0;
+
+    return TETRIS_SUCCESS;
+}
+
 tetris_error_t tetris_init(tetris_game_t* game, tetris_board_t* board, int32_t randx_init)
 {
     // Error checking
@@ -284,6 +344,7 @@ tetris_error_t tetris_tick(tetris_game_t* game)
             {
                 game->isRunning = 0;
                 board->fcol = TETRIS_BLANK;
+                board->pf_height = board->fpos[0].h;
 
                 return TETRIS_SUCCESS;
             }

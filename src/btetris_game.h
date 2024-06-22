@@ -75,6 +75,11 @@ typedef struct tetris_game
 
 // --- Function Declarations --- //
 
+/// @brief Resets a game to a playable state without reseting random state
+/// @param game Game object
+/// @return Error code
+tetris_error_t tetris_reset(tetris_game_t* game);
+
 /// @brief Initializes a tetris game struct
 /// @param game Pointer to allocated game struct
 /// @param board Pointer to allocated board struct
