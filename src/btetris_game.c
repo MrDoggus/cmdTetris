@@ -249,8 +249,11 @@ tetris_error_t tetris_rand_entropy(tetris_game_t* game, int entropy)
         return TETRIS_ERROR_NULL_GAME;
     }
     
-    // Feels too simple but felt that it should be a function
+    // Add user generated entropy
     game->randx += entropy;
+
+    // Get entropy from game runtime
+    game->randx += game->tmicro;
 
     return TETRIS_SUCCESS;
 }

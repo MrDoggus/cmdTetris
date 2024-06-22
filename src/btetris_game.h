@@ -68,7 +68,7 @@ typedef struct tetris_game
     int64_t tdrop;
 
     // RNG state
-    int randx;
+    int32_t randx;
 
 } tetris_game_t;
 

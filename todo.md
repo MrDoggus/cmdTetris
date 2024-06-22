@@ -11,8 +11,8 @@ Create new file to store and handle gamestate information
  - [x] Tick function: handle pulling tetrominoes from queue when previous tetormino is locked
  - [x] Tick function: Handle row clear and combo scoring 
  - [x] Tick function: handle leveling
- - [ ] Tick function: Handle game over
- - [ ] Use game state variables to add more variation to rng algorithm
+ - [x] Tick function: Handle game over
+ - [x] Use game state variables to add more variation to rng algorithm
  - [ ] Init function to initialize tetris_game structure
  - [ ] Reset function to reset the game to a playable state after a previous game. 
  - [ ] Function documentation 
