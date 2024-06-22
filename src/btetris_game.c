@@ -73,7 +73,7 @@ tetris_error_t tetris_tick(tetris_game_t* game)
                     row_cidx++;
                 }
 
-                // Update previous row
+                // Update row_prev
                 row_prev = board->fpos[i].h;
             }
         }
@@ -123,9 +123,47 @@ tetris_error_t tetris_tick(tetris_game_t* game)
             // Update pf height
             board->pf_height -= adj_cnt;
         }
-    }
 
-    
+
+        // --- Pop Tetromino --- //
+
+        // Get the color of the next falling tetromino
+        board->fcol = game->ppreview[0];
+
+        // If queue is empty, need to swap with shuffle queue
+        if (game->qidx > 7) 
+        {
+            // Swap queues
+            tetris_color_t tempc;
+            for (int i = 0; i < 7; i++)
+            {
+                tempc = game->queue[i];
+                game->queue[i] = game->shuffle_queue[i];
+                game->shuffle_queue[i] = tempc;
+            }
+
+            // Reset queue length
+            game->qidx = 0;
+        }
+
+        // Shift tetrominoes in piece preview 
+        for (int i = 1; i < TETRIS_PP_SIZE; i++)
+        {
+            game->ppreview[i-1] = game->ppreview[i];
+        }
+
+        // Pop tetromino from queue
+        game->ppreview[TETRIS_PP_SIZE-1] = game->queue[game->qidx];
+        game->qidx++;
+
+        // Copy starting position for next falling tetromino
+        board->frot = 0;
+        board->fpos[0] = TETRIS_TETROMINO_START[board->fcol][0];
+        board->fpos[1] = TETRIS_TETROMINO_START[board->fcol][1];
+        board->fpos[2] = TETRIS_TETROMINO_START[board->fcol][2];
+        board->fpos[3] = TETRIS_TETROMINO_START[board->fcol][3];
+
+    }
 
     // Calculate the number of times tetromino should be dropped
     int drop_cnt;   

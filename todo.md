@@ -8,7 +8,7 @@ Create new file to store and handle gamestate information
  - [x] Rename betris to something else
  - [x] Tick function: handle timing of falling tetrominoes
  - [x] Tick function: Handle clearing rows
- - [ ] Tick function: handle pulling tetrominoes from queue when previous tetormino is locked
+ - [x] Tick function: handle pulling tetrominoes from queue when previous tetormino is locked
  - [ ] Tick function: Handle row clear and combo scoring 
  - [ ] Tick function: handle leveling
  - [ ] Tick function: Handle game over
@@ -16,6 +16,8 @@ Create new file to store and handle gamestate information
  - [ ] Init function to initialize tetris_game structure
  - [ ] Reset function to reset the game to a playable state after a previous game. 
  - [ ] Function documentation 
+ - [ ] Consider atomicity issues with shuffling tetrominoes and swaping 
+   - Maybe warn user to not call ramd_swap in a different thread from the tick. 
 
 ____________________________________________________
 Features
