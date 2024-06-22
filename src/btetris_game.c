@@ -78,11 +78,42 @@ tetris_error_t tetris_tick(tetris_game_t* game)
             }
         }
 
+        int row_ccnt = row_cidx;    // Number of rows to clear
+        row_cidx = 0;               // Reset cidx
+
+        // Update line clear score
+        switch (row_ccnt)
+        {
+        case 1:
+            game->score += 100 * game->level;
+            break;
+        case 2: 
+            game->score += 300 * game->level;
+            break;
+        case 3: 
+            game->score += 500 * game->level;
+            break;
+        case 4:
+            game->score += 800 * game->level;
+            break;
+        default:
+            break;
+        }
+
+        // Update combo scoring
+        if (row_ccnt == 0)
+        {
+            game->combo = -1;
+        }
+        else if (game->combo >= 0)
+        {
+            game->score += 50 * game->combo * game->level;
+            game->combo += 1;
+        }
+
 
         // --- Clear rows --- //
 
-        int row_ccnt = row_cidx;    // Number of rows to clear
-        row_cidx = 0;               // Current working row
         while (row_cidx < row_ccnt)
         {
             // Count number of adjacent rows
