@@ -44,6 +44,11 @@ tetris_error_t tetris_rotcw(tetris_game_t* game)
     // Use user input to add entropy
     tetris_rand_entropy(game, 1);
 
+    // Dont worry about handling game logic if the game isn't running. 
+    if (!game->isRunning) {
+        return TETRIS_SUCCESS;
+    }
+
     // If falling tetromino is 'O' (yellow), rotation doesn't have an effect. No need perform computations.
     if (board->fcol == TETRIS_YELLOW) {
         return TETRIS_SUCCESS;
@@ -103,6 +108,11 @@ tetris_error_t tetris_rotcntrcw(tetris_game_t* game)
 
     // Use user input to add entropy
     tetris_rand_entropy(game, 2);
+
+    // Dont worry about handling game logic if the game isn't running. 
+    if (!game->isRunning) {
+        return TETRIS_SUCCESS;
+    }
     
     // If falling tetromino is 'O' (yellow), rotation doesn't have an effect. No need perform computations.
     if (board->fcol == TETRIS_YELLOW) {
@@ -163,6 +173,11 @@ tetris_error_t tetris_leftshift(tetris_game_t* game)
 
     // Use user input to add entropy
     tetris_rand_entropy(game, 3);
+
+    // Dont worry about handling game logic if the game isn't running. 
+    if (!game->isRunning) {
+        return TETRIS_SUCCESS;
+    }
 
     // Copy tetromino
     tmpT[0] = board->fpos[0];
@@ -270,6 +285,11 @@ tetris_error_t tetris_sdrop(tetris_game_t* game)
     // Use user input to add entropy
     tetris_rand_entropy(game, 5);
 
+    // Dont worry about handling game logic if the game isn't running. 
+    if (!game->isRunning) {
+        return TETRIS_SUCCESS;
+    }
+
     // Copy tetromino
     tmpT[0] = board->fpos[0];
     tmpT[1] = board->fpos[1];
@@ -318,6 +338,11 @@ tetris_error_t tetris_hdrop(tetris_game_t* game)
 
     // Use user input to add entropy
     tetris_rand_entropy(game, 6);
+
+    // Dont worry about handling game logic if the game isn't running. 
+    if (!game->isRunning) {
+        return TETRIS_SUCCESS;
+    }
 
     // game pointer is null checked in calcGhostCoords
     board = game->board;

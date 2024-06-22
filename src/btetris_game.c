@@ -24,7 +24,7 @@ tetris_error_t tetris_tick(tetris_game_t* game)
     }
 
     // Update game runtime
-    game->tmicro += TETRIS_TICK_PERIOD;
+    game->tmicro += 1;
 
     // If current falling tetromino is "blank" then a tetromino was recently locked. 
     // Need to check if a row needs to be cleared and generate a new tetromino to fall
@@ -201,6 +201,17 @@ tetris_error_t tetris_tick(tetris_game_t* game)
         board->fpos[2] = TETRIS_TETROMINO_START[board->fcol][2];
         board->fpos[3] = TETRIS_TETROMINO_START[board->fcol][3];
 
+        // If there is a colision with the starting position, the game is over
+        for (int i = 0; i < 4; i++) 
+        {
+            if (board->pf[board->fpos[i].h][board->fpos[i].w] != TETRIS_BLANK) 
+            {
+                game->isRunning = 0;
+                board->fcol = TETRIS_BLANK;
+
+                return TETRIS_SUCCESS;
+            }
+        }
     }
 
     // Calculate the number of times tetromino should be dropped
