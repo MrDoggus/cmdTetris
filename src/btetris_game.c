@@ -111,6 +111,13 @@ tetris_error_t tetris_tick(tetris_game_t* game)
             game->combo += 1;
         }
 
+        game->lines += row_ccnt;
+        if (game->lines >= 10) 
+        {
+            game->level += 1;
+            game->lines -= 10;
+        }
+
 
         // --- Clear rows --- //
 

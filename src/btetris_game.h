@@ -55,6 +55,7 @@ typedef struct tetris_game
     int8_t  level;
     int64_t score;
     int8_t  combo;
+    int8_t  lines;
 
     // Tetromino queue
     tetris_color_t  ppreview[TETRIS_PP_SIZE];   // Piece preview

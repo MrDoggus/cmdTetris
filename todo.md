@@ -10,7 +10,7 @@ Create new file to store and handle gamestate information
  - [x] Tick function: Handle clearing rows
  - [x] Tick function: handle pulling tetrominoes from queue when previous tetormino is locked
  - [x] Tick function: Handle row clear and combo scoring 
- - [ ] Tick function: handle leveling
+ - [x] Tick function: handle leveling
  - [ ] Tick function: Handle game over
  - [ ] Use game state variables to add more variation to rng algorithm
  - [ ] Init function to initialize tetris_game structure
@@ -19,21 +19,14 @@ Create new file to store and handle gamestate information
  - [ ] Consider atomicity issues with shuffling tetrominoes and swaping 
    - Maybe warn user to not call ramd_swap in a different thread from the tick. 
 
-____________________________________________________
-Features
- - [x] ghostCoords caching to avoid recalculations of the ghost position
- - [ ] disable piece preview/next queue option 
- - [ ] disable ghost piece cache option 
- - [ ] disable null board check option
-
 ___________________________________________________
 Later Features
- - [ ] update display event option 
  - [ ] Super Rotation System 
  - [ ] T-spin scoring
- - [ ] Lock down
  - [ ] Holding
+ - [ ] Lock down
  - [ ] Option for shuffle queue size other than 7
  - [ ] Non constant tick length feature
  - [ ] Custom random functions
+ - [ ] update display event option 
  - [ ] Perfect clear scoring
