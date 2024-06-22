@@ -75,6 +75,18 @@ typedef struct tetris_game
 
 // --- Function Declarations --- //
 
+/// @brief Initializes a tetris game struct
+/// @param game Pointer to allocated game struct
+/// @param board Pointer to allocated board struct
+/// @param randx_init Starting number for RNG
+/// @return Erroc code
+tetris_error_t tetris_init(tetris_game_t* game, tetris_board_t* board, int32_t randx_init);
+
+/// @brief Should be called at the set tick rate. Handles 
+/// @param game Game object
+/// @return Error code
+tetris_error_t tetris_tick(tetris_game_t* game);
+
 /// @brief Adds entropy to the random number generator
 /// @param game Game object
 /// @param entropy Any integer
@@ -85,11 +97,6 @@ tetris_error_t tetris_rand_entropy(tetris_game_t* game, int entropy);
 /// @param game Game object
 /// @return Error code
 tetris_error_t tetris_rand_swap(tetris_game_t* game);
-
-/// @brief Should be called at the set tick rate. Handles 
-/// @param game Game object
-/// @return Error code
-tetris_error_t tetris_tick(tetris_game_t* game);
 
 
 // --- CONSTANTS --- //

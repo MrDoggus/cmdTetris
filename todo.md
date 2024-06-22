@@ -13,8 +13,9 @@ Create new file to store and handle gamestate information
  - [x] Tick function: handle leveling
  - [x] Tick function: Handle game over
  - [x] Use game state variables to add more variation to rng algorithm
- - [ ] Init function to initialize tetris_game structure
+ - [x] Init function to initialize tetris_game structure
  - [ ] Reset function to reset the game to a playable state after a previous game. 
+ - [ ] Start function
  - [ ] Function documentation 
  - [ ] Consider atomicity issues with shuffling tetrominoes and swaping 
    - Maybe warn user to not call ramd_swap in a different thread from the tick. 

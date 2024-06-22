@@ -1,6 +1,82 @@
 #include "btetris_game.h"
 #include "btetris_control.h"
 
+#define MOD4(val) (val & 0b0011)
+
+tetris_error_t tetris_init(tetris_game_t* game, tetris_board_t* board, int32_t randx_init)
+{
+    // Error checking
+    if (!game) {
+        return TETRIS_ERROR_NULL_GAME;
+    }
+    if (!board) {
+        return TETRIS_ERROR_NULL_BOARD;
+    }
+
+
+    // --- Initialize board struct --- //
+
+    for (int h = 0; h < TETRIS_HEIGHT+TETRIS_HEIGHT_BUFF; h++)
+    {
+        for (int w = 0; w < TETRIS_WIDTH; w++) 
+        {
+            board->pf[h][w] = TETRIS_BLANK;
+        }
+    }
+    board->pf_height = 0;
+
+    board->fpos[0] = (tetris_coord_t){-1, -1};
+    board->fpos[1] = (tetris_coord_t){-1, -1};
+    board->fpos[2] = (tetris_coord_t){-1, -1};
+    board->fpos[3] = (tetris_coord_t){-1, -1};
+
+    board->frot = 0;
+    board->fcol = TETRIS_BLANK;
+
+    board->gc_valid = 0;
+    board->gc_pos[0] = (tetris_coord_t){-1, -1};
+    board->gc_pos[1] = (tetris_coord_t){-1, -1};
+    board->gc_pos[2] = (tetris_coord_t){-1, -1};
+    board->gc_pos[3] = (tetris_coord_t){-1, -1};
+
+
+    // --- Initialize game struct --- //
+
+    game->isRunning = 0;
+
+    game->board = board;
+
+    game->level = 0;
+    game->score = 0;
+    game->combo = -1;
+    game->lines = 0;
+
+    for (int i = 0; i < TETRIS_PP_SIZE; i++) {
+        game->ppreview[i] = TETRIS_BLANK;
+    }
+    game->qidx = 0;
+    game->queue[0] = TETRIS_CYAN;
+    game->queue[1] = TETRIS_BLUE;
+    game->queue[2] = TETRIS_ORANGE;
+    game->queue[3] = TETRIS_YELLOW;
+    game->queue[4] = TETRIS_GREEN;
+    game->queue[5] = TETRIS_PURPLE;
+    game->queue[6] = TETRIS_RED;
+    game->shuffle_queue[0] = TETRIS_RED;
+    game->shuffle_queue[1] = TETRIS_ORANGE;
+    game->shuffle_queue[2] = TETRIS_YELLOW;
+    game->shuffle_queue[3] = TETRIS_GREEN;
+    game->shuffle_queue[4] = TETRIS_CYAN;
+    game->shuffle_queue[5] = TETRIS_BLUE;
+    game->shuffle_queue[6] = TETRIS_PURPLE;
+
+    game->tmicro = 0;
+    game->tdrop = 0;
+
+    game->randx = randx_init;
+
+    return TETRIS_SUCCESS;
+}
 
 tetris_error_t tetris_tick(tetris_game_t* game)
 {
@@ -244,9 +320,15 @@ tetris_error_t tetris_tick(tetris_game_t* game)
 
 tetris_error_t tetris_rand_entropy(tetris_game_t* game, int entropy)
 {
+    tetris_board_t* board;
+
     // Error checking
     if (!game) {
         return TETRIS_ERROR_NULL_GAME;
+    }
+    board = game->board;
+    if (!board) {
+        return TETRIS_ERROR_NULL_BOARD;
     }
     
     // Add user generated entropy
@@ -254,6 +336,13 @@ tetris_error_t tetris_rand_entropy(tetris_game_t* game, int entropy)
 
     // Get entropy from game runtime
     game->randx += game->tmicro;
+
+    // Get entropy from tetromino position
+    int rot = board->frot;
+    game->randx += board->fpos[0].h ^ board->fpos[rot].w;
+    game->randx += (board->fpos[1].h ^ board->fpos[MOD4(rot+1)].w) >> 8;
+    game->randx += (board->fpos[2].h ^ board->fpos[MOD4(rot+2)].w) >> 16;
+    game->randx += (board->fpos[3].h ^ board->fpos[MOD4(rot+3)].w) >> 24;
 
     return TETRIS_SUCCESS;
 }
