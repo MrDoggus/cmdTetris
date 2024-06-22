@@ -3,6 +3,50 @@
 
 #define MOD4(val) (val & 0b0011)
 
+/// @brief Pops a tetromino from the queue
+/// @param game game struct
+/// @return Popped tetromino
+tetris_color_t tetris_tqueue_pop(tetris_game_t* game);
+
+/// @brief Swaps tetromino queue with shuffle queue
+/// @param game game struct
+void tetris_tqueue_swap(tetris_game_t* game);
+
+tetris_error_t tetris_start(tetris_game_t* game)
+{
+    tetris_board_t* board;
+
+    // Error checking
+    if (!game) {
+        return TETRIS_ERROR_NULL_GAME;
+    }
+    board = game->board;
+    if (!board) {
+        return TETRIS_ERROR_NULL_BOARD;
+    }
+
+    // Swap queues to get shuffled tetrominoes
+    tetris_tqueue_swap(game);
+
+    // Populate piece preview
+    for (int i = 0; i < TETRIS_PP_SIZE; i++)
+    {
+        game->ppreview[i] = tetris_tqueue_pop(game);
+    }
+
+    // Set falling tetromino
+    board->fcol = tetris_tqueue_pop(game);
+    board->fpos[0] = TETRIS_TETROMINO_START[board->fcol][0];
+    board->fpos[1] = TETRIS_TETROMINO_START[board->fcol][1];
+    board->fpos[2] = TETRIS_TETROMINO_START[board->fcol][2];
+    board->fpos[3] = TETRIS_TETROMINO_START[board->fcol][3];
+
+    // Flag game as running
+    game->isRunning = 1;
+
+    return TETRIS_SUCCESS;
+}
+
 tetris_error_t tetris_reset(tetris_game_t* game)
 {
     tetris_board_t* board;
@@ -301,24 +345,8 @@ tetris_error_t tetris_tick(tetris_game_t* game)
 
         // --- Pop Tetromino --- //
 
-        // Get the color of the next falling tetromino
+        // Get the color of the next falling tetromino from piece preview
         board->fcol = game->ppreview[0];
-
-        // If queue is empty, need to swap with shuffle queue
-        if (game->qidx > 7) 
-        {
-            // Swap queues
-            tetris_color_t tempc;
-            for (int i = 0; i < 7; i++)
-            {
-                tempc = game->queue[i];
-                game->queue[i] = game->shuffle_queue[i];
-                game->shuffle_queue[i] = tempc;
-            }
-
-            // Reset queue length
-            game->qidx = 0;
-        }
 
         // Shift tetrominoes in piece preview 
         for (int i = 1; i < TETRIS_PP_SIZE; i++)
@@ -327,8 +355,7 @@ tetris_error_t tetris_tick(tetris_game_t* game)
         }
 
         // Pop tetromino from queue
-        game->ppreview[TETRIS_PP_SIZE-1] = game->queue[game->qidx];
-        game->qidx++;
+        game->ppreview[TETRIS_PP_SIZE-1] = tetris_tqueue_pop(game);
 
         // Copy starting position for next falling tetromino
         board->frot = 0;
@@ -430,4 +457,30 @@ tetris_error_t tetris_rand_swap(tetris_game_t* game)
     game->randx = game->randx + TETRIS_RAND_INCR;
 
     return TETRIS_SUCCESS;
+}
+
+
+tetris_color_t tetris_tqueue_pop(tetris_game_t* game)
+{
+    if (game->qidx > 7) 
+    {
+        tetris_tqueue_swap(game);
+    }
+
+    return game->queue[game->qidx++];
+}
+
+void tetris_tqueue_swap(tetris_game_t* game)
+{
+    // Swap queues
+    tetris_color_t tempc;
+    for (int i = 0; i < 7; i++)
+    {
+        tempc = game->queue[i];
+        game->queue[i] = game->shuffle_queue[i];
+        game->shuffle_queue[i] = tempc;
+    }
+
+    // Reset queue length
+    game->qidx = 0;
 }

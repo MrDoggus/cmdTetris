@@ -84,8 +84,13 @@ tetris_error_t tetris_reset(tetris_game_t* game);
 /// @param game Pointer to allocated game struct
 /// @param board Pointer to allocated board struct
 /// @param randx_init Starting number for RNG
-/// @return Erroc code
+/// @return Error code
 tetris_error_t tetris_init(tetris_game_t* game, tetris_board_t* board, int32_t randx_init);
+
+/// @brief Starts the tetris game
+/// @param game Game object
+/// @return Error code
+tetris_error_t tetris_start(tetris_game_t* game);
 
 /// @brief Should be called at the set tick rate. Handles 
 /// @param game Game object
