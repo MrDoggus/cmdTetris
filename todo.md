@@ -16,12 +16,17 @@ Create new file to store and handle gamestate information
  - [x] Init function to initialize tetris_game structure
  - [x] Reset function to reset the game to a playable state after a previous game. 
  - [x] Start function
+ - [x] Pause and unpase function
+ - [x] Return error when game is over
  - [ ] Function documentation 
  - [ ] Consider atomicity issues with shuffling tetrominoes and swaping 
    - Maybe warn user to not call ramd_swap in a different thread from the tick. 
 
+
 ___________________________________________________
 Later Features
+ - [ ] Add option to reset function to set randx variable
+ - [ ] Better RNG
  - [ ] Super Rotation System 
  - [ ] T-spin scoring
  - [ ] Holding

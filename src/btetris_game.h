@@ -40,13 +40,18 @@ typedef enum tetris_error {
     TETRIS_ERROR_NULL_GAME,
     TETRIS_ERROR_NULL_BOARD,
     TETRIS_ERROR_INACTIVE_TETROMINO,
-    TETRIS_ERROR_COLLISION
+    TETRIS_ERROR_COLLISION,
+    TETRIS_ERROR_GAME_OVER,
+    TETRIS_ERROR_GAME_PAUSED,
+    TETRIS_ERROR_NOT_STARTED
 } tetris_error_t;
 
 typedef struct tetris_game
 {
     // Game state
-    int8_t isRunning;
+    int8_t isStarted;   // Set after start(), cleared after init() or reset()
+    int8_t isRunning;   // Set by start() and unpause(). Cleared by pause(), tick(), init() or reset()
+    int8_t isGameover;  // Set by tick(), cleared by init() or reset()
 
     // Tetris board
     tetris_board_t* board;
@@ -75,11 +80,6 @@ typedef struct tetris_game
 
 // --- Function Declarations --- //
 
-/// @brief Resets a game to a playable state without reseting random state
-/// @param game Game object
-/// @return Error code
-tetris_error_t tetris_reset(tetris_game_t* game);
-
 /// @brief Initializes a tetris game struct
 /// @param game Pointer to allocated game struct
 /// @param board Pointer to allocated board struct
@@ -87,12 +87,17 @@ tetris_error_t tetris_reset(tetris_game_t* game);
 /// @return Error code
 tetris_error_t tetris_init(tetris_game_t* game, tetris_board_t* board, int32_t randx_init);
 
+/// @brief Resets a game to a playable state without reseting random state
+/// @param game Game object
+/// @return Error code
+tetris_error_t tetris_reset(tetris_game_t* game);
+
 /// @brief Starts the tetris game
 /// @param game Game object
 /// @return Error code
 tetris_error_t tetris_start(tetris_game_t* game);
 
-/// @brief Should be called at the set tick rate. Handles 
+/// @brief Computes game logic, should be called at the set tick rate. 
 /// @param game Game object
 /// @return Error code
 tetris_error_t tetris_tick(tetris_game_t* game);
@@ -112,7 +117,7 @@ tetris_error_t tetris_rand_swap(tetris_game_t* game);
 // --- CONSTANTS --- //
 
 const int64_t TETRIS_SPEED_CURVE[20] = {
-    (1.23915737299  * 1000000) / TETRIS_TICK_PERIOD, // 1
+    (1.23915737299  * 1000000) / TETRIS_TICK_PERIOD, // 0
     (1              * 1000000) / TETRIS_TICK_PERIOD, // 1
     (0.793          * 1000000) / TETRIS_TICK_PERIOD, // 2
     (0.617796       * 1000000) / TETRIS_TICK_PERIOD, // 3

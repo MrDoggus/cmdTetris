@@ -24,6 +24,16 @@ tetris_error_t tetris_start(tetris_game_t* game)
     if (!board) {
         return TETRIS_ERROR_NULL_BOARD;
     }
+    if (game->isGameover)
+    {
+        return TETRIS_ERROR_GAME_OVER;
+    }
+
+    // Already started
+    if (game->isStarted)
+    {
+        return TETRIS_SUCCESS;
+    }
 
     // Swap queues to get shuffled tetrominoes
     tetris_tqueue_swap(game);
@@ -42,6 +52,7 @@ tetris_error_t tetris_start(tetris_game_t* game)
     board->fpos[3] = TETRIS_TETROMINO_START[board->fcol][3];
 
     // Flag game as running
+    game->isStarted = 1;
     game->isRunning = 1;
 
     return TETRIS_SUCCESS;
@@ -59,6 +70,10 @@ tetris_error_t tetris_reset(tetris_game_t* game)
     if (!board) {
         return TETRIS_ERROR_NULL_BOARD;
     }
+
+    game->isStarted = 0;
+    game->isRunning = 0;
+    game->isGameover = 0;
 
 
     // --- Reset board struct --- //
@@ -89,9 +104,7 @@ tetris_error_t tetris_reset(tetris_game_t* game)
 
     // --- Initialize game struct --- //
 
-    game->isRunning = 0;
-
-    game->level = 0;
+    game->level = 1;
     game->score = 0;
     game->combo = -1;
     game->lines = 0;
@@ -146,11 +159,13 @@ tetris_error_t tetris_init(tetris_game_t* game, tetris_board_t* board, int32_t r
 
     // --- Initialize game struct --- //
 
+    game->isStarted = 0;
     game->isRunning = 0;
+    game->isGameover = 0;
 
     game->board = board;
 
-    game->level = 0;
+    game->level = 1;
     game->score = 0;
     game->combo = -1;
     game->lines = 0;
@@ -199,7 +214,11 @@ tetris_error_t tetris_tick(tetris_game_t* game)
     tetris_rand_swap(game);
 
     // Dont worry about handling game logic if the game isn't running. 
-    if (!game->isRunning) {
+    if (game->isGameover)
+    {
+        return TETRIS_ERROR_GAME_OVER;
+    }
+    if (!game->isStarted || !game->isRunning) {
         return TETRIS_SUCCESS;
     }
 
@@ -370,6 +389,7 @@ tetris_error_t tetris_tick(tetris_game_t* game)
             if (board->pf[board->fpos[i].h][board->fpos[i].w] != TETRIS_BLANK) 
             {
                 game->isRunning = 0;
+                game->isGameover = 1;
                 board->fcol = TETRIS_BLANK;
                 board->pf_height = board->fpos[0].h;
 
@@ -404,6 +424,42 @@ tetris_error_t tetris_tick(tetris_game_t* game)
         }
     }
 
+}
+
+tetris_error_t tetris_pause(tetris_game_t* game)
+{
+    // Error checking
+    if (!game) {
+        return TETRIS_ERROR_NULL_GAME;
+    }
+    if (game->isGameover)
+    {
+        return TETRIS_ERROR_GAME_OVER;
+    }
+    if (!game->isStarted)
+    {
+        return TETRIS_ERROR_NOT_STARTED;
+    }
+
+    game->isRunning = 0;
+}
+
+tetris_error_t tetris_unpause(tetris_game_t* game)
+{
+    // Error checking
+    if (!game) {
+        return TETRIS_ERROR_NULL_GAME;
+    }
+    if (game->isGameover)
+    {
+        return TETRIS_ERROR_GAME_OVER;
+    }
+    if (!game->isStarted)
+    {
+        return TETRIS_ERROR_NOT_STARTED;
+    }
+
+    game->isRunning = 1;
 }
 
 tetris_error_t tetris_rand_entropy(tetris_game_t* game, int entropy)
