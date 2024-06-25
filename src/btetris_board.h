@@ -3,6 +3,9 @@
 #ifndef __TETRIS_BOARD__
 #define __TETRIS_BOARD__
 
+// Additional row buffer at top of the board
+#define TETRIS_HEIGHT_BUFF 4    
+
 // Width of tetris board
 #ifndef  TETRIS_WIDTH
     #define TETRIS_WIDTH 10         
@@ -17,11 +20,9 @@
     #define TETRIS_HEIGHT 20        
 #elif TETRIS_HEIGHT <= 4
     #error invalid height, too small
-#elif TETRIS_HEIGHT > 127-4
+#elif TETRIS_HEIGHT > 127-TETRIS_HEIGHT_BUFF
     #error invalid height, too large
 #endif 
-
-#define TETRIS_HEIGHT_BUFF 4    // Additional row buffer at top of the board
 
 
 // --- Game Structures --- //
@@ -46,18 +47,19 @@ typedef struct tetris_board
 {
     // playfield, contains only locked tetrominos
     tetris_color_t pf[TETRIS_HEIGHT+TETRIS_HEIGHT_BUFF][TETRIS_WIDTH];
-    int8_t pf_height;   // Index of heighest row in playfield
+    int8_t pf_height;   // Index of highest row in playfield
 
     // Falling tetromino info
     tetris_coord_t  fpos[4];    // Position of tetromino's squares
-    int8_t          frot;       // Current rotation of tetromino
     tetris_color_t  fcol;       // Tetromino color
+    int8_t          frot;       // Current rotation of tetromino
 
     // Ghost piece cache
     int8_t          gc_valid;   // True when ghost piece cache is valid
     tetris_coord_t  gc_pos[4];  // Ghost piece position data
  
 } tetris_board_t;
+
 
 // --- Function Declarations --- //
 

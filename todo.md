@@ -18,7 +18,8 @@ Create new file to store and handle gamestate information
  - [x] Start function
  - [x] Pause and unpase function
  - [x] Return error when game is over
- - [ ] Function documentation 
+ - [x] Function documentation 
+ - [ ] Option documentation
  - [ ] Consider atomicity issues with shuffling tetrominoes and swaping 
    - Maybe warn user to not call ramd_swap in a different thread from the tick. 
 
@@ -36,3 +37,5 @@ Later Features
  - [ ] Custom random functions
  - [ ] update display event option 
  - [ ] Perfect clear scoring
+ - [ ] Option to start game at a level other than 1
+ - [ ] Control queueing so falling tetromino is only moved in the tick() thread
