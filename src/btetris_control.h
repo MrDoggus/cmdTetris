@@ -53,8 +53,6 @@ tetris_error_t tetris_calcGhostCoords(tetris_game_t* game);
  * 
  * If there is a better way to make this more readable, I would love to know 
  */
-
-
 const tetris_coord_t TETRIS_TETROMINO_ROTATE[8][4][4] = {
 
     // Blank

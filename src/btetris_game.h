@@ -4,10 +4,9 @@
 #ifndef __TETRIS_GAME__
 #define __TETRIS_GAME__
 
-
-
 // https://tetris.wiki/Tetris_Guideline
 
+// Piece preview array size
 #ifndef TETRIS_PP_SIZE
     #define TETRIS_PP_SIZE 2
 #elif TETRIS_PP_SIZE <= 1
@@ -59,8 +58,8 @@ typedef struct tetris_game
     // Score
     int8_t  level;
     int64_t score;
-    int8_t  combo;
-    int8_t  lines;
+    int8_t  combo;  // Number of line clears in a row - 1
+    int8_t  lines;  // Lines cleared in this level
 
     // Tetromino queue
     tetris_color_t  ppreview[TETRIS_PP_SIZE];   // Piece preview
@@ -97,6 +96,16 @@ tetris_error_t tetris_reset(tetris_game_t* game);
 /// @return Error code
 tetris_error_t tetris_start(tetris_game_t* game);
 
+/// @brief Pauses the tetris game
+/// @param game Game object
+/// @return Error code
+tetris_error_t tetris_pause(tetris_game_t* game);
+
+/// @brief Unpauses the tetris game
+/// @param game Game object
+/// @return Error code
+tetris_error_t tetris_unpause(tetris_game_t* game);
+
 /// @brief Computes game logic, should be called at the set tick rate. 
 /// @param game Game object
 /// @return Error code
@@ -116,6 +125,7 @@ tetris_error_t tetris_rand_swap(tetris_game_t* game);
 
 // --- CONSTANTS --- //
 
+// tick() calls per line drop
 const int64_t TETRIS_SPEED_CURVE[20] = {
     (1.23915737299  * 1000000) / TETRIS_TICK_PERIOD, // 0
     (1              * 1000000) / TETRIS_TICK_PERIOD, // 1

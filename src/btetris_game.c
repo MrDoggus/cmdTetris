@@ -3,6 +3,8 @@
 
 #define MOD4(val) (val & 0b0011)
 
+// --- Function Declarations --- //
+
 /// @brief Pops a tetromino from the queue
 /// @param game game struct
 /// @return Popped tetromino
@@ -12,6 +14,7 @@ tetris_color_t tetris_tqueue_pop(tetris_game_t* game);
 /// @param game game struct
 void tetris_tqueue_swap(tetris_game_t* game);
 
+// Starts the tetris game
 tetris_error_t tetris_start(tetris_game_t* game)
 {
     tetris_board_t* board;
@@ -58,6 +61,7 @@ tetris_error_t tetris_start(tetris_game_t* game)
     return TETRIS_SUCCESS;
 }
 
+// Resets a game to a playable state without reseting random state
 tetris_error_t tetris_reset(tetris_game_t* game)
 {
     tetris_board_t* board;
@@ -120,6 +124,7 @@ tetris_error_t tetris_reset(tetris_game_t* game)
     return TETRIS_SUCCESS;
 }
 
+// Initializes a tetris game struct
 tetris_error_t tetris_init(tetris_game_t* game, tetris_board_t* board, int32_t randx_init)
 {
     // Error checking
@@ -197,6 +202,45 @@ tetris_error_t tetris_init(tetris_game_t* game, tetris_board_t* board, int32_t r
     return TETRIS_SUCCESS;
 }
 
+// Pauses the tetris game
+tetris_error_t tetris_pause(tetris_game_t* game)
+{
+    // Error checking
+    if (!game) {
+        return TETRIS_ERROR_NULL_GAME;
+    }
+    if (game->isGameover)
+    {
+        return TETRIS_ERROR_GAME_OVER;
+    }
+    if (!game->isStarted)
+    {
+        return TETRIS_ERROR_NOT_STARTED;
+    }
+
+    game->isRunning = 0;
+}
+
+// Unpauses the tetris game
+tetris_error_t tetris_unpause(tetris_game_t* game)
+{
+    // Error checking
+    if (!game) {
+        return TETRIS_ERROR_NULL_GAME;
+    }
+    if (game->isGameover)
+    {
+        return TETRIS_ERROR_GAME_OVER;
+    }
+    if (!game->isStarted)
+    {
+        return TETRIS_ERROR_NOT_STARTED;
+    }
+
+    game->isRunning = 1;
+}
+
+// Computes game logic, should be called at the set tick rate. 
 tetris_error_t tetris_tick(tetris_game_t* game)
 {
     tetris_board_t* board;
@@ -384,7 +428,7 @@ tetris_error_t tetris_tick(tetris_game_t* game)
         board->fpos[3] = TETRIS_TETROMINO_START[board->fcol][3];
 
         // If there is a colision with the starting position, the game is over
-        for (int i = 0; i < 4; i++) 
+        for (int i = 3; i >= 0; i--) 
         {
             if (board->pf[board->fpos[i].h][board->fpos[i].w] != TETRIS_BLANK) 
             {
@@ -396,7 +440,8 @@ tetris_error_t tetris_tick(tetris_game_t* game)
                 return TETRIS_SUCCESS;
             }
         }
-    }
+    } // end `if (board->fcol == TETRIS_BLANK)`
+
 
     // Calculate the number of times tetromino should be dropped
     int drop_cnt;   
@@ -426,42 +471,7 @@ tetris_error_t tetris_tick(tetris_game_t* game)
 
 }
 
-tetris_error_t tetris_pause(tetris_game_t* game)
-{
-    // Error checking
-    if (!game) {
-        return TETRIS_ERROR_NULL_GAME;
-    }
-    if (game->isGameover)
-    {
-        return TETRIS_ERROR_GAME_OVER;
-    }
-    if (!game->isStarted)
-    {
-        return TETRIS_ERROR_NOT_STARTED;
-    }
-
-    game->isRunning = 0;
-}
-
-tetris_error_t tetris_unpause(tetris_game_t* game)
-{
-    // Error checking
-    if (!game) {
-        return TETRIS_ERROR_NULL_GAME;
-    }
-    if (game->isGameover)
-    {
-        return TETRIS_ERROR_GAME_OVER;
-    }
-    if (!game->isStarted)
-    {
-        return TETRIS_ERROR_NOT_STARTED;
-    }
-
-    game->isRunning = 1;
-}
-
+// Adds entropy to the random number generator
 tetris_error_t tetris_rand_entropy(tetris_game_t* game, int entropy)
 {
     tetris_board_t* board;
@@ -491,6 +501,7 @@ tetris_error_t tetris_rand_entropy(tetris_game_t* game, int entropy)
     return TETRIS_SUCCESS;
 }
 
+// Swaps two tetrominoes in the shuffle queue using the RNG
 tetris_error_t tetris_rand_swap(tetris_game_t* game)
 {
     tetris_color_t temp;
@@ -515,7 +526,7 @@ tetris_error_t tetris_rand_swap(tetris_game_t* game)
     return TETRIS_SUCCESS;
 }
 
-
+// Pops a tetromino from the queue
 tetris_color_t tetris_tqueue_pop(tetris_game_t* game)
 {
     if (game->qidx > 7) 
@@ -526,6 +537,7 @@ tetris_color_t tetris_tqueue_pop(tetris_game_t* game)
     return game->queue[game->qidx++];
 }
 
+// Swaps tetromino queue with shuffle queue
 void tetris_tqueue_swap(tetris_game_t* game)
 {
     // Swap queues

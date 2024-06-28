@@ -7,8 +7,7 @@
 // Used to keep rotation in the range of [0,3]
 #define MOD4(val) (val & 0b0011)
 
-// --- Private Function Declarations --- //
-// Don't see why a user would need to use these functions, so they are not included in the header file. 
+// --- Function Declarations --- //
 
 /// @brief Checks if a given tetromino has any collisions with the playfield
 /// @param board Board object 
@@ -20,14 +19,13 @@ int8_t tetris_collisionCheck(tetris_board_t* board, tetris_coord_t tetromino[4])
 /// @param board Board object
 void tetris_lockTetromino(tetris_board_t* board);
 
+
 // --- Function Definitions --- //
 
 // Rotates the falling tetromino clockwise
 tetris_error_t tetris_rotcw(tetris_game_t* game) 
 {
     tetris_board_t* board;
-    tetris_coord_t tmpT[4];
-    int8_t rotPossible;
 
     // Error checking
     if (!game) {
@@ -63,16 +61,20 @@ tetris_error_t tetris_rotcw(tetris_game_t* game)
     }
 
     // Copy tetromino
+    tetris_coord_t tmpT[4];
     tmpT[0] = board->fpos[0];
     tmpT[1] = board->fpos[1];
     tmpT[2] = board->fpos[2];
     tmpT[3] = board->fpos[3];
 
     // Check if rotation is possible in current position
+    int8_t rotPossible;
     for (int i = 0; i < 4; i++) {   // Apply transformation
         tmpT[i] = tetris_addCoord(tmpT[i], TETRIS_TETROMINO_ROTATE[board->fcol][board->frot][i]);
     }
-    rotPossible = tetris_collisionCheck(board, tmpT);    // Check if there is room for rotation
+
+    // Check if there is room for rotation
+    rotPossible = tetris_collisionCheck(board, tmpT);
 
     // Apply transformation if there are no collisions
     if (rotPossible) 
@@ -99,9 +101,7 @@ tetris_error_t tetris_rotcw(tetris_game_t* game)
 tetris_error_t tetris_rotcntrcw(tetris_game_t* game) 
 {
     tetris_board_t* board;
-    tetris_coord_t tmpT[4];
-    int8_t rotPossible;
-
+    
     // Error checking
     if (!game) {
         return TETRIS_ERROR_NULL_GAME;
@@ -136,16 +136,20 @@ tetris_error_t tetris_rotcntrcw(tetris_game_t* game)
     }
 
     // Copy tetromino
+    tetris_coord_t tmpT[4];
     tmpT[0] = board->fpos[0];
     tmpT[1] = board->fpos[1];
     tmpT[2] = board->fpos[2];
     tmpT[3] = board->fpos[3];
 
     // Check if rotation is possible in current position
+    int8_t rotPossible;
     for (int i = 0; i < 4; i++) {   // Apply transformation
         tmpT[i] = tetris_subCoord(tmpT[i], TETRIS_TETROMINO_ROTATE[board->fcol][MOD4(board->frot-1)][i]);
     }
-    rotPossible = tetris_collisionCheck(board, tmpT);    // Check if there is room for rotation
+
+    // Check if there is room for rotation
+    rotPossible = tetris_collisionCheck(board, tmpT);
 
     // Apply transformation if there are no collisions
     if (rotPossible) 
@@ -172,9 +176,7 @@ tetris_error_t tetris_rotcntrcw(tetris_game_t* game)
 tetris_error_t tetris_leftshift(tetris_game_t* game)
 {
     tetris_board_t* board;
-    tetris_coord_t tmpT[4];
-    int8_t shiftPossible;
-
+    
     // Error checking
     if (!game) {
         return TETRIS_ERROR_NULL_GAME;
@@ -204,16 +206,20 @@ tetris_error_t tetris_leftshift(tetris_game_t* game)
     }
 
     // Copy tetromino
+    tetris_coord_t tmpT[4];
     tmpT[0] = board->fpos[0];
     tmpT[1] = board->fpos[1];
     tmpT[2] = board->fpos[2];
     tmpT[3] = board->fpos[3];
 
     // Check if left shift is possible
+    int8_t shiftPossible;
     for (int i = 0; i < 4; i++) {   // Apply left shift
         tmpT[i].w = tmpT[i].w - 1;
     }
-    shiftPossible = tetris_collisionCheck(board, tmpT);    // Check if there is room for shift
+
+    // Check if there is room for shift
+    shiftPossible = tetris_collisionCheck(board, tmpT);    
 
     // Apply shift if there are no collisions
     if (shiftPossible) 
@@ -238,8 +244,6 @@ tetris_error_t tetris_leftshift(tetris_game_t* game)
 tetris_error_t tetris_rightshift(tetris_game_t* game)
 {
     tetris_board_t* board;
-    tetris_coord_t tmpT[4];
-    int8_t shiftPossible;
 
     // Error checking
     if (!game) {
@@ -270,16 +274,20 @@ tetris_error_t tetris_rightshift(tetris_game_t* game)
     }
 
     // Copy tetromino
+    tetris_coord_t tmpT[4];
     tmpT[0] = board->fpos[0];
     tmpT[1] = board->fpos[1];
     tmpT[2] = board->fpos[2];
     tmpT[3] = board->fpos[3];
 
     // Check if right shift is possible
+    int8_t shiftPossible;
     for (int i = 0; i < 4; i++) {   // Apply right shift
         tmpT[i].w = tmpT[i].w + 1;
     }
-    shiftPossible = tetris_collisionCheck(board, tmpT);    // Check if there is room for shift
+
+    // Check if there is room for shift
+    shiftPossible = tetris_collisionCheck(board, tmpT);    
 
     // Apply shift if there are no collisions
     if (shiftPossible) 
@@ -304,8 +312,6 @@ tetris_error_t tetris_rightshift(tetris_game_t* game)
 tetris_error_t tetris_sdrop(tetris_game_t* game)
 {
     tetris_board_t* board;
-    tetris_coord_t tmpT[4];
-    int8_t dropPossible;
 
     // Error checking
     if (!game) {
@@ -336,6 +342,7 @@ tetris_error_t tetris_sdrop(tetris_game_t* game)
     }
 
     // Copy tetromino
+    tetris_coord_t tmpT[4];
     tmpT[0] = board->fpos[0];
     tmpT[1] = board->fpos[1];
     tmpT[2] = board->fpos[2];
@@ -343,12 +350,13 @@ tetris_error_t tetris_sdrop(tetris_game_t* game)
     
     
     // Apply soft drop 
+    int8_t dropPossible;
     for (int i = 0; i < 4; i++) {   
         tmpT[i].h = tmpT[i].h - 1;
     }
 
     // Check if soft drop is possible
-    dropPossible = tetris_collisionCheck(board, tmpT);    // Check if there is room for shift
+    dropPossible = tetris_collisionCheck(board, tmpT);
     
     // Apply drop if there are no collisions
     if (dropPossible) 
@@ -372,7 +380,6 @@ tetris_error_t tetris_sdrop(tetris_game_t* game)
 // Performs locking hard drop
 tetris_error_t tetris_hdrop(tetris_game_t* game)
 {
-    tetris_board_t* board;
     tetris_error_t error; 
     
     // Hard drop tetromino using genGhostCoords() to calculate the drop position 
@@ -397,7 +404,8 @@ tetris_error_t tetris_hdrop(tetris_game_t* game)
         return TETRIS_ERROR_GAME_PAUSED;
     }
 
-    // game pointer is null checked in calcGhostCoords
+    // game pointer is null checked in `calcGhostCoords()` function
+    tetris_board_t* board;
     board = game->board;
 
     // Set falling tetromino position to ghost piece position
@@ -416,7 +424,6 @@ tetris_error_t tetris_hdrop(tetris_game_t* game)
 tetris_error_t tetris_calcGhostCoords(tetris_game_t* game)
 {
     tetris_board_t* board;
-    int8_t dropPossible;
 
     // Error checking
     if (!game) {
@@ -452,6 +459,7 @@ tetris_error_t tetris_calcGhostCoords(tetris_game_t* game)
     board->gc_pos[3] = board->fpos[3];
 
     // Drop tetromino until cant anymore
+    int8_t dropPossible;
     do 
     {
         // Apply soft drop
@@ -476,26 +484,27 @@ tetris_error_t tetris_calcGhostCoords(tetris_game_t* game)
 }
 
 
-
 // Checks if a given tetromino has any collisions with the playfield
 int8_t tetris_collisionCheck(tetris_board_t* board, tetris_coord_t tetromino[4]) 
 {
+    // NOTE: Checked in reverse because coord array is sorted from highest to lowest. Lower blocks are more likely to have a colision. 
+
+    // Check collisions with locked/fallen tetrominos
+    for (int i = 3; i >= 0; i--) 
+    {
+        if (board->pf[tetromino[i].h][tetromino[i].w] != TETRIS_BLANK) {
+            return 0;
+        }
+    }
+
     // Check border bounds collisions before checking playfield array
-    for (int i = 0; i < 4; i++) 
+    for (int i = 3; i >= 0; i--) 
     {
         if (tetromino[i].h < 0 || tetromino[i].h >= TETRIS_HEIGHT+TETRIS_HEIGHT_BUFF) {
             return 0;
         }
 
         if (tetromino[i].w < 0 || tetromino[i].w >= TETRIS_WIDTH) {
-            return 0;
-        }
-    }
-
-    // Check collisions with locked/fallen tetrominos
-    for (int i = 0; i < 4; i++) 
-    {
-        if (board->pf[tetromino[i].h][tetromino[i].w] != TETRIS_BLANK) {
             return 0;
         }
     }
