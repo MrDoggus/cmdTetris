@@ -19,9 +19,10 @@ Create new file to store and handle gamestate information
  - [x] Pause and unpase function
  - [x] Return error when game is over
  - [x] Function documentation 
- - [ ] Option documentation
- - [ ] Consider atomicity issues with shuffling tetrominoes and swaping 
-   - Maybe warn user to not call ramd_swap in a different thread from the tick. 
+ - [x] Consider atomicity issues with shuffling tetrominoes and swaping 
+ - [x] Option documentation
+ - [ ] Look through code and clean up. 
+ - [ ] Create a demo app for library
 
 
 ___________________________________________________

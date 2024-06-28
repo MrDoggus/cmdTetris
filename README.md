@@ -9,15 +9,15 @@ The vision for this project is to make it easy to implement Tetris on a given co
 Since this library can be potentially be used in a wide array of devices, implementation of the game logic will avoid standard functions that invoke system calls. 
 Actions such as allocating game structures will be up to the frontend application's implementation. Write atomicity to game structures isn't guaranteed and should be implemented by frontend if using threading or something similar.
 
-> **Note**: The code in this repository is currently untested
+> **Note**: The code in this repository is currently untested.
 
 
 ## Creating a Tetris game using BTetris
 
 There are three steps to using BTetris: Display, User Interaction, and Game Runtime. 
-Functions and structures related to game runtime can be found in [`btetris_game.h`](src/btetris_game.h)
-Information relating to the Tetris playfield can be found in the `tetris_board_t` struct located in [`btetris_board.h`](src/btetris_board.h)
-Additional information about the game state can be found in `tetris_game_t`, which can be found in [`btetris_game.h`](src/btetris_game.h)
+Functions and structures related to game runtime can be found in [`btetris_game.h`](src/btetris_game.h).
+Information relating to the Tetris playfield can be found in the `tetris_board_t` struct located in [`btetris_board.h`](src/btetris_board.h).
+Additional information about the game state can be found in `tetris_game_t`, which can be found in [`btetris_game.h`](src/btetris_game.h).
 Finally, user interaction with the game can be done through functions found in [`btetris_control.h`](src/btetris_control.h).
 
 ### Game Runtime
@@ -67,9 +67,32 @@ Another example is the current score and level for the current game, found in `t
 
 Most of the functions in [`btetris_control.h`](src/btetris_control.h) are useful for user input. 
 These functions are described in the list below: 
- - `tetris_rotcw()`: Rotates the falling tetromino clockwise
- - `tetris_rotcntrcw()`: Rotates the falling tetromino counter-clockwise
- - `tetris_leftshift()`: Shifts the falling tetromino to the left
- - `tetris_rightshift()`: Shifts the falling tetromino to the right
+ - `tetris_rotcw()`: Rotates the falling tetromino clockwise.
+ - `tetris_rotcntrcw()`: Rotates the falling tetromino counter-clockwise.
+ - `tetris_leftshift()`: Shifts the falling tetromino to the left.
+ - `tetris_rightshift()`: Shifts the falling tetromino to the right.
  - `tetris_sdrop()`: Drops the falling tetromino by one position. 
  - `tetris_hdrop()`: Drops the falling tetromino as far as it can, then locks it in place. 
+
+
+## Options
+
+There are various defines created to allow small tweaks to the library. 
+To configure these options, simply redefine the definition before the include headers or through compiler arguments.
+These defines are described below: 
+
+ - `TETRIS_WIDTH`: Width of the tetris playfield. 
+   - Default := `10`
+   - Range := `[4:127]`
+ - `TETRIS_HEIGHT`: Height of the tetris playfield. 
+   - Default := `20`
+   - Range := `[4:123]`
+ - `TETRIS_TICK_PERIOD`: Time period (microseconds) between `tetris_tick()` function calls.
+   - Default := `100`
+   - Range := `(inf, 823]`
+ - `TETRIS_PP_SIZE`: Number of tetrominoes in the piece preview array
+   - Default := `2`
+   - Range := `[1, 6]`
+ - `TETRIS_RAND_INCR`: Increment parameter for the random number generator. 
+   - Default := `2`
+   - Range := `[1, 6]`
