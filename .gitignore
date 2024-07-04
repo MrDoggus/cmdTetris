@@ -1,4 +1,6 @@
-.vscode/c_cpp_properties.json
-.vscode/settings.json
+.vscode/*
+.vs/*
 *.h.gch
 *.o
+*.exe
+*.out

@@ -21,7 +21,7 @@ Create new file to store and handle gamestate information
  - [x] Function documentation 
  - [x] Consider atomicity issues with shuffling tetrominoes and swaping 
  - [x] Option documentation
- - [ ] Look through code and clean up. 
+ - [x] Look through code and clean up. 
  - [ ] Create a demo app for library
 
 
