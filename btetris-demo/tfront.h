@@ -5,20 +5,33 @@
 #define __DTETRIS__
 
 #define TFRONT_PLAYFIELD_XOFFSET 23
-#define TFRONT_TITLE_YOFFSET 5
+#define TFRONT_TITLE_YOFFSET 6
 #define TFRONT_PPREVIEW_YOFFSET 11
+#define TFRONT_PPREVIEW_XOFFSET 11
 
 typedef enum tfront_regions {
     TFRONT_REG_PLAYFIELD =  0x01,
     TFRONT_REG_PPREVIEW =   0x02,
-    TFRONT_REG_SCORE_INFO = 0x08,
+    TFRONT_REG_SCORE =      0x08,
     TFRONT_REG_TITLE =      0x10,
 
     TFRONT_REG_DEBUGR =     0x100,
 } tfront_regions_t;
 
+typedef union tfront_coord {
+    int isRendered;
+    struct {
+        short x;
+        short y;
+    } coord;
+} tfront_coord_t;
+
 typedef struct tfront {
-    uint16_t render_regions;
+    tfront_coord_t title_offset;
+    tfront_coord_t pfield_offset;
+    tfront_coord_t pprev_offset;
+    tfront_coord_t score_offset;
+    tfront_coord_t debug_offset;
 } tfront_t;
 
 console_error_t tfront_draw_boxes(console_info_t* cinfo);
