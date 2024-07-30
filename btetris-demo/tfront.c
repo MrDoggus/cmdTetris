@@ -77,8 +77,8 @@ console_error_t tfront_draw_boxes(console_info_t* cinfo)
 
     // Find regions that should be rendered based on console size
 
-    if (cinfo->c_height >= 26) {
-        if (cinfo->c_width >= 42) {
+    if (cinfo->c_height >= TFRONT_TITLE_YOFFSET + TFRONT_PLAYFIELD_YOFFSET) {
+        if (cinfo->c_width >= TFRONT_PLAYFIELD_XOFFSET + TFRONT_PPREVIEW_XOFFSET + TFRONT_DEBUG_XOFFSET) {
             new_rr = TFRONT_REG_TITLE | TFRONT_REG_PLAYFIELD | TFRONT_REG_PPREVIEW | TFRONT_REG_SCORE | TFRONT_REG_DEBUGR;
             tfront_info.title_offset.coord.x = 1;
             tfront_info.title_offset.coord.y = 1;
@@ -95,7 +95,7 @@ console_error_t tfront_draw_boxes(console_info_t* cinfo)
             tfront_info.debug_offset.coord.x = 1 + TFRONT_PLAYFIELD_XOFFSET + TFRONT_PPREVIEW_XOFFSET;
             tfront_info.debug_offset.coord.y = 1 + TFRONT_TITLE_YOFFSET + TFRONT_PPREVIEW_YOFFSET;
         }
-        else if (cinfo->c_width >= 32) {
+        else if (cinfo->c_width >= TFRONT_PLAYFIELD_XOFFSET + TFRONT_PPREVIEW_XOFFSET) {
             new_rr = TFRONT_REG_TITLE | TFRONT_REG_PLAYFIELD | TFRONT_REG_PPREVIEW | TFRONT_REG_SCORE;
 
             tfront_info.title_offset.coord.x = 1;
@@ -112,7 +112,7 @@ console_error_t tfront_draw_boxes(console_info_t* cinfo)
 
             tfront_info.debug_offset.isRendered = 0;
         }
-        else if (cinfo->c_width >= 22) {
+        else if (cinfo->c_width >= TFRONT_PLAYFIELD_XOFFSET) {
             new_rr = TFRONT_REG_TITLE | TFRONT_REG_PLAYFIELD;
 
             tfront_info.title_offset.coord.x = 1;
@@ -126,8 +126,8 @@ console_error_t tfront_draw_boxes(console_info_t* cinfo)
             tfront_info.title_offset.isRendered = 0;
         }
     }
-    else if (cinfo->c_height >= 22) {
-        if (cinfo->c_width >= 42) {
+    else if (cinfo->c_height >= TFRONT_PLAYFIELD_YOFFSET) {
+        if (cinfo->c_width >= TFRONT_PLAYFIELD_XOFFSET + TFRONT_PPREVIEW_XOFFSET + TFRONT_DEBUG_XOFFSET) {
             new_rr = TFRONT_REG_PLAYFIELD | TFRONT_REG_PPREVIEW | TFRONT_REG_SCORE | TFRONT_REG_DEBUGR;
 
             tfront_info.pfield_offset.coord.x = 1;
@@ -144,7 +144,7 @@ console_error_t tfront_draw_boxes(console_info_t* cinfo)
 
             tfront_info.title_offset.isRendered = 0;
         }
-        else if (cinfo->c_width >= 32) {
+        else if (cinfo->c_width >= TFRONT_PLAYFIELD_XOFFSET + TFRONT_PPREVIEW_XOFFSET) {
             new_rr = TFRONT_REG_PLAYFIELD | TFRONT_REG_PPREVIEW | TFRONT_REG_SCORE;
             
             tfront_info.pfield_offset.coord.x = 1;
@@ -159,7 +159,7 @@ console_error_t tfront_draw_boxes(console_info_t* cinfo)
             tfront_info.title_offset.isRendered = 0;
             tfront_info.debug_offset.isRendered = 0;
         }
-        else if (cinfo->c_width >= 22) {
+        else if (cinfo->c_width >= TFRONT_PLAYFIELD_XOFFSET) {
             new_rr = TFRONT_REG_PLAYFIELD;
 
             tfront_info.pfield_offset.coord.x = 1;
