@@ -38,6 +38,17 @@ console_error_t tdraw_ppreview(console_info_t* cinfo, tetris_game_t* game)
     {
         // Dont draw tetromino if blank
         if (game->ppreview[pp] == TETRIS_BLANK) {
+
+            for (int h = 0; h < 4; h++)
+            {
+                set_cursor_pos(cinfo, draw_info.pprev_offset.coord.x + 1, draw_info.pprev_offset.coord.y + 1 + pp*5 + h);
+
+                tdraw_block(cinfo, TETRIS_BLANK);
+                tdraw_block(cinfo, TETRIS_BLANK);
+                tdraw_block(cinfo, TETRIS_BLANK);
+                tdraw_block(cinfo, TETRIS_BLANK);
+            }
+
             continue;
         }
 
