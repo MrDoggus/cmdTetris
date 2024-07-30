@@ -78,54 +78,7 @@ inline tetris_coord_t tetris_subCoord(tetris_coord_t left, tetris_coord_t right)
 
 // --- CONSTANTS --- //
 
-// Array of starting positions for the 7 tetrominos
-const tetris_coord_t TETRIS_TETROMINO_START[8][4] = {
-    {   // Blank
-        {-1, -1}, {-1, -1}, {-1, -1}, {-1, -1},
-    },
-    {   // Cyan (I)
-        {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)-2},
-        {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)-1}, 
-        {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)}, 
-        {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)+1},
-    },
-    {   // Blue (J)
-        {TETRIS_HEIGHT+2, (TETRIS_WIDTH/2)-2}, 
-        {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)-2}, 
-        {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)-1}, 
-        {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)},
-    },
-    {   // Orange (L)
-        {TETRIS_HEIGHT+2, (TETRIS_WIDTH/2)},
-        {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)-2}, 
-        {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)-1}, 
-        {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)}, 
-    },
-    {   // Yellow (O)
-        {TETRIS_HEIGHT+2, (TETRIS_WIDTH/2)-1}, 
-        {TETRIS_HEIGHT+2, (TETRIS_WIDTH/2)}, 
-        {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)-1}, 
-        {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)},
-    },
-    {   // Green (S)
-        {TETRIS_HEIGHT+2, (TETRIS_WIDTH/2)-1}, 
-        {TETRIS_HEIGHT+2, (TETRIS_WIDTH/2)},
-        {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)-2}, 
-        {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)-1}, 
-    },
-    {   // Purple (T)
-        {TETRIS_HEIGHT+2, (TETRIS_WIDTH/2)-1}, 
-        {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)-2}, 
-        {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)-1}, 
-        {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)},
-    },
-    {   // Red (Z)
-        {TETRIS_HEIGHT+2, (TETRIS_WIDTH/2)-2}, 
-        {TETRIS_HEIGHT+2, (TETRIS_WIDTH/2)-1}, 
-        {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)-1}, 
-        {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)},
-    }
-};
+extern const tetris_coord_t TETRIS_TETROMINO_START[8][4];
 
 // Adds two coordinate structures
 inline tetris_coord_t tetris_addCoord(tetris_coord_t left, tetris_coord_t right) 

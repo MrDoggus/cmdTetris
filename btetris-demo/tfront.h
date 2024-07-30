@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include "console.h"
+#include "btetris_game.h"
 
 #ifndef __DTETRIS__
 #define __DTETRIS__
@@ -33,6 +34,8 @@ typedef struct tfront {
     tfront_coord_t score_offset;
     tfront_coord_t debug_offset;
 } tfront_t;
+
+console_error_t tfront_draw_playfield(console_info_t* cinfo, tetris_board_t* board);
 
 console_error_t tfront_draw_boxes(console_info_t* cinfo);
 

@@ -1,9 +1,12 @@
+#include <stdlib.h>
 #include "tfront.h"
 #include "console.h"
 
 BOOL ctrlhandler(DWORD dwCtrlType);
 
 console_info_t* cinfo;
+
+tetris_board_t tboard;
 
 int main()
 {
@@ -24,8 +27,6 @@ int main()
 
     const int STRBUFF_LEN = 32;
     char strbuff[STRBUFF_LEN];
-
-    
 
     int retval;
     retval = SetConsoleMode(cinfo->inHandle, ENABLE_PROCESSED_INPUT | /*ENABLE_MOUSE_INPUT |*/ ENABLE_WINDOW_INPUT | ENABLE_EXTENDED_FLAGS );
@@ -48,9 +49,21 @@ int main()
 
     tfront_draw_boxes(cinfo);
 
+    tetris_color_t tcol;
     while(1)
     {
         handle_events(cinfo, 0);
+
+        for (int y = 0; y < TETRIS_HEIGHT; y++)
+        {
+            for (int x = 0; x < TETRIS_WIDTH; x++)
+            {
+                tcol = rand()%8;
+                tboard.pf[y][x] = tcol;
+            }
+        }
+
+        tfront_draw_playfield(cinfo, &tboard);
 
         Sleep(200);
     }

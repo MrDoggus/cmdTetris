@@ -1,7 +1,58 @@
 #include "tfront.h"
-#include "console.h"
 
 tfront_t tfront_info;
+
+console_error_t tfront_draw_playfield(console_info_t* cinfo, tetris_board_t* board)
+{
+    if (!tfront_info.pfield_offset.isRendered) {
+        return CONSOLE_ERR_GENERIC;
+    }
+
+    for (int h = 0; h < TETRIS_HEIGHT; h++)
+    {
+        set_cursor_pos(cinfo, tfront_info.pfield_offset.coord.x + 1, tfront_info.pfield_offset.coord.y + 1 + h);
+
+        for (int w = 0; w < TETRIS_WIDTH; w++)
+        {
+            switch (board->pf[h][w])
+            {
+            case TETRIS_CYAN:
+                set_foreground_color(cinfo, CONSOLE_COL_CYAN);
+                WriteConsoleW(cinfo->outHandle, L"\x2588\x2588", 3, NULL, NULL);
+                break;
+            case TETRIS_BLUE:
+                set_foreground_color(cinfo, CONSOLE_COL_BLUE);
+                WriteConsoleW(cinfo->outHandle, L"\x2588\x2588", 3, NULL, NULL);
+                break;
+            case TETRIS_ORANGE:
+                set_foreground_color(cinfo, CONSOLE_COL_ORANGE);
+                WriteConsoleW(cinfo->outHandle, L"\x2588\x2588", 3, NULL, NULL);
+                break;
+            case TETRIS_YELLOW:
+                set_foreground_color(cinfo, CONSOLE_COL_YELLOW);
+                WriteConsoleW(cinfo->outHandle, L"\x2588\x2588", 3, NULL, NULL);
+                break;
+            case TETRIS_GREEN:
+                set_foreground_color(cinfo, CONSOLE_COL_GREEN);
+                WriteConsoleW(cinfo->outHandle, L"\x2588\x2588", 3, NULL, NULL);
+                break;
+            case TETRIS_PURPLE:
+                set_foreground_color(cinfo, CONSOLE_COL_MAGENTA);
+                WriteConsoleW(cinfo->outHandle, L"\x2588\x2588", 3, NULL, NULL);
+                break;
+            case TETRIS_RED:
+                set_foreground_color(cinfo, CONSOLE_COL_RED);
+                WriteConsoleW(cinfo->outHandle, L"\x2588\x2588", 3, NULL, NULL);
+                break;
+            default:
+                WriteConsoleA(cinfo->outHandle, "  ", 3, NULL, NULL);
+                break;
+            }
+        }
+    }
+
+    return reset_color(cinfo);
+}
 
 console_error_t tfront_draw_boxes(console_info_t* cinfo)
 {

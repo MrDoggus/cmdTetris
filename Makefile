@@ -9,7 +9,7 @@ OBJS = $(SRCS:%.c=%.o)
 default: tetrisd
 
 %.o: %.c $(SRCS)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -Isrc -Ibtetris-demo -c $< -o $@
 
 tetrisd: $(OBJS)
 	$(CC) $(OBJS) -Wall -o $@

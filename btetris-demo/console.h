@@ -101,6 +101,11 @@ console_error_t hide_cursor(console_info_t* cinfo);
 /// @return Error code
 console_error_t show_cursor(console_info_t* cinfo);
 
+/// @brief Resets color to default
+/// @param cinfo Console info struct
+/// @return Error code
+console_error_t reset_color(console_info_t* cinfo);
+
 /// @brief Sets the text color
 /// @param cinfo Console info struct
 /// @param color Specified color
