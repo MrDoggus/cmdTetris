@@ -18,7 +18,7 @@ console_error_t tdraw_playfield(console_info_t* cinfo, tetris_board_t* board)
         }
     }
 
-    return reset_color(cinfo);
+    return CONSOLE_SUCCESS;
 }
 
 console_error_t tdraw_ppreview(console_info_t* cinfo, tetris_game_t* game)
@@ -374,6 +374,8 @@ console_error_t tdraw_block(console_info_t* cinfo, tetris_color_t color)
         WriteConsoleA(cinfo->outHandle, "  ", 3, NULL, NULL);
         break;
     }
+
+    reset_color(cinfo);
 
     return CONSOLE_SUCCESS;
 }
