@@ -5,7 +5,7 @@
 // https://tetris.fandom.com/wiki/SR
 
 // Used to keep rotation in the range of [0,3]
-#define MOD4(val) (val & 0b0011)
+#define MOD4(val) ((val) & 0b0011)
 
 // --- Function Declarations --- //
 

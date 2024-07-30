@@ -1,7 +1,7 @@
 #include "btetris_game.h"
 #include "btetris_control.h"
 
-#define MOD4(val) (val & 0b0011)
+#define MOD4(val) ((val) & 0b0011)
 
 // --- Function Declarations --- //
 
@@ -219,6 +219,8 @@ tetris_error_t tetris_pause(tetris_game_t* game)
     }
 
     game->isRunning = 0;
+
+    return TETRIS_SUCCESS;
 }
 
 // Unpauses the tetris game
@@ -238,6 +240,8 @@ tetris_error_t tetris_unpause(tetris_game_t* game)
     }
 
     game->isRunning = 1;
+
+    return TETRIS_SUCCESS;
 }
 
 // Computes game logic, should be called at the set tick rate. 
@@ -469,6 +473,7 @@ tetris_error_t tetris_tick(tetris_game_t* game)
         }
     }
 
+    return TETRIS_SUCCESS;
 }
 
 // Adds entropy to the random number generator
