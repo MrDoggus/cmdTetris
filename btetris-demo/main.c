@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include "tfront.h"
+#include "tdraw.h"
 #include "console.h"
 
 BOOL ctrlhandler(DWORD dwCtrlType);
@@ -17,7 +17,7 @@ int main()
         return 1;
     }
 
-    cinfo->window_event = &tfront_window_event;
+    cinfo->window_event = &tdraw_window_event;
     cinfo->focus_event = &focus_event;
 
     if (cinfo->c_height == 0 && cinfo->c_width == 0) {
@@ -47,7 +47,7 @@ int main()
 
     clear_display(cinfo);
 
-    tfront_draw_boxes(cinfo);
+    tdraw_boxes(cinfo);
 
     tetris_color_t tcol;
     while(1)
@@ -63,7 +63,7 @@ int main()
             }
         }
 
-        tfront_draw_playfield(cinfo, &tboard);
+        tdraw_playfield(cinfo, &tboard);
 
         Sleep(200);
     }
