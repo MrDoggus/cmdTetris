@@ -10,6 +10,12 @@ const tetris_coord_t TETRIS_TETROMINO_START[8][4] = {
         {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)}, 
         {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)+1},
     },
+    {   // Yellow (O)
+        {TETRIS_HEIGHT+2, (TETRIS_WIDTH/2)-1}, 
+        {TETRIS_HEIGHT+2, (TETRIS_WIDTH/2)}, 
+        {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)-1}, 
+        {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)},
+    },
     {   // Blue (J)
         {TETRIS_HEIGHT+2, (TETRIS_WIDTH/2)-2}, 
         {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)-2}, 
@@ -21,12 +27,6 @@ const tetris_coord_t TETRIS_TETROMINO_START[8][4] = {
         {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)-2}, 
         {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)-1}, 
         {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)}, 
-    },
-    {   // Yellow (O)
-        {TETRIS_HEIGHT+2, (TETRIS_WIDTH/2)-1}, 
-        {TETRIS_HEIGHT+2, (TETRIS_WIDTH/2)}, 
-        {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)-1}, 
-        {TETRIS_HEIGHT+1, (TETRIS_WIDTH/2)},
     },
     {   // Green (S)
         {TETRIS_HEIGHT+2, (TETRIS_WIDTH/2)-1}, 

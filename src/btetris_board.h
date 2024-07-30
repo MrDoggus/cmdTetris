@@ -30,9 +30,9 @@
 typedef enum tetris_color {
     TETRIS_BLANK    = 0,
     TETRIS_CYAN     = 1,
-    TETRIS_BLUE     = 2,
-    TETRIS_ORANGE   = 3,
-    TETRIS_YELLOW   = 4,
+    TETRIS_YELLOW   = 2,
+    TETRIS_BLUE     = 3,
+    TETRIS_ORANGE   = 4,
     TETRIS_GREEN    = 5,
     TETRIS_PURPLE   = 6,
     TETRIS_RED      = 7
@@ -67,13 +67,13 @@ typedef struct tetris_board
 /// @param left operand 1
 /// @param right operand 2
 /// @return result coordinate
-inline tetris_coord_t tetris_addCoord(tetris_coord_t left, tetris_coord_t right);
+static inline tetris_coord_t tetris_addCoord(tetris_coord_t left, tetris_coord_t right);
 
 /// @brief Subtracts two coordinate structures
 /// @param left operand 1
 /// @param right operand 2
 /// @return result coordinate
-inline tetris_coord_t tetris_subCoord(tetris_coord_t left, tetris_coord_t right);
+static inline tetris_coord_t tetris_subCoord(tetris_coord_t left, tetris_coord_t right);
 
 
 // --- CONSTANTS --- //
@@ -81,7 +81,7 @@ inline tetris_coord_t tetris_subCoord(tetris_coord_t left, tetris_coord_t right)
 extern const tetris_coord_t TETRIS_TETROMINO_START[8][4];
 
 // Adds two coordinate structures
-inline tetris_coord_t tetris_addCoord(tetris_coord_t left, tetris_coord_t right) 
+static inline tetris_coord_t tetris_addCoord(tetris_coord_t left, tetris_coord_t right) 
 {
     tetris_coord_t retval;
 
@@ -92,7 +92,7 @@ inline tetris_coord_t tetris_addCoord(tetris_coord_t left, tetris_coord_t right)
 }
 
 // Subtracts two coordinate structures
-inline tetris_coord_t tetris_subCoord(tetris_coord_t left, tetris_coord_t right) 
+static inline tetris_coord_t tetris_subCoord(tetris_coord_t left, tetris_coord_t right) 
 {
     tetris_coord_t retval;
 

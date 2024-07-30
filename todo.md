@@ -1,4 +1,10 @@
 _______________________________________________________
+Demo app:
+ - [ ] Do proper error handling in tdraw.c
+ - [ ] Make sure demo app works with different options
+
+
+_______________________________________________________
 Create new file to store and handle gamestate information
  - [x] Stores started or paused state here
  - [x] Stores score, level and high score

@@ -6,7 +6,8 @@ BOOL ctrlhandler(DWORD dwCtrlType);
 
 console_info_t* cinfo;
 
-tetris_board_t tboard;
+tetris_board_t tmp_board;
+tetris_game_t tmp_game;
 
 int main()
 {
@@ -20,7 +21,8 @@ int main()
     cinfo->window_event = &tdraw_window_event;
     cinfo->focus_event = &focus_event;
 
-    if (cinfo->c_height == 0 && cinfo->c_width == 0) {
+    if (cinfo->c_height == 0 && cinfo->c_width == 0) 
+    {
         cinfo->c_height = 22;
         cinfo->c_width = 22;
     }
@@ -49,7 +51,6 @@ int main()
 
     tdraw_boxes(cinfo);
 
-    tetris_color_t tcol;
     while(1)
     {
         handle_events(cinfo, 0);
@@ -58,12 +59,17 @@ int main()
         {
             for (int x = 0; x < TETRIS_WIDTH; x++)
             {
-                tcol = rand()%8;
-                tboard.pf[y][x] = tcol;
+                tmp_board.pf[y][x] = rand()%8;
             }
         }
 
-        tdraw_playfield(cinfo, &tboard);
+        for (int pp = 0; pp < TETRIS_PP_SIZE; pp++)
+        {
+            tmp_game.ppreview[pp] = rand()%8;
+        }
+
+        tdraw_playfield(cinfo, &tmp_board);
+        tdraw_ppreview(cinfo, &tmp_game);
 
         Sleep(200);
     }

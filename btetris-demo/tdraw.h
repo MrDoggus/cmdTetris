@@ -39,6 +39,8 @@ typedef struct tdraw_info {
 
 console_error_t tdraw_playfield(console_info_t* cinfo, tetris_board_t* board);
 
+console_error_t tdraw_ppreview(console_info_t* cinfo, tetris_game_t* game);
+
 console_error_t tdraw_boxes(console_info_t* cinfo);
 
 console_error_t tdraw_title(console_info_t* cinfo);
@@ -48,6 +50,8 @@ console_error_t tdraw_bplayfield(console_info_t* cinfo);
 console_error_t tdraw_bppreview(console_info_t* cinfo);
 
 console_error_t tdraw_bscore(console_info_t* cinfo);
+
+console_error_t tdraw_block(console_info_t* cinfo, tetris_color_t color);
 
 console_error_t tdraw_window_event(console_info_t* cinfo, PWINDOW_BUFFER_SIZE_RECORD record);
 
