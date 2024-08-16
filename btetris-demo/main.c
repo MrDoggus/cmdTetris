@@ -1,4 +1,4 @@
-#include <stdlib.h>
+
 #include "tdraw.h"
 
 
@@ -11,7 +11,7 @@ int main()
     refresh();
     resize_term(0, 0);  // Force curses to update term size
 
-
+    tdraw_wininit();
 
     //  ends ncurse
     getch();
