@@ -39,6 +39,7 @@ WINDOW* winpfield;
 WINDOW* winpprev;
 WINDOW* winscore;
 WINDOW* windebug;
+WINDOW* debug_window;
 
 tdraw_winoff_t tdraw_calc_offsets()
 {
@@ -181,7 +182,132 @@ int tdraw_wininit()
         windebug = newwin(10, 19, win_offsets.debug.offset.y, win_offsets.debug.offset.x);
         box(windebug, 0, 0);
         wrefresh(windebug);
+
+        // Create subwindow inside of the box so the box isnt overwritten
+        debug_window = derwin(windebug, 8, 17, 1, 1);
+        scrollok(debug_window, true);
+        touchwin(windebug);
+        wrefresh(debug_window);
     }
+
+    return 0;
+}
+
+int tdraw_winupdate()
+{
+    tdraw_winoff_t new_winoff;
+
+    new_winoff = tdraw_calc_offsets();
+
+    if (win_offsets.title.isRendered != new_winoff.title.isRendered)
+    {
+        // Not enough room for title window, delete window
+        if (win_offsets.title.isRendered && !new_winoff.title.isRendered) {
+            delwin(wintitle);
+            wintitle = NULL;
+        }
+        // There is room to create title window
+        else if (!win_offsets.title.isRendered && new_winoff.title.isRendered) {
+            wintitle = newwin(6, 42, win_offsets.title.offset.y, win_offsets.title.offset.x);
+            box(winpfield, 0, 0);
+            wrefresh(wintitle);
+        }
+        else {
+            mvwin(wintitle, new_winoff.title.offset.y, new_winoff.title.offset.y);
+            wrefresh(wintitle);
+        }
+    }
+
+    if (win_offsets.pfield.isRendered != new_winoff.pfield.isRendered)
+    {
+        // Not enough room for playfield window, delete window
+        if (win_offsets.pfield.isRendered && !new_winoff.pfield.isRendered) {
+            delwin(winpfield);
+            winpfield = NULL;
+        }
+        // There is room to create playfield window
+        else if (!win_offsets.pfield.isRendered && new_winoff.pfield.isRendered) {
+            winpfield = newwin(22, 22, win_offsets.pfield.offset.y, win_offsets.pfield.offset.x);
+            box(winpfield, 0, 0);
+            wrefresh(winpfield);
+        }
+        // Playfield window needs to be moved
+        else {
+            mvwin(winpfield, new_winoff.pfield.offset.y, new_winoff.pfield.offset.y);
+            wrefresh(winpfield);
+        }
+    }
+
+    if (win_offsets.pprev.isRendered != new_winoff.pprev.isRendered)
+    {
+        // Not enough room for piece preview window, delete window
+        if (win_offsets.pprev.isRendered && !new_winoff.pprev.isRendered) {
+            delwin(winpprev);
+            winpprev = NULL;
+        }
+        // There is room to create piece preview window
+        else if (!win_offsets.pprev.isRendered && new_winoff.pprev.isRendered) {
+            winpprev = newwin(6, 19, win_offsets.pprev.offset.y, win_offsets.pprev.offset.x);
+            box(winpprev, 0, 0);
+            wrefresh(winpprev);
+        }
+        // Piece preview window needs to be moved
+        else {
+            mvwin(winpprev, new_winoff.pprev.offset.y, new_winoff.pprev.offset.y);
+            wrefresh(winpprev);
+        }
+    }
+
+    if (win_offsets.score.isRendered != new_winoff.score.isRendered)
+    {
+        // Not enough room for score window, delete window
+        if (win_offsets.score.isRendered && !new_winoff.score.isRendered) {
+            delwin(winscore);
+            winscore = NULL;
+        }
+        // There is room to create score window
+        else if (!win_offsets.score.isRendered && new_winoff.score.isRendered) {
+            winscore = newwin(6, 19, win_offsets.score.offset.y, win_offsets.score.offset.x);
+            box(winscore, 0, 0);
+            wrefresh(winscore);
+        }
+        // Score window needs to be moved
+        else {
+            mvwin(winscore, new_winoff.score.offset.y, new_winoff.score.offset.y);
+            wrefresh(winscore);
+        }
+    }
+
+    if (win_offsets.debug.isRendered != new_winoff.debug.isRendered)
+    {
+        // Not enough room for debug window, delete window
+        if (win_offsets.debug.isRendered && !new_winoff.debug.isRendered) {
+            delwin(debug_window);
+            delwin(windebug);
+            debug_window = NULL;
+            windebug = NULL;
+        }
+        // There is room to create debug window
+        else if (!win_offsets.debug.isRendered && new_winoff.debug.isRendered) {
+            windebug = newwin(10, 19, win_offsets.debug.offset.y, win_offsets.debug.offset.x);
+            box(windebug, 0, 0);
+            wrefresh(windebug);
+
+            // Create subwindow inside of the box so the box isnt overwritten
+            debug_window = derwin(windebug, 8, 17, 1, 1);
+            scrollok(debug_window, true);
+            touchwin(windebug);
+            wrefresh(debug_window);
+        }
+        // debug window needs to be moved
+        else {
+            mvwin(windebug, new_winoff.debug.offset.y, new_winoff.debug.offset.y);
+            wrefresh(windebug);
+            wrefresh(debug_window);
+        }
+    }
+
+    refresh();
 
     return 0;
 }
