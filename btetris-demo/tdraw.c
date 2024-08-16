@@ -5,7 +5,7 @@
 #define TDRAW_PLAYFIELD_XOFFSET 23
 #define TDRAW_PLAYFIELD_YOFFSET 23
 #define TDRAW_TITLE_YOFFSET 6
-#define TDRAW_PPREVIEW_XOFFSET 11
+#define TDRAW_PPREVIEW_XOFFSET 20
 #define TDRAW_PPREVIEW_YOFFSET 6
 #define TDRAW_SCORE_YOFFSET 6
 #define TDRAW_DEBUG_XOFFSET 11
@@ -95,8 +95,8 @@ tdraw_winoff_t tdraw_calc_offsets()
             new_winoff.score.offset.x = 1 + TDRAW_PLAYFIELD_XOFFSET;
             new_winoff.score.offset.y = 1 + TDRAW_PPREVIEW_YOFFSET;
 
-            new_winoff.debug.offset.x = 1 + TDRAW_PLAYFIELD_XOFFSET + TDRAW_PPREVIEW_XOFFSET;
-            new_winoff.debug.offset.y = 1 + TDRAW_PPREVIEW_YOFFSET;
+            new_winoff.debug.offset.x = 1 + TDRAW_PLAYFIELD_XOFFSET;
+            new_winoff.debug.offset.y = 1 + TDRAW_PPREVIEW_YOFFSET + TDRAW_SCORE_YOFFSET;
 
             new_winoff.title.isRendered = 0;
         }
@@ -111,8 +111,11 @@ tdraw_winoff_t tdraw_calc_offsets()
             new_winoff.score.offset.x = 1 + TDRAW_PLAYFIELD_XOFFSET;
             new_winoff.score.offset.y = 1 + TDRAW_PPREVIEW_YOFFSET;
 
+            new_winoff.debug.offset.x = 1 + TDRAW_PLAYFIELD_XOFFSET;
+            new_winoff.debug.offset.y = 1 + TDRAW_PPREVIEW_YOFFSET + TDRAW_SCORE_YOFFSET;
+
             new_winoff.title.isRendered = 0;
-            new_winoff.debug.isRendered = 0;
+            
         }
         else if (c_width >= TDRAW_PLAYFIELD_XOFFSET) 
         {
@@ -208,12 +211,12 @@ int tdraw_winupdate()
         }
         // There is room to create title window
         else if (!win_offsets.title.isRendered && new_winoff.title.isRendered) {
-            wintitle = newwin(6, 42, win_offsets.title.offset.y, win_offsets.title.offset.x);
+            wintitle = newwin(6, 42, new_winoff.title.offset.y, new_winoff.title.offset.x);
             box(winpfield, 0, 0);
             wrefresh(wintitle);
         }
         else {
-            mvwin(wintitle, new_winoff.title.offset.y, new_winoff.title.offset.y);
+            mvwin(wintitle, new_winoff.title.offset.y, new_winoff.title.offset.x);
             wrefresh(wintitle);
         }
     }
@@ -227,13 +230,13 @@ int tdraw_winupdate()
         }
         // There is room to create playfield window
         else if (!win_offsets.pfield.isRendered && new_winoff.pfield.isRendered) {
-            winpfield = newwin(22, 22, win_offsets.pfield.offset.y, win_offsets.pfield.offset.x);
+            winpfield = newwin(22, 22, new_winoff.pfield.offset.y, new_winoff.pfield.offset.x);
             box(winpfield, 0, 0);
             wrefresh(winpfield);
         }
         // Playfield window needs to be moved
         else {
-            mvwin(winpfield, new_winoff.pfield.offset.y, new_winoff.pfield.offset.y);
+            mvwin(winpfield, new_winoff.pfield.offset.y, new_winoff.pfield.offset.x);
             wrefresh(winpfield);
         }
     }
@@ -247,13 +250,13 @@ int tdraw_winupdate()
         }
         // There is room to create piece preview window
         else if (!win_offsets.pprev.isRendered && new_winoff.pprev.isRendered) {
-            winpprev = newwin(6, 19, win_offsets.pprev.offset.y, win_offsets.pprev.offset.x);
+            winpprev = newwin(6, 19, new_winoff.pprev.offset.y, new_winoff.pprev.offset.x);
             box(winpprev, 0, 0);
             wrefresh(winpprev);
         }
         // Piece preview window needs to be moved
         else {
-            mvwin(winpprev, new_winoff.pprev.offset.y, new_winoff.pprev.offset.y);
+            mvwin(winpprev, new_winoff.pprev.offset.y, new_winoff.pprev.offset.x);
             wrefresh(winpprev);
         }
     }
@@ -267,13 +270,13 @@ int tdraw_winupdate()
         }
         // There is room to create score window
         else if (!win_offsets.score.isRendered && new_winoff.score.isRendered) {
-            winscore = newwin(6, 19, win_offsets.score.offset.y, win_offsets.score.offset.x);
+            winscore = newwin(6, 19, new_winoff.score.offset.y, new_winoff.score.offset.x);
             box(winscore, 0, 0);
             wrefresh(winscore);
         }
         // Score window needs to be moved
         else {
-            mvwin(winscore, new_winoff.score.offset.y, new_winoff.score.offset.y);
+            mvwin(winscore, new_winoff.score.offset.y, new_winoff.score.offset.x);
             wrefresh(winscore);
         }
     }
@@ -289,25 +292,58 @@ int tdraw_winupdate()
         }
         // There is room to create debug window
         else if (!win_offsets.debug.isRendered && new_winoff.debug.isRendered) {
-            windebug = newwin(10, 19, win_offsets.debug.offset.y, win_offsets.debug.offset.x);
+            windebug = newwin(10, 19, new_winoff.debug.offset.y, new_winoff.debug.offset.x);
             box(windebug, 0, 0);
             wrefresh(windebug);
 
             // Create subwindow inside of the box so the box isnt overwritten
-            debug_window = derwin(windebug, 8, 17, 1, 1);
+            debug_window = subwin(windebug, 8, 17, getbegy(windebug)+1, getbegx(windebug)+1);
             scrollok(debug_window, true);
             touchwin(windebug);
             wrefresh(debug_window);
         }
         // debug window needs to be moved
         else {
-            mvwin(windebug, new_winoff.debug.offset.y, new_winoff.debug.offset.y);
+            mvwin(windebug, new_winoff.debug.offset.y, new_winoff.debug.offset.x);
+            mvwin(debug_window, getbegy(windebug)+1, getbegx(windebug)+1);
             wrefresh(windebug);
             wrefresh(debug_window);
         }
     }
 
+    win_offsets = new_winoff;
+
     refresh();
+
+    return 0;
+}
+
+int tdraw_touchwin()
+{
+    if (wintitle != NULL) {
+        touchwin(wintitle);
+        wrefresh(wintitle);
+    }
+    if (winpfield != NULL) {
+        touchwin(winpfield);
+        wrefresh(winpfield);
+    }
+    if (winpprev != NULL) {
+        touchwin(winpprev);
+        wrefresh(winpprev);
+    }
+    if (winscore != NULL) {
+        touchwin(winscore);
+        wrefresh(winscore);
+    }
+    if (windebug != NULL) {
+        touchwin(windebug);
+        wrefresh(windebug);
+    }
+    if (debug_window != NULL) {
+        touchwin(debug_window);
+        wrefresh(debug_window);
+    }
 
     return 0;
 }

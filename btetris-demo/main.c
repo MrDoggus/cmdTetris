@@ -23,6 +23,16 @@ int main()
         {
         case ERR:
             break;
+        #ifdef KEY_RESIZE
+        case KEY_RESIZE:
+            #ifdef PDCURSES
+            resize_term(0, 0);
+            #endif
+            clear();
+            tdraw_winupdate();
+            tdraw_touchwin();
+            break;
+        #endif
         case '\n':
         case KEY_ENTER:
             if (debug_window) {

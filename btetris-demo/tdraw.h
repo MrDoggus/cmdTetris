@@ -15,4 +15,6 @@ int tdraw_wininit();
 
 int tdraw_winupdate();
 
+int tdraw_touchwin();
+
 #endif
