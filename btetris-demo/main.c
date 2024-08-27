@@ -34,32 +34,34 @@ int main()
             mvprintw(0, 0, "%d", ch);
             clrtoeol();
 
-            wprintw(debug_window, "REFRESH\n");
-            wrefresh(debug_window);
+            if (debug_window) {
+                wprintw(debug_window, "REFRESH\n");
+                wrefresh(debug_window);
+            }
             refresh();
+            
             break;
         #endif
         case '\n':
         case KEY_ENTER:
+            mvprintw(0, 0, "%d", ch);
+            clrtoeol();
+
             if (debug_window) {
-
-                mvprintw(0, 0, "%d", ch);
-                clrtoeol();
-
                 waddch(debug_window, '\n');
                 wrefresh(debug_window);
-                refresh();
             }
+            refresh();
             break;
         default:
-            if (debug_window) {
-                mvprintw(0, 0, "%d", ch);
-                clrtoeol();
+            mvprintw(0, 0, "%d", ch);
+            clrtoeol();
 
+            if (debug_window) {
                 wprintw(debug_window, "%s", keyname(ch));
                 wrefresh(debug_window);
-                refresh();
             }
+            refresh();
             break;
         }
     }
