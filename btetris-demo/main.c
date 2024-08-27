@@ -7,6 +7,7 @@ int main()
     // itits screen. sets up memory and clears screen
     initscr();
     noecho();
+    // raw();
     nodelay(stdscr, true);
 
     // Refreshes screen to match whats in buffer
@@ -19,23 +20,32 @@ int main()
     while(true)
     {
         ch = getch();
+
         switch (ch)
         {
         case ERR:
             break;
         #ifdef KEY_RESIZE
         case KEY_RESIZE:
-            #ifdef PDCURSES
-            resize_term(0, 0);
-            #endif
-            clear();
+            erase();
             tdraw_winupdate();
             tdraw_touchwin();
+
+            mvprintw(0, 0, "%d", ch);
+            clrtoeol();
+
+            wprintw(debug_window, "REFRESH\n");
+            wrefresh(debug_window);
+            refresh();
             break;
         #endif
         case '\n':
         case KEY_ENTER:
             if (debug_window) {
+
+                mvprintw(0, 0, "%d", ch);
+                clrtoeol();
+
                 waddch(debug_window, '\n');
                 wrefresh(debug_window);
                 refresh();
@@ -43,6 +53,9 @@ int main()
             break;
         default:
             if (debug_window) {
+                mvprintw(0, 0, "%d", ch);
+                clrtoeol();
+
                 wprintw(debug_window, "%s", keyname(ch));
                 wrefresh(debug_window);
                 refresh();

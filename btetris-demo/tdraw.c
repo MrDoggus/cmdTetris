@@ -187,10 +187,12 @@ int tdraw_wininit()
         wrefresh(windebug);
 
         // Create subwindow inside of the box so the box isnt overwritten
-        debug_window = derwin(windebug, 8, 17, 1, 1);
+        // debug_window = derwin(windebug, 8, 17, 1, 1);
+        debug_window = newwin(8, 17, getbegy(windebug)+1, getbegx(windebug)+1);
         scrollok(debug_window, true);
-        touchwin(windebug);
         wrefresh(debug_window);
+        
+        // touchwin(windebug);
     }
 
     return 0;
@@ -297,10 +299,11 @@ int tdraw_winupdate()
             wrefresh(windebug);
 
             // Create subwindow inside of the box so the box isnt overwritten
-            debug_window = subwin(windebug, 8, 17, getbegy(windebug)+1, getbegx(windebug)+1);
+            debug_window = newwin(8, 17, getbegy(windebug)+1, getbegx(windebug)+1);
             scrollok(debug_window, true);
-            touchwin(windebug);
             wrefresh(debug_window);
+
+            // touchwin(windebug);
         }
         // debug window needs to be moved
         else {
