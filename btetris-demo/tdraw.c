@@ -2,8 +2,8 @@
 
 // --- DEFINITIONS --- //
 
-#define TDRAW_PLAYFIELD_XOFFSET 23
-#define TDRAW_PLAYFIELD_YOFFSET 23
+#define TDRAW_PLAYFIELD_XOFFSET (TETRIS_WIDTH*2 + 2 + 1)
+#define TDRAW_PLAYFIELD_YOFFSET (TETRIS_HEIGHT + 2 + 1)
 #define TDRAW_TITLE_YOFFSET 6
 #define TDRAW_PPREVIEW_XOFFSET 20
 #define TDRAW_PPREVIEW_YOFFSET 6
@@ -26,8 +26,14 @@ typedef struct tdraw_winoff {
     tdraw_coord_t debug;
 } tdraw_winoff_t;
 
-/// @brief 
-/// @return 
+/// @brief Draws a tetris block on a given window
+/// @param window Window to print block
+/// @param color Color to give block
+/// @return Error code
+int tdraw_block(WINDOW* window, tetris_color_t color);
+
+/// @brief Calculates and returns the window offsets
+/// @return Window offset structure.
 tdraw_winoff_t tdraw_calc_offsets();
 
 // --- GLOBAL VARS --- //
@@ -40,6 +46,30 @@ WINDOW* winpprev;
 WINDOW* winscore;
 WINDOW* windebug;
 WINDOW* debug_window;
+
+int hascolors;
+
+// --- Private Functions --- //
+
+int tdraw_block(WINDOW* window, tetris_color_t color)
+{
+    chtype solid_block;
+
+    if (hascolors)
+    {
+        solid_block = ('0'+color) | COLOR_PAIR(color+8);
+
+
+        waddch(window, solid_block);
+        waddch(window, solid_block);
+    }
+    else
+    {
+        wprintw(window, "##");
+    }
+
+    return 0;
+}
 
 tdraw_winoff_t tdraw_calc_offsets()
 {
@@ -148,6 +178,133 @@ tdraw_winoff_t tdraw_calc_offsets()
     return new_winoff;
 }
 
+// --- Public Functions --- //
+
+int tdraw_initcolor()
+{
+    hascolors = has_colors();
+    if (hascolors)
+    {
+        start_color();
+        // use_default_colors();
+
+        int TCOLOR_CYAN = COLORS-7;
+        int TCOLOR_YELLOW = COLORS-6;
+        int TCOLOR_BLUE = COLORS-5;
+        int TCOLOR_ORANGE = COLORS-4;
+        int TCOLOR_GREEN = COLORS-3;
+        int TCOLOR_PURPLE = COLORS-2;
+        int TCOLOR_RED = COLORS-1;
+
+        // init_color(COLOR_BLACK, 0, 0, 0);
+        init_color(TCOLOR_CYAN, 0, 900, 900);
+        init_color(TCOLOR_YELLOW, 900, 900, 0);
+        init_color(TCOLOR_BLUE, 100, 100, 900);
+        init_color(TCOLOR_ORANGE, 900, 500, 0);
+        init_color(TCOLOR_GREEN, 0, 900, 0);
+        init_color(TCOLOR_PURPLE, 500, 0, 900);
+        init_color(TCOLOR_RED, 900, 0, 0);
+        
+        
+        init_pair(TETRIS_CYAN+8, TCOLOR_CYAN, TCOLOR_CYAN);
+        init_pair(TETRIS_YELLOW+8, TCOLOR_YELLOW, TCOLOR_YELLOW);
+        init_pair(TETRIS_BLUE+8, TCOLOR_BLUE, TCOLOR_BLUE);
+        init_pair(TETRIS_ORANGE+8, TCOLOR_ORANGE, TCOLOR_ORANGE);
+        init_pair(TETRIS_GREEN+8, TCOLOR_GREEN, TCOLOR_GREEN);
+        init_pair(TETRIS_PURPLE+8, TCOLOR_PURPLE, TCOLOR_PURPLE);
+        init_pair(TETRIS_RED+8, TCOLOR_RED, TCOLOR_RED);
+        init_pair(TETRIS_BLANK+8, COLOR_BLACK, COLOR_BLACK);
+
+        if (win_offsets.debug.isRendered)
+        {
+            wprintw(debug_window, "Color :)\n");
+            wprintw(debug_window, "COLOR_PAIRS: %d, COLORS: %d\n", COLOR_PAIRS, COLORS);
+        }
+    }
+    else 
+    {
+        if (win_offsets.debug.isRendered)
+        {
+            wprintw(debug_window, "No color :(\n");
+        }
+        return 1;
+    }
+
+    return 0;
+}
+
+int tdraw_pfield(tetris_board_t* board)
+{
+    if (!win_offsets.pfield.isRendered) {
+        return 1;
+    }
+
+    for (int y = 0; y < TETRIS_HEIGHT; y++)
+    {
+        wmove(winpfield, TETRIS_HEIGHT - y, 1);
+        for (int x = 0; x < TETRIS_WIDTH; x++)
+        {
+            tdraw_block(winpfield, board->pf[y][x]);
+        }
+    }
+
+    wmove(winpfield, 1, 1);
+
+    wrefresh(winpfield);
+
+    return 0;
+}
+
+int tdraw_pprev(tetris_game_t* game)
+{
+    const tetris_coord_t PPOFFSET = (tetris_coord_t){
+        .h = (TETRIS_HEIGHT),
+        .w = ((TETRIS_WIDTH/2)) - 2
+    };
+
+    char isOddWidth;
+    tetris_coord_t tmp_coord;
+
+    werase(winpprev);
+
+    for (int i = 1; i < 5; i++)
+    {
+        mvwaddch(winpprev, i, 9, '|');
+    }
+    
+
+    // Loop through pieces in piece preview 
+    for (int ppi = 0; ppi < TETRIS_PP_SIZE; ppi++)
+    {
+        if (game->ppreview[ppi] == TETRIS_BLANK) {
+            continue;
+        }
+
+        if (game->ppreview[ppi] > 2) {
+            isOddWidth = 1;
+        }
+        else {
+            isOddWidth = 0;
+        }
+
+        // Loop through blocks for a piece in piece preview
+        for (int ppj = 0; ppj < 4; ppj++)
+        {
+            tmp_coord = tetris_subCoord(TETRIS_TETROMINO_START[game->ppreview[ppi]][ppj], PPOFFSET);
+            tmp_coord.h = 3 - tmp_coord.h;
+
+            wmove(winpprev, tmp_coord.h + 1, tmp_coord.w*2 + ppi * 9 + isOddWidth + 1);
+            tdraw_block(winpprev, game->ppreview[ppi]);
+        }
+    }
+
+    box(winpprev, 0, 0);
+
+    wrefresh(winpprev);
+
+    return 0;
+}
+
 int tdraw_wininit()
 {
     win_offsets = tdraw_calc_offsets();
@@ -161,7 +318,7 @@ int tdraw_wininit()
 
     if (win_offsets.pfield.isRendered)
     {
-        winpfield = newwin(22, 22, win_offsets.pfield.offset.y, win_offsets.pfield.offset.x);
+        winpfield = newwin(TETRIS_HEIGHT + 2, TETRIS_WIDTH*2 + 2, win_offsets.pfield.offset.y, win_offsets.pfield.offset.x);
         box(winpfield, 0, 0);
         wrefresh(winpfield);
     }
@@ -232,7 +389,7 @@ int tdraw_winupdate()
         }
         // There is room to create playfield window
         else if (!win_offsets.pfield.isRendered && new_winoff.pfield.isRendered) {
-            winpfield = newwin(22, 22, new_winoff.pfield.offset.y, new_winoff.pfield.offset.x);
+            winpfield = newwin(TETRIS_HEIGHT + 2, TETRIS_WIDTH*2 + 2, new_winoff.pfield.offset.y, new_winoff.pfield.offset.x);
             box(winpfield, 0, 0);
             wrefresh(winpfield);
         }
@@ -350,3 +507,4 @@ int tdraw_touchwin()
 
     return 0;
 }
+
