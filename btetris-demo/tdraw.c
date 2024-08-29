@@ -7,8 +7,8 @@
 #define TDRAW_TITLE_YOFFSET 6
 #define TDRAW_PPREVIEW_XOFFSET 20
 #define TDRAW_PPREVIEW_YOFFSET 6
-#define TDRAW_SCORE_YOFFSET 6
-#define TDRAW_DEBUG_XOFFSET 11
+#define TDRAW_SCORE_YOFFSET 4
+#define TDRAW_GINFO_XOFFSET 32
 
 typedef union tdraw_coord {
     uint32_t isRendered;
@@ -24,6 +24,7 @@ typedef struct tdraw_winoff {
     tdraw_coord_t pprev;
     tdraw_coord_t score;
     tdraw_coord_t debug;
+    tdraw_coord_t ginfo;
 } tdraw_winoff_t;
 
 /// @brief Draws a tetris block on a given window
@@ -45,27 +46,40 @@ WINDOW* winpfield;
 WINDOW* winpprev;
 WINDOW* winscore;
 WINDOW* windebug;
+WINDOW* winginfo;
 WINDOW* debug_window;
 
 int hascolors;
 
 // --- Private Functions --- //
 
-int tdraw_block(WINDOW* window, tetris_color_t color)
+int tdraw_block(WINDOW* window, tetris_color_t bcolor)
 {
     chtype solid_block;
 
     if (hascolors)
     {
-        solid_block = ('0'+color) | COLOR_PAIR(color+8);
-
-
+        if (bcolor) {
+            solid_block = ('0'+bcolor) | COLOR_PAIR(bcolor+8);
+        }
+        else {
+            solid_block = ' ' | COLOR_PAIR(8);
+        }
+        
         waddch(window, solid_block);
         waddch(window, solid_block);
     }
     else
     {
-        wprintw(window, "##");
+        if (bcolor) {
+            solid_block = ('0'+bcolor);
+        }
+        else {
+            solid_block = ' ';
+        }
+        
+        waddch(window, solid_block);
+        waddch(window, solid_block);
     }
 
     return 0;
@@ -82,7 +96,7 @@ tdraw_winoff_t tdraw_calc_offsets()
     // Calculate offsets
     if (c_height >= TDRAW_TITLE_YOFFSET + TDRAW_PLAYFIELD_YOFFSET) 
     {
-        if (c_width >= TDRAW_PLAYFIELD_XOFFSET + TDRAW_PPREVIEW_XOFFSET) 
+        if (c_width >= TDRAW_PLAYFIELD_XOFFSET + TDRAW_PPREVIEW_XOFFSET + TDRAW_GINFO_XOFFSET) 
         {
             new_winoff.title.offset.x = 1;
             new_winoff.title.offset.y = 1;
@@ -98,6 +112,28 @@ tdraw_winoff_t tdraw_calc_offsets()
 
             new_winoff.debug.offset.x = 1 + TDRAW_PLAYFIELD_XOFFSET;
             new_winoff.debug.offset.y = 1 + TDRAW_TITLE_YOFFSET + TDRAW_PPREVIEW_YOFFSET + TDRAW_SCORE_YOFFSET;
+
+            new_winoff.ginfo.offset.x = 1 + TDRAW_PLAYFIELD_XOFFSET + TDRAW_PPREVIEW_XOFFSET;
+            new_winoff.ginfo.offset.y = 1 + TDRAW_TITLE_YOFFSET;
+        }
+        else if (c_width >= TDRAW_PLAYFIELD_XOFFSET + TDRAW_PPREVIEW_XOFFSET) 
+        {
+            new_winoff.title.offset.x = 1;
+            new_winoff.title.offset.y = 1;
+
+            new_winoff.pfield.offset.x = 1;
+            new_winoff.pfield.offset.y = 1 + TDRAW_TITLE_YOFFSET;
+
+            new_winoff.pprev.offset.x = 1 + TDRAW_PLAYFIELD_XOFFSET;
+            new_winoff.pprev.offset.y = 1 + TDRAW_TITLE_YOFFSET;
+            
+            new_winoff.score.offset.x = 1 + TDRAW_PLAYFIELD_XOFFSET;
+            new_winoff.score.offset.y = 1 + TDRAW_TITLE_YOFFSET + TDRAW_PPREVIEW_YOFFSET;
+
+            new_winoff.debug.offset.x = 1 + TDRAW_PLAYFIELD_XOFFSET;
+            new_winoff.debug.offset.y = 1 + TDRAW_TITLE_YOFFSET + TDRAW_PPREVIEW_YOFFSET + TDRAW_SCORE_YOFFSET;
+
+            new_winoff.ginfo.isRendered = 0;
         }
         else if (c_width >= TDRAW_PLAYFIELD_XOFFSET) 
         {
@@ -110,11 +146,21 @@ tdraw_winoff_t tdraw_calc_offsets()
             new_winoff.pprev.isRendered = 0;
             new_winoff.score.isRendered = 0;
             new_winoff.title.isRendered = 0;
+            new_winoff.ginfo.isRendered = 0;
+        }
+        else
+        {
+            new_winoff.pfield.isRendered = 0;
+            new_winoff.title.isRendered = 0;
+            new_winoff.pprev.isRendered = 0;
+            new_winoff.score.isRendered = 0;
+            new_winoff.debug.isRendered = 0;
+            new_winoff.ginfo.isRendered = 0;
         }
     }
     else if (c_height >= TDRAW_PLAYFIELD_YOFFSET) 
     {
-        if (c_width >= TDRAW_PLAYFIELD_XOFFSET + TDRAW_PPREVIEW_XOFFSET + TDRAW_DEBUG_XOFFSET) 
+        if (c_width >= TDRAW_PLAYFIELD_XOFFSET + TDRAW_PPREVIEW_XOFFSET + TDRAW_GINFO_XOFFSET) 
         {
             new_winoff.pfield.offset.x = 1;
             new_winoff.pfield.offset.y = 1;
@@ -127,6 +173,9 @@ tdraw_winoff_t tdraw_calc_offsets()
 
             new_winoff.debug.offset.x = 1 + TDRAW_PLAYFIELD_XOFFSET;
             new_winoff.debug.offset.y = 1 + TDRAW_PPREVIEW_YOFFSET + TDRAW_SCORE_YOFFSET;
+
+            new_winoff.ginfo.offset.x = 1 + TDRAW_PLAYFIELD_XOFFSET + TDRAW_PPREVIEW_XOFFSET;
+            new_winoff.ginfo.offset.y = 1;
 
             new_winoff.title.isRendered = 0;
         }
@@ -145,7 +194,7 @@ tdraw_winoff_t tdraw_calc_offsets()
             new_winoff.debug.offset.y = 1 + TDRAW_PPREVIEW_YOFFSET + TDRAW_SCORE_YOFFSET;
 
             new_winoff.title.isRendered = 0;
-            
+            new_winoff.ginfo.isRendered = 0;
         }
         else if (c_width >= TDRAW_PLAYFIELD_XOFFSET) 
         {
@@ -156,6 +205,7 @@ tdraw_winoff_t tdraw_calc_offsets()
             new_winoff.pprev.isRendered = 0;
             new_winoff.score.isRendered = 0;
             new_winoff.debug.isRendered = 0;
+            new_winoff.ginfo.isRendered = 0;
         }
         else 
         {
@@ -164,6 +214,7 @@ tdraw_winoff_t tdraw_calc_offsets()
             new_winoff.pprev.isRendered = 0;
             new_winoff.score.isRendered = 0;
             new_winoff.debug.isRendered = 0;
+            new_winoff.ginfo.isRendered = 0;
         }
     }
     else 
@@ -173,6 +224,7 @@ tdraw_winoff_t tdraw_calc_offsets()
         new_winoff.pprev.isRendered = 0;
         new_winoff.score.isRendered = 0;
         new_winoff.debug.isRendered = 0;
+        new_winoff.ginfo.isRendered = 0;
     }
 
     return new_winoff;
@@ -233,7 +285,7 @@ int tdraw_initcolor()
     return 0;
 }
 
-int tdraw_pfield(tetris_board_t* board)
+int tdraw_pfield(tetris_game_t* game)
 {
     if (!win_offsets.pfield.isRendered) {
         return 1;
@@ -244,7 +296,7 @@ int tdraw_pfield(tetris_board_t* board)
         wmove(winpfield, TETRIS_HEIGHT - y, 1);
         for (int x = 0; x < TETRIS_WIDTH; x++)
         {
-            tdraw_block(winpfield, board->pf[y][x]);
+            tdraw_block(winpfield, game->board->pf[y][x]);
         }
     }
 
@@ -305,6 +357,65 @@ int tdraw_pprev(tetris_game_t* game)
     return 0;
 }
 
+int tdraw_score(tetris_game_t* game)
+{
+    mvwprintw(winscore, 1, 1, "Score: %ld", game->score);
+    wclrtoeol(winscore);
+
+    mvwprintw(winscore, 2, 1, "Level: %d", game->level);
+    wclrtoeol(winscore);
+
+    box(winscore, 0, 0);
+
+    wrefresh(winscore);
+
+    return 0;
+}
+
+int tdraw_ginfo(tetris_game_t* game)
+{
+    werase(winginfo);
+
+    box(winginfo, 0, 0);
+
+    mvwprintw(winginfo, 1, 1, "tetris_game: state");
+    mvwprintw(winginfo, 2, 3, "Started: %s", game->isStarted ? "true" : "false");
+    mvwprintw(winginfo, 3, 3, "Running: %s", game->isRunning ? "true" : "false");
+    mvwprintw(winginfo, 4, 3, "Gameover: %s", game->isGameover ? "true" : "false");
+
+    mvwprintw(winginfo, 5, 1, "tetris_game: score");
+    mvwprintw(winginfo, 6, 3, "combo: %d", game->combo);
+    mvwprintw(winginfo, 7, 3, "lines: %d", game->lines);
+
+    mvwprintw(winginfo, 8, 1, "tetris_game: tetromino queue");
+    mvwprintw(winginfo, 9, 3, "queue idx: %d", game->qidx);
+    mvwprintw(winginfo, 10, 3, "pqueue: ");
+    for (int i = 0; i < 7; i++)
+    {
+        tdraw_block(winginfo, game->queue[i]);
+    }
+    mvwprintw(winginfo, 11, 3, "squeue: ");
+    for (int i = 0; i < 7; i++)
+    {
+        tdraw_block(winginfo, game->shuffle_queue[i]);
+    }
+    mvwprintw(winginfo, 12, 3, "randx: %d", game->randx);
+
+    mvwprintw(winginfo, 13, 1, "tetris_game: time");
+    mvwprintw(winginfo, 14, 3, "tmicro: %ld", game->tmicro);
+    mvwprintw(winginfo, 15, 3, "tdrop: %ld", game->tdrop);
+
+    mvwprintw(winginfo, 17, 1, "tetris_board:");
+    mvwprintw(winginfo, 18, 3, "falling color: ");
+    tdraw_block(winginfo, game->board->fcol);
+    mvwprintw(winginfo, 19, 3, "falling rotation: %d", game->board->frot);
+    mvwprintw(winginfo, 20, 3, "gc_valid: %s", game->board->gc_valid ? "true" : "false");
+
+    wrefresh(winginfo);
+
+    return 0;
+}
+
 int tdraw_wininit()
 {
     win_offsets = tdraw_calc_offsets();
@@ -332,24 +443,31 @@ int tdraw_wininit()
 
     if (win_offsets.score.isRendered)
     {
-        winscore = newwin(6, 19, win_offsets.score.offset.y, win_offsets.score.offset.x);
+        winscore = newwin(4, 19, win_offsets.score.offset.y, win_offsets.score.offset.x);
         box(winscore, 0, 0);
         wrefresh(winscore);
     }
 
     if (win_offsets.debug.isRendered)
     {
-        windebug = newwin(10, 19, win_offsets.debug.offset.y, win_offsets.debug.offset.x);
+        windebug = newwin(12, 19, win_offsets.debug.offset.y, win_offsets.debug.offset.x);
         box(windebug, 0, 0);
         wrefresh(windebug);
 
         // Create subwindow inside of the box so the box isnt overwritten
         // debug_window = derwin(windebug, 8, 17, 1, 1);
-        debug_window = newwin(8, 17, getbegy(windebug)+1, getbegx(windebug)+1);
+        debug_window = newwin(10, 17, getbegy(windebug)+1, getbegx(windebug)+1);
         scrollok(debug_window, true);
         wrefresh(debug_window);
         
         // touchwin(windebug);
+    }
+
+    if (win_offsets.ginfo.isRendered)
+    {
+        winginfo = newwin(22, 31, win_offsets.ginfo.offset.y, win_offsets.ginfo.offset.x);
+        box(winginfo, 0, 0);
+        wrefresh(winginfo);
     }
 
     return 0;
@@ -429,7 +547,7 @@ int tdraw_winupdate()
         }
         // There is room to create score window
         else if (!win_offsets.score.isRendered && new_winoff.score.isRendered) {
-            winscore = newwin(6, 19, new_winoff.score.offset.y, new_winoff.score.offset.x);
+            winscore = newwin(4, 19, new_winoff.score.offset.y, new_winoff.score.offset.x);
             box(winscore, 0, 0);
             wrefresh(winscore);
         }
@@ -451,12 +569,12 @@ int tdraw_winupdate()
         }
         // There is room to create debug window
         else if (!win_offsets.debug.isRendered && new_winoff.debug.isRendered) {
-            windebug = newwin(10, 19, new_winoff.debug.offset.y, new_winoff.debug.offset.x);
+            windebug = newwin(12, 19, new_winoff.debug.offset.y, new_winoff.debug.offset.x);
             box(windebug, 0, 0);
             wrefresh(windebug);
 
             // Create subwindow inside of the box so the box isnt overwritten
-            debug_window = newwin(8, 17, getbegy(windebug)+1, getbegx(windebug)+1);
+            debug_window = newwin(10, 17, getbegy(windebug)+1, getbegx(windebug)+1);
             scrollok(debug_window, true);
             wrefresh(debug_window);
 
@@ -468,6 +586,29 @@ int tdraw_winupdate()
             mvwin(debug_window, getbegy(windebug)+1, getbegx(windebug)+1);
             wrefresh(windebug);
             wrefresh(debug_window);
+        }
+    }
+
+    if (win_offsets.ginfo.isRendered != new_winoff.ginfo.isRendered)
+    {
+        // Not enough room for score window, delete window
+        if (win_offsets.ginfo.isRendered && !new_winoff.ginfo.isRendered)
+        {
+            delwin(winginfo);
+            winginfo = NULL;
+        }
+
+        // There is room to create score window
+        else if (!win_offsets.ginfo.isRendered && new_winoff.ginfo.isRendered) {
+            winginfo = newwin(22, 31, new_winoff.ginfo.offset.y, new_winoff.ginfo.offset.x);
+            box(winginfo, 0, 0);
+            wrefresh(winginfo);
+        }
+
+        // Score window needs to be moved
+        else {
+            mvwin(winginfo, new_winoff.ginfo.offset.y, new_winoff.ginfo.offset.x);
+            wrefresh(winginfo);
         }
     }
 

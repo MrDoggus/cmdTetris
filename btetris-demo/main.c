@@ -24,6 +24,8 @@ int main()
     uint64_t trefresh = 0;
     uint64_t tnow = 0;
 
+    tmp_game.board = &tmp_board;
+
     while(true)
     {
         ch = getch();
@@ -93,8 +95,32 @@ int main()
                 tmp_game.ppreview[pp] = rand()%8;
             }
 
-            tdraw_pfield(&tmp_board);
+            for (int i = 0; i < 7; i++)
+            {
+                tmp_game.queue[i] = rand()%8;
+            }
+
+            for (int i = 0; i < 7; i++)
+            {
+                tmp_game.shuffle_queue[i] = rand()%8;
+            }
+
+            tmp_game.isStarted = rand()%2;
+            tmp_game.isRunning = rand()%2;
+            tmp_game.isGameover = rand()%2;
+            tmp_game.score = rand();
+            tmp_game.level = rand();
+            tmp_game.combo = rand();
+            tmp_game.lines = rand();
+            tmp_game.qidx = rand();
+            tmp_game.tmicro = rand();
+            tmp_game.tdrop = rand();
+            tmp_game.randx = rand();
+
+            tdraw_pfield(&tmp_game);
             tdraw_pprev(&tmp_game);
+            tdraw_score(&tmp_game);
+            tdraw_ginfo(&tmp_game);
 
             trefresh = tnow;
         }

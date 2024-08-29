@@ -7,9 +7,13 @@
 
 extern WINDOW* debug_window;
 
-int tdraw_pfield(tetris_board_t* board);
+int tdraw_pfield(tetris_game_t* game);
 
 int tdraw_pprev(tetris_game_t* game);
+
+int tdraw_score(tetris_game_t* game);
+
+int tdraw_ginfo(tetris_game_t* game);
 
 int tdraw_initcolor();
 
