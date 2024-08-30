@@ -1,19 +1,30 @@
 
 
-CC = x86_64-w64-mingw32-gcc
+CC = gcc
+CCWIN = x86_64-w64-mingw32-gcc
 CFLAGS = -Wall -Wshadow -Werror
 
-SRCS = src/btetris_board.c src/btetris_control.c src/btetris_game.c btetris-demo/main.c btetris-demo/console.c btetris-demo/tdraw.c 
-OBJS = $(SRCS:%.c=%.o)
+TSRCS = btetris_control.c btetris_game.c btetris_board.c
+SRCS = main.c tdraw.c
+
+TOBJS = $(TSRCS:%.c=btetris-demo/binaries/%.o)
+OBJS = $(SRCS:%.c=btetris-demo/binaries/%.o) 
+
+OBJS_DIR = btetris-demo/binaries
 
 default: tetrisd
 
-%.o: %.c $(SRCS)
-	$(CC) $(CFLAGS) -Isrc -Ibtetris-demo -c $< -o $@
+$(OBJS): $(OBJS_DIR)/%.o: btetris-demo/%.c
+	$(CC) $(CFLAGS) -Isrc -Ibtetris-demo -c $^ -o $@ -lncurses
 
-tetrisd: $(OBJS)
-	$(CC) $(OBJS) -Wall -o $@
+$(TOBJS): $(OBJS_DIR)/%.o: src/%.c
+	$(CC) $(CFLAGS) -Isrc -Ibtetris-demo -c $^ -o $@ -lncurses
+
+tetrisd: $(OBJS) $(TOBJS)
+	$(CC) -Wall $(OBJS) $(TOBJS) -o $@ -lncurses
+	strip $@
 
 clean: 
 	-rm src/*.o
-	-rm btetris-demo/*.o
+	-rm btetris-demo/binaries/*.o
+	-rm tetrisd

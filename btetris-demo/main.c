@@ -1,93 +1,134 @@
-#include <stdlib.h>
+
 #include "tdraw.h"
-#include "console.h"
-
-BOOL ctrlhandler(DWORD dwCtrlType);
-
-console_info_t* cinfo;
+#include <stdlib.h>
+#include <sys/time.h>
 
 tetris_board_t tmp_board;
 tetris_game_t tmp_game;
 
 int main()
 {
-    // --- Setup console --- //
-    
-    cinfo = setup_console();
-    if (!cinfo) {
-        return 1;
-    }
+    // itits screen. sets up memory and clears screen
+    initscr();
+    noecho();
+    nodelay(stdscr, true);
 
-    cinfo->window_event = &tdraw_window_event;
-    cinfo->focus_event = &focus_event;
+    // Refreshes screen to match whats in buffer
+    refresh();
 
-    if (cinfo->c_height == 0 && cinfo->c_width == 0) 
+    tdraw_wininit();
+    tdraw_initcolor();
+
+    int ch;
+    struct timeval tstruct;
+    uint64_t trefresh = 0;
+    uint64_t tnow = 0;
+
+    tmp_game.board = &tmp_board;
+
+    while(true)
     {
-        cinfo->c_height = 22;
-        cinfo->c_width = 22;
-    }
+        ch = getch();
 
-    const int STRBUFF_LEN = 32;
-    char strbuff[STRBUFF_LEN];
-
-    int retval;
-    retval = SetConsoleMode(cinfo->inHandle, ENABLE_PROCESSED_INPUT | /*ENABLE_MOUSE_INPUT |*/ ENABLE_WINDOW_INPUT | ENABLE_EXTENDED_FLAGS );
-    if (!retval) return 2;
-    retval = SetConsoleMode(cinfo->outHandle, ENABLE_PROCESSED_OUTPUT | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
-    if (!retval) return 2;
-
-    // const int STR_BUFFLEN = 64;
-    // char strbuff[STR_BUFFLEN];
-
-    // set CTRL handler
-    SetConsoleCtrlHandler(&ctrlhandler, 1);
-    
-    hide_cursor(cinfo);
-
-    snprintf(strbuff, STRBUFF_LEN, "(x: %d, y: %d)\n", cinfo->c_width, cinfo->c_height);
-    WriteConsoleA(cinfo->outHandle, strbuff, strlen(strbuff), NULL, NULL);
-
-    clear_display(cinfo);
-
-    tdraw_boxes(cinfo);
-
-    while(1)
-    {
-        handle_events(cinfo, 0);
-
-        for (int y = 0; y < TETRIS_HEIGHT; y++)
+        switch (ch)
         {
-            for (int x = 0; x < TETRIS_WIDTH; x++)
-            {
-                tmp_board.pf[y][x] = rand()%8;
+        case ERR:
+            break;
+
+        #ifdef KEY_RESIZE
+        case KEY_RESIZE:
+            erase();
+            tdraw_winupdate();
+            tdraw_touchwin();
+
+            mvprintw(0, 0, "%d", ch);
+            clrtoeol();
+
+            if (debug_window) {
+                wprintw(debug_window, "REFRESH\n");
+                wrefresh(debug_window);
             }
+            refresh();
+            
+            break;
+        #endif
+
+        case '\n':
+        case KEY_ENTER:
+            mvprintw(0, 0, "%d", ch);
+            clrtoeol();
+
+            if (debug_window) {
+                waddch(debug_window, '\n');
+                wrefresh(debug_window);
+            }
+            refresh();
+            break;
+
+        default:
+            mvprintw(0, 0, "%d", ch);
+            clrtoeol();
+
+            if (debug_window) {
+                wprintw(debug_window, "%s", keyname(ch));
+                wrefresh(debug_window);
+            }
+            refresh();
+            break;
         }
 
-        for (int pp = 0; pp < TETRIS_PP_SIZE; pp++)
+
+        gettimeofday(&tstruct, NULL);
+        tnow = (uint64_t)tstruct.tv_sec * 1000000 + (uint64_t)tstruct.tv_usec;
+        if (tnow - trefresh > 500000 /*50ms*/)
         {
-            tmp_game.ppreview[pp] = rand()%8;
+            for (int y = 0; y < TETRIS_HEIGHT; y++)
+            {
+                for (int x = 0; x < TETRIS_WIDTH; x++)
+                {
+                    tmp_board.pf[y][x] = rand()%8;
+                }
+            }
+
+            for (int pp = 0; pp < TETRIS_PP_SIZE; pp++)
+            {
+                tmp_game.ppreview[pp] = rand()%8;
+            }
+
+            for (int i = 0; i < 7; i++)
+            {
+                tmp_game.queue[i] = rand()%8;
+            }
+
+            for (int i = 0; i < 7; i++)
+            {
+                tmp_game.shuffle_queue[i] = rand()%8;
+            }
+
+            tmp_game.isStarted = rand()%2;
+            tmp_game.isRunning = rand()%2;
+            tmp_game.isGameover = rand()%2;
+            tmp_game.score = rand();
+            tmp_game.level = rand();
+            tmp_game.combo = rand();
+            tmp_game.lines = rand();
+            tmp_game.qidx = rand();
+            tmp_game.tmicro = rand();
+            tmp_game.tdrop = rand();
+            tmp_game.randx = rand();
+
+            tdraw_pfield(&tmp_game);
+            tdraw_pprev(&tmp_game);
+            tdraw_score(&tmp_game);
+            tdraw_ginfo(&tmp_game);
+
+            trefresh = tnow;
         }
-
-        tdraw_playfield(cinfo, &tmp_board);
-        tdraw_ppreview(cinfo, &tmp_game);
-
-        Sleep(200);
     }
+
+    //  ends ncurse
+    getch();
+    endwin();
 
     return 0;
-}
-
-BOOL ctrlhandler(DWORD dwCT)
-{
-    if (dwCT == CTRL_C_EVENT || dwCT == CTRL_BREAK_EVENT)
-    {
-        show_cursor(cinfo);
-        clear_display(cinfo);
-        ExitProcess(0);
-    }
-    else 
-    {
-        clear_display(cinfo);
-        ExitProcess(0);
-    }
 }
