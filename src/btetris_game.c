@@ -245,7 +245,7 @@ tetris_error_t tetris_unpause(tetris_game_t* game)
 }
 
 // Computes game logic, should be called at the set tick rate. 
-tetris_error_t tetris_tick(tetris_game_t* game)
+tetris_error_t tetris_tick(tetris_game_t* game, uint64_t tmicro)
 {
     tetris_board_t* board;
 
@@ -269,9 +269,6 @@ tetris_error_t tetris_tick(tetris_game_t* game)
     if (!game->isStarted || !game->isRunning) {
         return TETRIS_SUCCESS;
     }
-
-    // Update game runtime
-    game->tmicro += 1;
 
     // If current falling tetromino is "blank" then a tetromino was recently locked. 
     // Need to check if a row needs to be cleared and generate a new tetromino to fall
@@ -446,6 +443,8 @@ tetris_error_t tetris_tick(tetris_game_t* game)
         }
     } // end `if (board->fcol == TETRIS_BLANK)`
 
+    // Update game runtime
+    game->tmicro += tmicro;
 
     // Calculate the number of times tetromino should be dropped
     int drop_cnt;   
@@ -560,24 +559,24 @@ void tetris_tqueue_swap(tetris_game_t* game)
 
 // tick() calls per line drop
 const int64_t TETRIS_SPEED_CURVE[20] = {
-    (1.23915737299  * 1000000) / TETRIS_TICK_PERIOD, // 0
-    (1              * 1000000) / TETRIS_TICK_PERIOD, // 1
-    (0.793          * 1000000) / TETRIS_TICK_PERIOD, // 2
-    (0.617796       * 1000000) / TETRIS_TICK_PERIOD, // 3
-    (0.472729139000 * 1000000) / TETRIS_TICK_PERIOD, // 4
-    (0.355196928256 * 1000000) / TETRIS_TICK_PERIOD, // 5
-    (0.262003549978 * 1000000) / TETRIS_TICK_PERIOD, // 6
-    (0.189677245333 * 1000000) / TETRIS_TICK_PERIOD, // 7
-    (0.134734730816 * 1000000) / TETRIS_TICK_PERIOD, // 8
-    (0.093882248904 * 1000000) / TETRIS_TICK_PERIOD, // 9
-    (0.064151584960 * 1000000) / TETRIS_TICK_PERIOD, // 10
-    (0.042976258297 * 1000000) / TETRIS_TICK_PERIOD, // 11
-    (0.028217677801 * 1000000) / TETRIS_TICK_PERIOD, // 12
-    (0.018153328544 * 1000000) / TETRIS_TICK_PERIOD, // 13
-    (0.011439342347 * 1000000) / TETRIS_TICK_PERIOD, // 14
-    (0.007058616221 * 1000000) / TETRIS_TICK_PERIOD, // 15
-    (0.004263556954 * 1000000) / TETRIS_TICK_PERIOD, // 16
-    (0.002520083970 * 1000000) / TETRIS_TICK_PERIOD, // 17
-    (0.001457138733 * 1000000) / TETRIS_TICK_PERIOD, // 18
-    (0.000823906896 * 1000000) / TETRIS_TICK_PERIOD, // 19
+    (1.23915737299  * 1000000), // 0
+    (1              * 1000000), // 1
+    (0.793          * 1000000), // 2
+    (0.617796       * 1000000), // 3
+    (0.472729139000 * 1000000), // 4
+    (0.355196928256 * 1000000), // 5
+    (0.262003549978 * 1000000), // 6
+    (0.189677245333 * 1000000), // 7
+    (0.134734730816 * 1000000), // 8
+    (0.093882248904 * 1000000), // 9
+    (0.064151584960 * 1000000), // 10
+    (0.042976258297 * 1000000), // 11
+    (0.028217677801 * 1000000), // 12
+    (0.018153328544 * 1000000), // 13
+    (0.011439342347 * 1000000), // 14
+    (0.007058616221 * 1000000), // 15
+    (0.004263556954 * 1000000), // 16
+    (0.002520083970 * 1000000), // 17
+    (0.001457138733 * 1000000), // 18
+    (0.000823906896 * 1000000), // 19
 };

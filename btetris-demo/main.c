@@ -22,6 +22,7 @@ int main()
     int ch;
     struct timeval tstruct;
     uint64_t trefresh = 0;
+    uint64_t tprev = 0;
     uint64_t tnow = 0;
 
     tmp_game.board = &tmp_board;
@@ -124,6 +125,10 @@ int main()
 
             trefresh = tnow;
         }
+        
+        wprintw(debug_window, "dtime: %ld\n", tnow-tprev);
+        wrefresh(debug_window);
+        tprev = tnow;
     }
 
     //  ends ncurse

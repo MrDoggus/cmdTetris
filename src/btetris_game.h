@@ -15,13 +15,6 @@
     #error invalid piece preview size, too large
 #endif
 
-// TETRIS_TICK_PERIOD units are in microseconds
-#ifndef TETRIS_TICK_PERIOD
-    #define TETRIS_TICK_PERIOD 100
-#elif TETRIS_TICK_PERIOD  > 823
-    #error Tick period too large
-#endif
-
 // Random INCR. Dont want to be 0 or multiples of 7 because it would produce a constant value
 #ifndef TETRIS_RAND_INCR
     #define TETRIS_RAND_INCR 2
@@ -106,10 +99,11 @@ tetris_error_t tetris_pause(tetris_game_t* game);
 /// @return Error code
 tetris_error_t tetris_unpause(tetris_game_t* game);
 
-/// @brief Computes game logic, should be called at the set tick rate. 
+/// @brief Automatically handles game logic. 
 /// @param game Game object
+/// @param tmicro Time passed, in microseconds, since last tetris tick call
 /// @return Error code
-tetris_error_t tetris_tick(tetris_game_t* game);
+tetris_error_t tetris_tick(tetris_game_t* game, uint64_t tmicro);
 
 /// @brief Adds entropy to the random number generator
 /// @param game Game object
