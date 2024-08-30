@@ -345,14 +345,16 @@ tetris_error_t tetris_tick(tetris_game_t* game, uint64_t tmicro)
         }
 
         // Update combo scoring
-        if (row_ccnt == 0)
-        {
+        if (row_ccnt == 0) {
             game->combo = -1;
         }
-        else if (game->combo >= 0)
+        else {
+            game->combo += 1;
+        }
+        
+        if (game->combo >= 0)
         {
             game->score += 50 * game->combo * game->level;
-            game->combo += 1;
         }
 
         game->lines += row_ccnt;
