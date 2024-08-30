@@ -1,16 +1,21 @@
 
+#include "btetris_control.h"
 #include "tdraw.h"
 #include <stdlib.h>
 #include <sys/time.h>
 
-tetris_board_t tmp_board;
-tetris_game_t tmp_game;
+tetris_board_t _board;
+tetris_game_t _game;
 
 int main()
 {
+    tetris_board_t* board = &_board;
+    tetris_game_t* game = &_game;
+
     // itits screen. sets up memory and clears screen
     initscr();
     noecho();
+    keypad(stdscr, true);
     nodelay(stdscr, true);
 
     // Refreshes screen to match whats in buffer
@@ -18,6 +23,7 @@ int main()
 
     tdraw_wininit();
     tdraw_initcolor();
+    tetris_init(game, board, rand());
 
     int ch;
     struct timeval tstruct;
@@ -25,11 +31,26 @@ int main()
     uint64_t tprev = 0;
     uint64_t tnow = 0;
 
-    tmp_game.board = &tmp_board;
+    gettimeofday(&tstruct, NULL);
+    tnow =      (uint64_t)tstruct.tv_sec * 1000000 + (uint64_t)tstruct.tv_usec;
+    tprev =     (uint64_t)tstruct.tv_sec * 1000000 + (uint64_t)tstruct.tv_usec;
+    trefresh =  (uint64_t)tstruct.tv_sec * 1000000 + (uint64_t)tstruct.tv_usec;
 
+    tetris_start(game);
+    
     while(true)
     {
         ch = getch();
+
+        if (ch != ERR) {
+            mvprintw(0, 0, "%d", ch);
+            clrtoeol();
+
+            if (debug_window) {
+                wprintw(debug_window, "%s\n", keyname(ch));
+                wrefresh(debug_window);
+            }
+        }
 
         switch (ch)
         {
@@ -41,94 +62,62 @@ int main()
             erase();
             tdraw_winupdate();
             tdraw_touchwin();
-
-            mvprintw(0, 0, "%d", ch);
-            clrtoeol();
-
-            if (debug_window) {
-                wprintw(debug_window, "REFRESH\n");
-                wrefresh(debug_window);
-            }
-            refresh();
-            
             break;
         #endif
 
-        case '\n':
-        case KEY_ENTER:
-            mvprintw(0, 0, "%d", ch);
-            clrtoeol();
-
-            if (debug_window) {
-                waddch(debug_window, '\n');
-                wrefresh(debug_window);
-            }
-            refresh();
+        case 's':
+        case 'S':
+        case KEY_DOWN:
+            tetris_sdrop(game);
             break;
 
-        default:
-            mvprintw(0, 0, "%d", ch);
-            clrtoeol();
-
-            if (debug_window) {
-                wprintw(debug_window, "%s", keyname(ch));
-                wrefresh(debug_window);
-            }
-            refresh();
+        case 'a':
+        case 'A':
+        case KEY_LEFT:
+            tetris_leftshift(game);
             break;
+
+        case 'd':
+        case 'D':
+        case KEY_RIGHT:
+            tetris_rightshift(game);
+            break;
+
+        case 'w':
+        case 'W':
+        case 'e':
+        case 'E':
+        case KEY_UP:
+            tetris_rotcw(game);
+            break;
+
+        case 'z':
+        case 'Z':
+        case 'q':
+        case 'Q':
+            tetris_rotcntrcw(game);
+            break;
+        case ' ':
+            tetris_hdrop(game);
+            break;
+        
         }
-
 
         gettimeofday(&tstruct, NULL);
         tnow = (uint64_t)tstruct.tv_sec * 1000000 + (uint64_t)tstruct.tv_usec;
-        if (tnow - trefresh > 500000 /*50ms*/)
+        if (tnow - trefresh > 1000000/60 /*60hz*/)
         {
-            for (int y = 0; y < TETRIS_HEIGHT; y++)
-            {
-                for (int x = 0; x < TETRIS_WIDTH; x++)
-                {
-                    tmp_board.pf[y][x] = rand()%8;
-                }
-            }
-
-            for (int pp = 0; pp < TETRIS_PP_SIZE; pp++)
-            {
-                tmp_game.ppreview[pp] = rand()%8;
-            }
-
-            for (int i = 0; i < 7; i++)
-            {
-                tmp_game.queue[i] = rand()%8;
-            }
-
-            for (int i = 0; i < 7; i++)
-            {
-                tmp_game.shuffle_queue[i] = rand()%8;
-            }
-
-            tmp_game.isStarted = rand()%2;
-            tmp_game.isRunning = rand()%2;
-            tmp_game.isGameover = rand()%2;
-            tmp_game.score = rand();
-            tmp_game.level = rand();
-            tmp_game.combo = rand();
-            tmp_game.lines = rand();
-            tmp_game.qidx = rand();
-            tmp_game.tmicro = rand();
-            tmp_game.tdrop = rand();
-            tmp_game.randx = rand();
-
-            tdraw_pfield(&tmp_game);
-            tdraw_pprev(&tmp_game);
-            tdraw_score(&tmp_game);
-            tdraw_ginfo(&tmp_game);
+            tdraw_pfield(game);
+            tdraw_pprev(game);
+            tdraw_score(game);
+            tdraw_ginfo(game);
 
             trefresh = tnow;
+
+            tetris_tick(game, tnow - tprev);
+
+            tprev = tnow;
         }
-        
-        wprintw(debug_window, "dtime: %ld\n", tnow-tprev);
-        wrefresh(debug_window);
-        tprev = tnow;
     }
 
     //  ends ncurse

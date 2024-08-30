@@ -509,6 +509,7 @@ tetris_error_t tetris_rand_entropy(tetris_game_t* game, int entropy)
 tetris_error_t tetris_rand_swap(tetris_game_t* game)
 {
     tetris_color_t temp;
+    int idx1, idx2;
 
     // Error checking
     if (!game) {
@@ -516,8 +517,10 @@ tetris_error_t tetris_rand_swap(tetris_game_t* game)
     }
 
     // Find swap indexes
-    int idx1 = game->randx % 7; // Get random position from randx
-    int idx2 = game->qidx;      // Other swap position from queue idx, guarantees every piece gets swapped around
+    idx1 = game->randx % 7;             // Get random position from randx
+    idx1 = (idx1<0) ? idx1+7 : idx1;    // Get mod instead of remainder
+    idx2 = game->qidx;                  // Other swap position from queue idx, guarantees every piece gets swapped around
+    
 
     // Swap 
     temp = game->shuffle_queue[idx1];
@@ -533,12 +536,17 @@ tetris_error_t tetris_rand_swap(tetris_game_t* game)
 // Pops a tetromino from the queue
 tetris_color_t tetris_tqueue_pop(tetris_game_t* game)
 {
-    if (game->qidx > 7) 
+    tetris_color_t retval;
+
+    retval = game->queue[game->qidx];
+    game->qidx++;
+
+    if (game->qidx > 6) 
     {
         tetris_tqueue_swap(game);
     }
 
-    return game->queue[game->qidx++];
+    return retval;
 }
 
 // Swaps tetromino queue with shuffle queue
