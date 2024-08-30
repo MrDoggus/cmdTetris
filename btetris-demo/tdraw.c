@@ -309,6 +309,10 @@ int tdraw_pfield(tetris_game_t* game)
 
 int tdraw_pprev(tetris_game_t* game)
 {
+    if (!win_offsets.pprev.isRendered) {
+        return 1;
+    }
+
     const tetris_coord_t PPOFFSET = (tetris_coord_t){
         .h = (TETRIS_HEIGHT),
         .w = ((TETRIS_WIDTH/2)) - 2
@@ -359,6 +363,10 @@ int tdraw_pprev(tetris_game_t* game)
 
 int tdraw_score(tetris_game_t* game)
 {
+    if (!win_offsets.score.isRendered) {
+        return 1;
+    }
+
     mvwprintw(winscore, 1, 1, "Score: %ld", game->score);
     wclrtoeol(winscore);
 
@@ -374,6 +382,10 @@ int tdraw_score(tetris_game_t* game)
 
 int tdraw_ginfo(tetris_game_t* game)
 {
+    if (!win_offsets.ginfo.isRendered) {
+        return 1;
+    }
+
     werase(winginfo);
 
     box(winginfo, 0, 0);
