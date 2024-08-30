@@ -9,9 +9,6 @@ The vision for this project is to make it easy to implement Tetris on a given co
 Since this library can be potentially be used in a wide array of devices, implementation of the game logic will avoid standard functions that invoke system calls. 
 Actions such as allocating game structures will be up to the frontend application's implementation. Write atomicity to game structures isn't guaranteed and should be implemented by frontend if using threading or something similar.
 
-> **Note**: The code in this repository is currently untested.
-
-
 ## Creating a Tetris game using BTetris
 
 There are three steps to using BTetris: Display, User Interaction, and Game Runtime. 
@@ -32,9 +29,7 @@ After a played game is over, use `tetris_reset()` to put the game back to a play
 The `tetris_tick()` function is a critical part of the game exection. 
 It handles tetromino bag shuffling, automatic dropping of tetrominoes, row clearing, leveling and scoring.
 Then the game is over, `tetris_tick()` returns `TETRIS_ERROR_GAME_OVER` to communicate this. 
-This function should be called at a fixed time interval. 
-By default, this interval is 100 microseconds, but this can be changed by defining `TETRIS_TICK_PERIOD` to a value other than 100.
-`TETRIS_TICK_PERIOD` is in units of microseconds and cannot be a value higher than 823.
+Passing the number of microseconds since the last tick call is necissary for correct automatic tetromino drop timing. 
 The tick function should be called even if the game isn't running since it shuffles the tetromino bag. 
 
 The random number generator used is similar to the Linear Congruential Generator algorithm.
@@ -87,9 +82,6 @@ These defines are described below:
  - `TETRIS_HEIGHT`: Height of the tetris playfield. 
    - Default := `20`
    - Range := `[4:123]`
- - `TETRIS_TICK_PERIOD`: Time period (microseconds) between `tetris_tick()` function calls.
-   - Default := `100`
-   - Range := `(inf, 823]`
  - `TETRIS_PP_SIZE`: Number of tetrominoes in the piece preview array
    - Default := `2`
    - Range := `[1, 6]`
