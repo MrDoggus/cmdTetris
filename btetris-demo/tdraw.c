@@ -287,6 +287,7 @@ int tdraw_initcolor()
 
 int tdraw_pfield(tetris_game_t* game)
 {
+    char fdrawn;
     int fidx = 0;
 
     if (!win_offsets.pfield.isRendered) {
@@ -298,9 +299,22 @@ int tdraw_pfield(tetris_game_t* game)
         wmove(winpfield, TETRIS_HEIGHT - y, 1);
         for (int x = 0; x < TETRIS_WIDTH; x++)
         {
-            if (game->board->fpos[fidx].h == y && game->board->fpos[fidx].w == x && fidx < 4) {
-                tdraw_block(winpfield, game->board->fcol);
-                fidx++;
+            if (game->board->pf[y][x] == TETRIS_BLANK)
+            {
+                fdrawn = 0;
+                for (int i = fidx; i < 4; i++)
+                {
+                    if (game->board->fpos[i].h == y && game->board->fpos[i].w == x) {
+                        tdraw_block(winpfield, game->board->fcol);
+                        fidx++;
+                        fdrawn = 1;
+                        break;
+                    }
+                }
+
+                if (!fdrawn) {
+                    tdraw_block(winpfield, TETRIS_BLANK);
+                }
             }
             else {
                 tdraw_block(winpfield, game->board->pf[y][x]);
