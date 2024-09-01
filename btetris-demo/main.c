@@ -31,12 +31,12 @@ int main()
     uint64_t tprev = 0;
     uint64_t tnow = 0;
 
+    tdraw_start(game);
+
     gettimeofday(&tstruct, NULL);
     tnow =      (uint64_t)tstruct.tv_sec * 1000000 + (uint64_t)tstruct.tv_usec;
     tprev =     (uint64_t)tstruct.tv_sec * 1000000 + (uint64_t)tstruct.tv_usec;
     trefresh =  (uint64_t)tstruct.tv_sec * 1000000 + (uint64_t)tstruct.tv_usec;
-
-    tetris_start(game);
     
     while(true)
     {
@@ -97,6 +97,7 @@ int main()
         case 'Q':
             tetris_rotcntrcw(game);
             break;
+
         case ' ':
             tetris_hdrop(game);
             break;
@@ -105,7 +106,7 @@ int main()
 
         gettimeofday(&tstruct, NULL);
         tnow = (uint64_t)tstruct.tv_sec * 1000000 + (uint64_t)tstruct.tv_usec;
-        if (tnow - trefresh > 1000000/60 /*60hz*/)
+        if (tnow - trefresh > 1000000/100 /*100hz*/)
         {
             tdraw_pfield(game);
             tdraw_pprev(game);

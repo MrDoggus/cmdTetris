@@ -1,4 +1,5 @@
 #include "tdraw.h"
+#include <string.h>
 
 // --- DEFINITIONS --- //
 
@@ -19,6 +20,8 @@ typedef union tdraw_coord {
 } tdraw_coord_t;
 
 typedef struct tdraw_winoff {
+    int draw_width;
+    int draw_height;
     tdraw_coord_t title;
     tdraw_coord_t pfield;
     tdraw_coord_t pprev;
@@ -26,6 +29,12 @@ typedef struct tdraw_winoff {
     tdraw_coord_t debug;
     tdraw_coord_t ginfo;
 } tdraw_winoff_t;
+
+typedef struct tdraw_menuitem {
+    char* name;
+    char* desc;
+    int loffset;
+} tdraw_menuitem;
 
 /// @brief Draws a tetris block on a given window
 /// @param window Window to print block
@@ -96,8 +105,12 @@ tdraw_winoff_t tdraw_calc_offsets()
     // Calculate offsets
     if (c_height >= TDRAW_TITLE_YOFFSET + TDRAW_PLAYFIELD_YOFFSET) 
     {
+        new_winoff.draw_height = TDRAW_TITLE_YOFFSET + TDRAW_PLAYFIELD_YOFFSET;
+
         if (c_width >= TDRAW_PLAYFIELD_XOFFSET + TDRAW_PPREVIEW_XOFFSET + TDRAW_GINFO_XOFFSET) 
         {
+            new_winoff.draw_width = TDRAW_PLAYFIELD_XOFFSET + TDRAW_PPREVIEW_XOFFSET + TDRAW_GINFO_XOFFSET;
+
             new_winoff.title.offset.x = 1;
             new_winoff.title.offset.y = 1;
 
@@ -118,6 +131,8 @@ tdraw_winoff_t tdraw_calc_offsets()
         }
         else if (c_width >= TDRAW_PLAYFIELD_XOFFSET + TDRAW_PPREVIEW_XOFFSET) 
         {
+            new_winoff.draw_width = TDRAW_PLAYFIELD_XOFFSET + TDRAW_PPREVIEW_XOFFSET;
+
             new_winoff.title.offset.x = 1;
             new_winoff.title.offset.y = 1;
 
@@ -137,6 +152,8 @@ tdraw_winoff_t tdraw_calc_offsets()
         }
         else if (c_width >= TDRAW_PLAYFIELD_XOFFSET) 
         {
+            new_winoff.draw_width = TDRAW_PLAYFIELD_XOFFSET;
+
             new_winoff.title.offset.x = 1;
             new_winoff.title.offset.y = 1;
 
@@ -150,6 +167,8 @@ tdraw_winoff_t tdraw_calc_offsets()
         }
         else
         {
+            new_winoff.draw_width = 0;
+
             new_winoff.pfield.isRendered = 0;
             new_winoff.title.isRendered = 0;
             new_winoff.pprev.isRendered = 0;
@@ -160,8 +179,12 @@ tdraw_winoff_t tdraw_calc_offsets()
     }
     else if (c_height >= TDRAW_PLAYFIELD_YOFFSET) 
     {
+        new_winoff.draw_height = TDRAW_PLAYFIELD_YOFFSET;
+
         if (c_width >= TDRAW_PLAYFIELD_XOFFSET + TDRAW_PPREVIEW_XOFFSET + TDRAW_GINFO_XOFFSET) 
         {
+            new_winoff.draw_width = TDRAW_PLAYFIELD_XOFFSET + TDRAW_PPREVIEW_XOFFSET + TDRAW_GINFO_XOFFSET;
+
             new_winoff.pfield.offset.x = 1;
             new_winoff.pfield.offset.y = 1;
 
@@ -181,6 +204,8 @@ tdraw_winoff_t tdraw_calc_offsets()
         }
         else if (c_width >= TDRAW_PLAYFIELD_XOFFSET + TDRAW_PPREVIEW_XOFFSET) 
         {            
+            new_winoff.draw_width = TDRAW_PLAYFIELD_XOFFSET + TDRAW_PPREVIEW_XOFFSET;
+
             new_winoff.pfield.offset.x = 1;
             new_winoff.pfield.offset.y = 1;
 
@@ -198,6 +223,8 @@ tdraw_winoff_t tdraw_calc_offsets()
         }
         else if (c_width >= TDRAW_PLAYFIELD_XOFFSET) 
         {
+            new_winoff.draw_width = TDRAW_PLAYFIELD_XOFFSET;
+
             new_winoff.pfield.offset.x = 1;
             new_winoff.pfield.offset.y = 1;
 
@@ -209,6 +236,8 @@ tdraw_winoff_t tdraw_calc_offsets()
         }
         else 
         {
+            new_winoff.draw_width = 0;
+
             new_winoff.pfield.isRendered = 0;
             new_winoff.title.isRendered = 0;
             new_winoff.pprev.isRendered = 0;
@@ -219,6 +248,9 @@ tdraw_winoff_t tdraw_calc_offsets()
     }
     else 
     {
+        new_winoff.draw_height = 0;
+        new_winoff.draw_width = 0;
+        
         new_winoff.pfield.isRendered = 0;
         new_winoff.title.isRendered = 0;
         new_winoff.pprev.isRendered = 0;
@@ -230,59 +262,236 @@ tdraw_winoff_t tdraw_calc_offsets()
     return new_winoff;
 }
 
+int tdraw_keybinds();
+
 // --- Public Functions --- //
 
-int tdraw_initcolor()
+int tdraw_keybinds()
 {
-    hascolors = has_colors();
-    if (hascolors)
+    WINDOW* winkeybinds;
+
+    #define KEYMENULEN 7
+    tdraw_menuitem menu[KEYMENULEN] = {
+        {.name = "Leftshift",                   .desc = "aA \'KEY_LEFT\'",  .loffset = 1},
+        {.name = "Rightshift",                  .desc = "aD \'KEY_RIGHT\'", .loffset = 1},
+        {.name = "Clockwise rotate",            .desc = "wWeE \'KEY_UP\'",  .loffset = 1},
+        {.name = "Counter-Clockwise rotate",    .desc = "zZqQ",             .loffset = 1},
+        {.name = "Soft Drop",                   .desc = "sS \'KEY_DOWN\'",  .loffset = 1},
+        {.name = "Hard Drop",                   .desc = "\'SPACE\'",        .loffset = 1},
+        {.name = "EXIT",                        .desc = "EXIT keybinds",    .loffset = 1}
+    };
+
+    const int winheight = KEYMENULEN + 6;
+    const int winwidth = 27;
+
+    if (win_offsets.draw_height >= winheight && win_offsets.draw_width >= winwidth)
     {
-        start_color();
-        // use_default_colors();
+        winkeybinds = newwin(winheight, winwidth, (win_offsets.draw_height - winheight)/2, (win_offsets.draw_width - winwidth)/2);
 
-        int TCOLOR_CYAN = COLORS-7;
-        int TCOLOR_YELLOW = COLORS-6;
-        int TCOLOR_BLUE = COLORS-5;
-        int TCOLOR_ORANGE = COLORS-4;
-        int TCOLOR_GREEN = COLORS-3;
-        int TCOLOR_PURPLE = COLORS-2;
-        int TCOLOR_RED = COLORS-1;
-
-        // init_color(COLOR_BLACK, 0, 0, 0);
-        init_color(TCOLOR_CYAN, 0, 900, 900);
-        init_color(TCOLOR_YELLOW, 900, 900, 0);
-        init_color(TCOLOR_BLUE, 100, 100, 900);
-        init_color(TCOLOR_ORANGE, 900, 500, 0);
-        init_color(TCOLOR_GREEN, 0, 900, 0);
-        init_color(TCOLOR_PURPLE, 500, 0, 900);
-        init_color(TCOLOR_RED, 900, 0, 0);
-        
-        
-        init_pair(TETRIS_CYAN+8, TCOLOR_CYAN, TCOLOR_CYAN);
-        init_pair(TETRIS_YELLOW+8, TCOLOR_YELLOW, TCOLOR_YELLOW);
-        init_pair(TETRIS_BLUE+8, TCOLOR_BLUE, TCOLOR_BLUE);
-        init_pair(TETRIS_ORANGE+8, TCOLOR_ORANGE, TCOLOR_ORANGE);
-        init_pair(TETRIS_GREEN+8, TCOLOR_GREEN, TCOLOR_GREEN);
-        init_pair(TETRIS_PURPLE+8, TCOLOR_PURPLE, TCOLOR_PURPLE);
-        init_pair(TETRIS_RED+8, TCOLOR_RED, TCOLOR_RED);
-        init_pair(TETRIS_BLANK+8, COLOR_BLACK, COLOR_BLACK);
-
-        if (win_offsets.debug.isRendered)
+        for (int i = 0; i < KEYMENULEN; i++)
         {
-            wprintw(debug_window, "Color :)\n");
-            wprintw(debug_window, "COLOR_PAIRS: %d, COLORS: %d\n", COLOR_PAIRS, COLORS);
+            menu[i].loffset = (winwidth - strlen(menu[i].name))/2;
         }
     }
-    else 
+    else
     {
-        if (win_offsets.debug.isRendered)
-        {
-            wprintw(debug_window, "No color :(\n");
-        }
-        return 1;
+        winkeybinds = newwin(win_offsets.draw_height, win_offsets.draw_width, 0, 0);
     }
+
+    mvwaddstr(winkeybinds, 1, (winwidth - 10) / 2, "KEYBINDS:");
+    box(winkeybinds, 0, 0); 
+    refresh();
+
+    char doloop = 1;
+    int key;
+    int highlight = 0;
+    while (doloop)
+    {
+        for (int i = 0; i < KEYMENULEN + 1; i++)
+        {
+            if (KEYMENULEN == i)
+            {
+                wmove(winkeybinds, 4 + KEYMENULEN, 1);
+                wclrtoeol(winkeybinds);
+                mvwaddstr(winkeybinds, 4 + KEYMENULEN, (winwidth - strlen(menu[highlight].desc))/2, menu[highlight].desc);
+                continue;
+            }
+            else if (highlight == i) 
+            {
+                wattron(winkeybinds, A_STANDOUT);
+            }
+
+            mvwaddstr(winkeybinds, 3 + i, menu[i].loffset, menu[i].name);
+            wattroff(winkeybinds, A_STANDOUT);
+        }
+        box(winkeybinds, 0, 0);
+
+        wrefresh(winkeybinds);
+
+        key = getch();
+        switch (key)
+        {
+        case ERR:
+            break;
+
+        case 'd':
+        case 'D':
+        case KEY_RIGHT:
+        case 's':
+        case 'S':
+        case KEY_DOWN:
+            highlight = (highlight+1) % KEYMENULEN;
+            break;
+
+        case 'a':
+        case 'A':
+        case KEY_LEFT:
+        case 'w':
+        case 'W':
+        case KEY_UP:
+            highlight = (highlight-1) % KEYMENULEN;
+            highlight = (highlight<0) ? highlight+KEYMENULEN : highlight;
+            break;
+
+        case '\n':
+        case KEY_ENTER:
+            switch (highlight)
+            {
+            case KEYMENULEN-1:
+                doloop = 0;
+                break;
+            
+            default:
+                break;
+            }
+            break;
+
+        default:
+            break;
+        }
+    }
+
+    werase(winkeybinds);
+    wrefresh(winkeybinds);
+    delwin(winkeybinds);
+    tdraw_touchwin();
 
     return 0;
+}
+
+int tdraw_start(tetris_game_t* game)
+{
+    WINDOW* winstart;
+
+    #define SMENULEN 2
+    tdraw_menuitem menu[SMENULEN] = {
+        {.name = "KEYBINDS", .loffset = 1},
+        {.name = "START", .loffset = 1}
+    };
+    
+    const int winheight = 7;
+    const int winwidth = 20;
+
+    if (win_offsets.draw_height >= winheight && win_offsets.draw_width >= winwidth)
+    {
+        winstart = newwin(winheight, winwidth, (win_offsets.draw_height - winheight)/2, (win_offsets.draw_width - winwidth)/2);
+
+        menu[0].loffset = (winwidth - strlen(menu[0].name))/2;
+        menu[1].loffset = (winwidth - strlen(menu[1].name))/2;
+    }
+    else
+    {
+        winstart = newwin(win_offsets.draw_height, win_offsets.draw_width, 0, 0);
+    }
+
+    mvwaddstr(winstart, 1, 1, "TETRIS START MENU");
+    mvwaddstr(winstart, 2, 1, "(ENTER to select)");
+    box(winstart, 0, 0);
+    refresh();
+
+    char doloop = 1;
+    int key;
+    int highlight = 0;
+    while (doloop)
+    {
+        for (int i = 0; i < SMENULEN; i++)
+        {
+            if (highlight == i) 
+            {
+                wattron(winstart, A_STANDOUT);
+            }
+
+            mvwaddstr(winstart, 4 + i, menu[i].loffset, menu[i].name);
+            wattroff(winstart, A_STANDOUT);
+        }
+
+        wrefresh(winstart);
+
+        key = getch();
+        switch (key)
+        {
+        case ERR:
+            break;
+
+        case 'd':
+        case 'D':
+        case KEY_RIGHT:
+        case 's':
+        case 'S':
+        case KEY_DOWN:
+            highlight = (highlight+1) % SMENULEN;
+            break;
+
+        case 'a':
+        case 'A':
+        case KEY_LEFT:
+        case 'w':
+        case 'W':
+        case KEY_UP:
+            highlight = (highlight-1) % SMENULEN;
+            highlight = (highlight<0) ? highlight+SMENULEN : highlight;
+            break;
+
+        case '\n':
+        case KEY_ENTER:
+            switch (highlight)
+            {
+            case 0:
+                tdraw_keybinds();
+                touchwin(winstart);
+                break;
+            case 1:
+                doloop = 0;
+                break;
+            
+            default:
+                break;
+            }
+            break;
+
+        default:
+            break;
+        }
+    }
+
+    tetris_start(game);
+
+    werase(winstart);
+    wrefresh(winstart);
+    delwin(winstart);
+    tdraw_touchwin();
+
+    return 0;
+}
+
+int tdraw_pause(tetris_game_t* game)
+{
+    return -1;
+}
+
+int tdraw_gameover(tetris_game_t* game)
+{
+    return -1;
 }
 
 int tdraw_pfield(tetris_game_t* game)
@@ -446,6 +655,59 @@ int tdraw_ginfo(tetris_game_t* game)
     mvwprintw(winginfo, 20, 3, "gc_valid: %s", game->board->gc_valid ? "true" : "false");
 
     wrefresh(winginfo);
+
+    return 0;
+}
+
+int tdraw_initcolor()
+{
+    hascolors = has_colors();
+    if (hascolors)
+    {
+        start_color();
+        // use_default_colors();
+
+        int TCOLOR_CYAN = COLORS-7;
+        int TCOLOR_YELLOW = COLORS-6;
+        int TCOLOR_BLUE = COLORS-5;
+        int TCOLOR_ORANGE = COLORS-4;
+        int TCOLOR_GREEN = COLORS-3;
+        int TCOLOR_PURPLE = COLORS-2;
+        int TCOLOR_RED = COLORS-1;
+
+        // init_color(COLOR_BLACK, 0, 0, 0);
+        init_color(TCOLOR_CYAN, 0, 900, 900);
+        init_color(TCOLOR_YELLOW, 900, 900, 0);
+        init_color(TCOLOR_BLUE, 100, 100, 900);
+        init_color(TCOLOR_ORANGE, 900, 500, 0);
+        init_color(TCOLOR_GREEN, 0, 900, 0);
+        init_color(TCOLOR_PURPLE, 500, 0, 900);
+        init_color(TCOLOR_RED, 900, 0, 0);
+        
+        
+        init_pair(TETRIS_CYAN+8, TCOLOR_CYAN, TCOLOR_CYAN);
+        init_pair(TETRIS_YELLOW+8, TCOLOR_YELLOW, TCOLOR_YELLOW);
+        init_pair(TETRIS_BLUE+8, TCOLOR_BLUE, TCOLOR_BLUE);
+        init_pair(TETRIS_ORANGE+8, TCOLOR_ORANGE, TCOLOR_ORANGE);
+        init_pair(TETRIS_GREEN+8, TCOLOR_GREEN, TCOLOR_GREEN);
+        init_pair(TETRIS_PURPLE+8, TCOLOR_PURPLE, TCOLOR_PURPLE);
+        init_pair(TETRIS_RED+8, TCOLOR_RED, TCOLOR_RED);
+        init_pair(TETRIS_BLANK+8, COLOR_BLACK, COLOR_BLACK);
+
+        if (win_offsets.debug.isRendered)
+        {
+            wprintw(debug_window, "Color :)\n");
+            wprintw(debug_window, "COLOR_PAIRS: %d, COLORS: %d\n", COLOR_PAIRS, COLORS);
+        }
+    }
+    else 
+    {
+        if (win_offsets.debug.isRendered)
+        {
+            wprintw(debug_window, "No color :(\n");
+        }
+        return 1;
+    }
 
     return 0;
 }
@@ -678,6 +940,10 @@ int tdraw_touchwin()
     if (debug_window != NULL) {
         touchwin(debug_window);
         wrefresh(debug_window);
+    }
+    if (winginfo != NULL) {
+        touchwin(winginfo);
+        wrefresh(winginfo);
     }
 
     return 0;

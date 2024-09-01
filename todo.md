@@ -1,7 +1,12 @@
 _______________________________________________________
 Demo app:
+ - [x] Start menu feature
  - [ ] Do proper error handling in tdraw.c
  - [ ] Make sure demo app works with different options
+ - [ ] Pause feature
+ - [ ] Game over feature
+ - [ ] Score saving/leaderboard system
+ - [ ] Sleep during while loops to reduce cpu usage
 
 
 _______________________________________________________

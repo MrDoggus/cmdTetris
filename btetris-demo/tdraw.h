@@ -7,6 +7,12 @@
 
 extern WINDOW* debug_window;
 
+int tdraw_start(tetris_game_t* game);
+
+int tdraw_pause(tetris_game_t* game);
+
+int tdraw_gameover(tetris_game_t* game);
+
 int tdraw_pfield(tetris_game_t* game);
 
 int tdraw_pprev(tetris_game_t* game);
