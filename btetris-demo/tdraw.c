@@ -1,5 +1,6 @@
 #include "tdraw.h"
 #include <string.h>
+#include <stdlib.h>
 
 // --- DEFINITIONS --- //
 
@@ -270,7 +271,7 @@ int tdraw_keybinds()
 {
     WINDOW* winkeybinds;
 
-    #define KEYMENULEN 7
+    #define KEYMENULEN 8
     tdraw_menuitem menu[KEYMENULEN] = {
         {.name = "Leftshift",                   .desc = "aA \'KEY_LEFT\'",  .loffset = 1},
         {.name = "Rightshift",                  .desc = "aD \'KEY_RIGHT\'", .loffset = 1},
@@ -278,6 +279,7 @@ int tdraw_keybinds()
         {.name = "Counter-Clockwise rotate",    .desc = "zZqQ",             .loffset = 1},
         {.name = "Soft Drop",                   .desc = "sS \'KEY_DOWN\'",  .loffset = 1},
         {.name = "Hard Drop",                   .desc = "\'SPACE\'",        .loffset = 1},
+        {.name = "Pause",                       .desc = "qQ \'ESC\'",       .loffset = 1},
         {.name = "EXIT",                        .desc = "EXIT keybinds",    .loffset = 1}
     };
 
@@ -383,21 +385,24 @@ int tdraw_start(tetris_game_t* game)
 {
     WINDOW* winstart;
 
-    #define SMENULEN 2
+    #define SMENULEN 3
     tdraw_menuitem menu[SMENULEN] = {
-        {.name = "KEYBINDS", .loffset = 1},
-        {.name = "START", .loffset = 1}
+        {.name = "KEYBINDS",    .loffset = 1},
+        {.name = "START",       .loffset = 1},
+        {.name = "QUIT",        .loffset = 1}
     };
     
-    const int winheight = 7;
+    const int winheight = SMENULEN + 5;
     const int winwidth = 20;
 
     if (win_offsets.draw_height >= winheight && win_offsets.draw_width >= winwidth)
     {
         winstart = newwin(winheight, winwidth, (win_offsets.draw_height - winheight)/2, (win_offsets.draw_width - winwidth)/2);
 
-        menu[0].loffset = (winwidth - strlen(menu[0].name))/2;
-        menu[1].loffset = (winwidth - strlen(menu[1].name))/2;
+        for (int i = 0; i < SMENULEN; i++)
+        {
+            menu[i].loffset = (winwidth - strlen(menu[i].name))/2;
+        }
     }
     else
     {
@@ -428,6 +433,12 @@ int tdraw_start(tetris_game_t* game)
         wrefresh(winstart);
 
         key = getch();
+
+        if (key != ERR)
+        {
+            tetris_rand_entropy(game, key);
+        }
+
         switch (key)
         {
         case ERR:
@@ -463,7 +474,9 @@ int tdraw_start(tetris_game_t* game)
             case 1:
                 doloop = 0;
                 break;
-            
+            case 2: 
+                endwin();
+                exit(0);
             default:
                 break;
             }
@@ -472,6 +485,8 @@ int tdraw_start(tetris_game_t* game)
         default:
             break;
         }
+
+        tetris_tick(game, 10);
     }
 
     tetris_start(game);
@@ -486,7 +501,120 @@ int tdraw_start(tetris_game_t* game)
 
 int tdraw_pause(tetris_game_t* game)
 {
-    return -1;
+    WINDOW* winpause;
+
+    #define PMENULEN 3
+    tdraw_menuitem menu[PMENULEN] = {
+        {.name = "KEYBINDS",    .loffset = 1},
+        {.name = "RESUME",      .loffset = 1},
+        {.name = "QUIT",        .loffset = 1}
+    };
+
+    tetris_pause(game);
+
+    const int winheight = PMENULEN + 5;
+    const int winwidth = 20;
+
+    if (win_offsets.draw_height >= winheight && win_offsets.draw_width >= winwidth)
+    {
+        winpause = newwin(winheight, winwidth, (win_offsets.draw_height - winheight)/2, (win_offsets.draw_width - winwidth)/2);
+
+        for (int i = 0; i < PMENULEN; i++)
+        {
+            menu[i].loffset = (winwidth - strlen(menu[i].name))/2;
+        }
+    }
+    else
+    {
+        winpause = newwin(win_offsets.draw_height, win_offsets.draw_width, 0, 0);
+    }
+
+    mvwaddstr(winpause, 1, 1, "TETRIS PAUSE MENU");
+    mvwaddstr(winpause, 2, 1, "(ENTER to select)");
+    box(winpause, 0, 0);
+    refresh();
+
+    char doloop = 1;
+    int key;
+    int highlight = 0;
+    while (doloop)
+    {
+        for (int i = 0; i < PMENULEN; i++)
+        {
+            if (highlight == i) 
+            {
+                wattron(winpause, A_STANDOUT);
+            }
+
+            mvwaddstr(winpause, 4 + i, menu[i].loffset, menu[i].name);
+            wattroff(winpause, A_STANDOUT);
+        }
+
+        wrefresh(winpause);
+
+        key = getch();
+
+        if (key != ERR)
+        {
+            tetris_rand_entropy(game, key);
+        }
+
+        switch (key)
+        {
+        case ERR:
+            break;
+
+        case 'd':
+        case 'D':
+        case KEY_RIGHT:
+        case 's':
+        case 'S':
+        case KEY_DOWN:
+            highlight = (highlight+1) % PMENULEN;
+            break;
+
+        case 'a':
+        case 'A':
+        case KEY_LEFT:
+        case 'w':
+        case 'W':
+        case KEY_UP:
+            highlight = (highlight-1) % PMENULEN;
+            highlight = (highlight<0) ? highlight+PMENULEN : highlight;
+            break;
+
+        case '\n':
+        case KEY_ENTER:
+            switch (highlight)
+            {
+            case 0:
+                tdraw_keybinds();
+                touchwin(winpause);
+                break;
+            case 1:
+                doloop = 0;
+                break;
+            case 2:
+                endwin();
+                exit(0);
+            default:
+                break;
+            }
+            break;
+
+        default:
+            break;
+        }
+    }
+
+    werase(winpause);
+    wrefresh(winpause);
+    delwin(winpause);
+    tdraw_touchwin();
+
+    tetris_unpause(game);
+
+    return 0;
 }
 
 int tdraw_gameover(tetris_game_t* game)

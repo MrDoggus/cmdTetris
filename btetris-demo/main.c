@@ -50,6 +50,8 @@ int main()
                 wprintw(debug_window, "%s\n", keyname(ch));
                 wrefresh(debug_window);
             }
+
+            tetris_rand_entropy(game, ch);
         }
 
         switch (ch)
@@ -101,7 +103,17 @@ int main()
         case ' ':
             tetris_hdrop(game);
             break;
-        
+
+        case 'p':
+        case 'P':
+        case 27:
+            // Draw pause menu
+            tdraw_pause(game);
+
+            // Reset stopwatch
+            gettimeofday(&tstruct, NULL);
+            tprev = (uint64_t)tstruct.tv_sec * 1000000 + (uint64_t)tstruct.tv_usec;
+            break;
         }
 
         gettimeofday(&tstruct, NULL);

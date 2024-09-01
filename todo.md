@@ -1,9 +1,10 @@
 _______________________________________________________
 Demo app:
  - [x] Start menu feature
+ - [x] Pause feature
  - [ ] Do proper error handling in tdraw.c
- - [ ] Make sure demo app works with different options
- - [ ] Pause feature
+ - [ ] Make sure demo app works with different tetris options
+
  - [ ] Game over feature
  - [ ] Score saving/leaderboard system
  - [ ] Sleep during while loops to reduce cpu usage
