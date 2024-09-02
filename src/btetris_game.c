@@ -82,7 +82,7 @@ tetris_error_t tetris_reset(tetris_game_t* game)
 
     // --- Reset board struct --- //
 
-    for (int h = 0; h < board->pf_height; h++)
+    for (int h = 0; h <= board->pf_height; h++)
     {
         for (int w = 0; w < TETRIS_WIDTH; w++) 
         {
@@ -438,9 +438,12 @@ tetris_error_t tetris_tick(tetris_game_t* game, uint64_t tmicro)
                 game->isRunning = 0;
                 game->isGameover = 1;
                 board->fcol = TETRIS_BLANK;
-                board->pf_height = board->fpos[0].h;
 
-                return TETRIS_SUCCESS;
+                if (board->pf_height < board->fpos[0].h) {
+                    board->pf_height = board->fpos[0].h;
+                }
+
+                return TETRIS_ERROR_GAME_OVER;
             }
         }
     } // end `if (board->fcol == TETRIS_BLANK)`

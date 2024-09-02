@@ -619,7 +619,127 @@ int tdraw_pause(tetris_game_t* game)
 
 int tdraw_gameover(tetris_game_t* game)
 {
-    return -1;
+    WINDOW* wingover;
+
+    #define GMENULEN 3
+    tdraw_menuitem menu[GMENULEN] = {
+        {.name = "KEYBINDS",    .loffset = 1},
+        {.name = "PLAY AGAIN",  .loffset = 1},
+        {.name = "QUIT",        .loffset = 1}
+    };
+
+    const int winheight = GMENULEN + 6;
+    const int winwidth = 20;
+
+    if (win_offsets.draw_height >= winheight && win_offsets.draw_width >= winwidth)
+    {
+        wingover = newwin(winheight, winwidth, (win_offsets.draw_height - winheight)/2, (win_offsets.draw_width - winwidth)/2);
+
+        for (int i = 0; i < GMENULEN; i++)
+        {
+            menu[i].loffset = (winwidth - strlen(menu[i].name))/2;
+        }
+    }
+    else
+    {
+        wingover = newwin(win_offsets.draw_height, win_offsets.draw_width, 0, 0);
+    }
+
+    char strbuff[18];
+    int sprintret;
+    mvwaddstr(wingover, 1, (winwidth - 12)/2, "GAME OVER!!");
+
+    sprintret = snprintf(strbuff, 18, "Score: %ld", game->score);
+    mvwaddstr(wingover, 2, (winwidth - sprintret)/2, strbuff);
+
+    sprintret = snprintf(strbuff, 18, "Level: %d", game->level);
+    mvwaddstr(wingover, 3, (winwidth - sprintret)/2, strbuff);
+
+    box(wingover, 0, 0);
+    refresh();
+
+    char doloop = 1;
+    int key;
+    int highlight = 0;
+    while (doloop)
+    {
+        for (int i = 0; i < GMENULEN; i++)
+        {
+            if (highlight == i) 
+            {
+                wattron(wingover, A_STANDOUT);
+            }
+
+            mvwaddstr(wingover, 5 + i, menu[i].loffset, menu[i].name);
+            wattroff(wingover, A_STANDOUT);
+        }
+
+        wrefresh(wingover);
+
+        key = getch();
+
+        if (key != ERR)
+        {
+            tetris_rand_entropy(game, key);
+        }
+
+        switch (key)
+        {
+        case ERR:
+            break;
+
+        case 'd':
+        case 'D':
+        case KEY_RIGHT:
+        case 's':
+        case 'S':
+        case KEY_DOWN:
+            highlight = (highlight+1) % GMENULEN;
+            break;
+
+        case 'a':
+        case 'A':
+        case KEY_LEFT:
+        case 'w':
+        case 'W':
+        case KEY_UP:
+            highlight = (highlight-1) % GMENULEN;
+            highlight = (highlight<0) ? highlight+GMENULEN : highlight;
+            break;
+
+        case '\n':
+        case KEY_ENTER:
+            switch (highlight)
+            {
+            case 0:
+                tdraw_keybinds();
+                touchwin(wingover);
+                break;
+            case 1:
+                doloop = 0;
+                break;
+            case 2:
+                endwin();
+                exit(0);
+            default:
+                break;
+            }
+            break;
+
+        default:
+            break;
+        }
+    }
+
+    tetris_reset(game);
+    tetris_start(game);
+
+    werase(wingover);
+    wrefresh(wingover);
+    delwin(wingover);
+    tdraw_touchwin();
+
+    return 0;
 }
 
 int tdraw_pfield(tetris_game_t* game)

@@ -126,10 +126,20 @@ int main()
             tdraw_ginfo(game);
 
             trefresh = tnow;
+            
 
-            tetris_tick(game, tnow - tprev);
-
-            tprev = tnow;
+            if (tetris_tick(game, tnow - tprev) == TETRIS_ERROR_GAME_OVER)
+            {
+                tdraw_gameover(game);
+                
+                // Reset stopwatch
+                gettimeofday(&tstruct, NULL);
+                tprev = (uint64_t)tstruct.tv_sec * 1000000 + (uint64_t)tstruct.tv_usec;
+            }
+            else 
+            {
+                tprev = tnow;
+            }
         }
     }
 
