@@ -1,6 +1,7 @@
 #include "tdraw.h"
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 // --- DEFINITIONS --- //
 
@@ -371,6 +372,8 @@ int tdraw_keybinds()
         default:
             break;
         }
+
+        usleep(1000);
     }
 
     werase(winkeybinds);
@@ -486,7 +489,9 @@ int tdraw_start(tetris_game_t* game)
             break;
         }
 
-        tetris_tick(game, 10);
+        usleep(1000);
+
+        tetris_tick(game, 1000);
     }
 
     tetris_start(game);
@@ -605,6 +610,8 @@ int tdraw_pause(tetris_game_t* game)
         default:
             break;
         }
+
+        usleep(1000);
     }
 
     werase(winpause);
@@ -729,6 +736,8 @@ int tdraw_gameover(tetris_game_t* game)
         default:
             break;
         }
+
+        usleep(1000);
     }
 
     tetris_reset(game);

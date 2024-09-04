@@ -3,10 +3,10 @@ Demo app:
  - [x] Start menu feature
  - [x] Pause feature
  - [x] Game over feature
+ - [x] Sleep during while loops to reduce cpu usage
  - [ ] Do proper error handling in tdraw.c
  - [ ] Make sure demo app works with different tetris options
  - [ ] Score saving/leaderboard system
- - [ ] Sleep during while loops to reduce cpu usage
  - [ ] Comment demo code
 
 _______________________________________________________
@@ -38,6 +38,7 @@ Create new file to store and handle gamestate information
 
 ___________________________________________________
 Later Features
+ - [x] Non constant tick length feature
  - [ ] Add option to reset function to set randx variable
  - [ ] Better RNG
  - [ ] Super Rotation System 
@@ -45,7 +46,6 @@ Later Features
  - [ ] Holding
  - [ ] Lock down
  - [ ] Option for shuffle queue size other than 7
- - [ ] Non constant tick length feature
  - [ ] Custom random functions
  - [ ] update display event option 
  - [ ] Perfect clear scoring

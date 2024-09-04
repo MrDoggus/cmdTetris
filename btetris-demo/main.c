@@ -2,6 +2,7 @@
 #include "btetris_control.h"
 #include "tdraw.h"
 #include <stdlib.h>
+#include <unistd.h>
 #include <sys/time.h>
 
 tetris_board_t _board;
@@ -141,6 +142,7 @@ int main()
                 tprev = tnow;
             }
         }
+        usleep(1000);
     }
 
     //  ends ncurse

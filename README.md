@@ -84,7 +84,7 @@ These defines are described below:
    - Range := `[4:123]`
  - `TETRIS_PP_SIZE`: Number of tetrominoes in the piece preview array
    - Default := `2`
-   - Range := `[1, 6]`
+   - Range := `[1:6]`
  - `TETRIS_RAND_INCR`: Increment parameter for the random number generator. 
    - Default := `2`
-   - Range := `[1, 6]`
+   - Range := `[1:6]`
