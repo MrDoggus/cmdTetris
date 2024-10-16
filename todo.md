@@ -8,9 +8,9 @@ Demo app:
    - [x] Function input arg check
    - [x] Function call return values
  - [x] Comment demo code
- - [ ] draw Playfield tetris height optimization
-   - [ ] Blank fill optimization
-   - [ ] falling tetromino optimization
+ - [x] draw Playfield tetris height optimization
+   - [x] Blank fill optimization
+   - [x] falling tetromino optimization
  - [ ] Make sure demo app works with different tetris options
  - [ ] Score saving/leaderboard system
  - [ ] Draw title window

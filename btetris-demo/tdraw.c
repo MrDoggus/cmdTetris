@@ -860,9 +860,6 @@ int tdraw_gameover(tetris_game_t* game)
 
 int tdraw_pfield(tetris_game_t* game)
 {
-    char fdrawn;    // true if falling tetromino was drawn at current position
-    int fidx = 0;   // Last drawn falling tetromino index. Allows taking advantage of sorted fpos array. 
-
     // Input arg check
     if (!game) {
         return ERROR_NULL_INARG;
@@ -871,38 +868,32 @@ int tdraw_pfield(tetris_game_t* game)
         return ERROR_NULL_GVAR;
     }
 
+    // Clear playfield window
+    werase(winpfield);
+
     // Draw tetris playfield array
-    for (int y = TETRIS_HEIGHT-1; y >= 0; y--)
+    for (int y = game->board->pf_height; y >= 0; y--)
     {
         // Move cursor to row position
         wmove(winpfield, TETRIS_HEIGHT - y, 1);
         for (int x = 0; x < TETRIS_WIDTH; x++)
         {
-            if (game->board->pf[y][x] == TETRIS_BLANK)
-            {
-                fdrawn = 0;
-
-                // Check if falling tetromino is at this coord.
-                for (int i = fidx; i < 4; i++)
-                {
-                    if (game->board->fpos[i].h == y && game->board->fpos[i].w == x) {
-                        tdraw_block(winpfield, game->board->fcol);
-                        fidx++;
-                        fdrawn = 1;
-                        break;
-                    }
-                }
-
-                // Draw blank pixel if falling tetromino isn't here
-                if (!fdrawn) {
-                    tdraw_block(winpfield, TETRIS_BLANK);
-                }
-            }
-            // Draw colored pixel here
-            else {
-                tdraw_block(winpfield, game->board->pf[y][x]);
-            }
+            tdraw_block(winpfield, game->board->pf[y][x]);
         }
+    }
+
+    // Draw falling tetromino
+    for (int i = 0; i < 4; i++)
+    {
+        // Skip if out of bounds
+        if (0 > game->board->fpos[i].h || game->board->fpos[i].h >= TETRIS_HEIGHT || 
+            0 > game->board->fpos[i].w || game->board->fpos[i].w >= TETRIS_WIDTH) {
+            continue;
+        }
+
+        // Draw block
+        wmove(winpfield, TETRIS_HEIGHT - game->board->fpos[i].h, game->board->fpos[i].w*2 + 1);
+        tdraw_block(winpfield, game->board->fcol);
     }
 
     // Reset cursor and refresh window
