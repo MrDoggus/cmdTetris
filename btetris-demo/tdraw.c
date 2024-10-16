@@ -38,15 +38,6 @@ typedef struct tdraw_menuitem {
     int loffset;
 } tdraw_menuitem;
 
-/// @brief Draws a tetris block on a given window
-/// @param window Window to print block
-/// @param color Color to give block
-/// @return Error code
-int tdraw_block(WINDOW* window, tetris_color_t color);
-
-/// @brief Calculates and returns the window offsets
-/// @return Window offset structure.
-tdraw_winoff_t tdraw_calc_offsets();
 
 // --- GLOBAL VARS --- //
 
@@ -60,16 +51,36 @@ WINDOW* windebug;
 WINDOW* winginfo;
 WINDOW* debug_window;
 
-int hascolors;
 
 // --- Private Functions --- //
 
+/// @brief Prints a tetromino pixel to the screen at given window
+/// @param window Window to print char to
+/// @param bcolor Color of tetromino to use
+/// @return Error value
+int tdraw_block(WINDOW* window, tetris_color_t color);
+
+/// @brief Calculate the offsets for the  UI windows
+/// @return return window offset data structure. 
+tdraw_winoff_t tdraw_calc_offsets();
+
+/// @brief Draws keybind info window 
+/// @return Error value
+int tdraw_keybinds();
+
 int tdraw_block(WINDOW* window, tetris_color_t bcolor)
 {
-    chtype solid_block;
+    chtype solid_block; // Character used to display pixel
+    tdraw_error_t retval = SUCCESS;
 
-    if (hascolors)
+    if (!window) {
+        return ERROR_NULL_INARG;
+    }
+
+    // If terminal has colors, use color pair attributes 
+    if (has_colors())
     {
+        // Add color attribute to char before printing
         if (bcolor) {
             solid_block = ('0'+bcolor) | COLOR_PAIR(bcolor+8);
         }
@@ -77,11 +88,13 @@ int tdraw_block(WINDOW* window, tetris_color_t bcolor)
             solid_block = ' ' | COLOR_PAIR(8);
         }
         
-        waddch(window, solid_block);
-        waddch(window, solid_block);
+        // Print characters to window. Continue on error
+        if (waddch(window, solid_block) == ERR) retval = ERROR_NCURSES_PRINT;
+        if (waddch(window, solid_block) == ERR) retval = ERROR_NCURSES_PRINT;
     }
     else
     {
+        // Use number to represent the color of the tetromino since color isnt available. 
         if (bcolor) {
             solid_block = ('0'+bcolor);
         }
@@ -89,26 +102,30 @@ int tdraw_block(WINDOW* window, tetris_color_t bcolor)
             solid_block = ' ';
         }
         
-        waddch(window, solid_block);
-        waddch(window, solid_block);
+        // Print characters to window. Continue on error
+        if (waddch(window, solid_block) == ERR) retval = ERROR_NCURSES_PRINT;
+        if (waddch(window, solid_block) == ERR) retval = ERROR_NCURSES_PRINT;
     }
 
-    return 0;
+    return retval;
 }
 
 tdraw_winoff_t tdraw_calc_offsets()
 {
-    int c_height, c_width;
-    tdraw_winoff_t new_winoff;
+    int c_height, c_width;      // Console width and height
+    tdraw_winoff_t new_winoff;  // Return value
 
     // Get terminal size
     getmaxyx(stdscr, c_height, c_width);
 
-    // Calculate offsets
+    // --- Calculate offsets --- //
+
+    // Tall enough for title and playfield
     if (c_height >= TDRAW_TITLE_YOFFSET + TDRAW_PLAYFIELD_YOFFSET) 
     {
         new_winoff.draw_height = TDRAW_TITLE_YOFFSET + TDRAW_PLAYFIELD_YOFFSET;
 
+        // Wide enough for Playfield and two side bars (ppreview and ginfo)
         if (c_width >= TDRAW_PLAYFIELD_XOFFSET + TDRAW_PPREVIEW_XOFFSET + TDRAW_GINFO_XOFFSET) 
         {
             new_winoff.draw_width = TDRAW_PLAYFIELD_XOFFSET + TDRAW_PPREVIEW_XOFFSET + TDRAW_GINFO_XOFFSET;
@@ -131,6 +148,7 @@ tdraw_winoff_t tdraw_calc_offsets()
             new_winoff.ginfo.offset.x = 1 + TDRAW_PLAYFIELD_XOFFSET + TDRAW_PPREVIEW_XOFFSET;
             new_winoff.ginfo.offset.y = 1 + TDRAW_TITLE_YOFFSET;
         }
+        // Wide enough for Playfield and one side bars (ppreview)
         else if (c_width >= TDRAW_PLAYFIELD_XOFFSET + TDRAW_PPREVIEW_XOFFSET) 
         {
             new_winoff.draw_width = TDRAW_PLAYFIELD_XOFFSET + TDRAW_PPREVIEW_XOFFSET;
@@ -152,6 +170,7 @@ tdraw_winoff_t tdraw_calc_offsets()
 
             new_winoff.ginfo.isRendered = 0;
         }
+        // Wide enough for Playfield only
         else if (c_width >= TDRAW_PLAYFIELD_XOFFSET) 
         {
             new_winoff.draw_width = TDRAW_PLAYFIELD_XOFFSET;
@@ -167,6 +186,7 @@ tdraw_winoff_t tdraw_calc_offsets()
             new_winoff.title.isRendered = 0;
             new_winoff.ginfo.isRendered = 0;
         }
+        // Not wide enough to display any game information
         else
         {
             new_winoff.draw_width = 0;
@@ -179,10 +199,12 @@ tdraw_winoff_t tdraw_calc_offsets()
             new_winoff.ginfo.isRendered = 0;
         }
     }
+    // Not tall enough to display title
     else if (c_height >= TDRAW_PLAYFIELD_YOFFSET) 
     {
         new_winoff.draw_height = TDRAW_PLAYFIELD_YOFFSET;
 
+        // Wide enough for Playfield and one side bars (ppreview)
         if (c_width >= TDRAW_PLAYFIELD_XOFFSET + TDRAW_PPREVIEW_XOFFSET + TDRAW_GINFO_XOFFSET) 
         {
             new_winoff.draw_width = TDRAW_PLAYFIELD_XOFFSET + TDRAW_PPREVIEW_XOFFSET + TDRAW_GINFO_XOFFSET;
@@ -204,6 +226,7 @@ tdraw_winoff_t tdraw_calc_offsets()
 
             new_winoff.title.isRendered = 0;
         }
+        // Wide enough for Playfield and one side bars (ppreview)
         else if (c_width >= TDRAW_PLAYFIELD_XOFFSET + TDRAW_PPREVIEW_XOFFSET) 
         {            
             new_winoff.draw_width = TDRAW_PLAYFIELD_XOFFSET + TDRAW_PPREVIEW_XOFFSET;
@@ -223,6 +246,7 @@ tdraw_winoff_t tdraw_calc_offsets()
             new_winoff.title.isRendered = 0;
             new_winoff.ginfo.isRendered = 0;
         }
+        // Wide enough for Playfield only
         else if (c_width >= TDRAW_PLAYFIELD_XOFFSET) 
         {
             new_winoff.draw_width = TDRAW_PLAYFIELD_XOFFSET;
@@ -236,6 +260,7 @@ tdraw_winoff_t tdraw_calc_offsets()
             new_winoff.debug.isRendered = 0;
             new_winoff.ginfo.isRendered = 0;
         }
+        // Not wide enough to display any game information
         else 
         {
             new_winoff.draw_width = 0;
@@ -248,6 +273,7 @@ tdraw_winoff_t tdraw_calc_offsets()
             new_winoff.ginfo.isRendered = 0;
         }
     }
+    // Not tall enough to display any game information
     else 
     {
         new_winoff.draw_height = 0;
@@ -264,14 +290,11 @@ tdraw_winoff_t tdraw_calc_offsets()
     return new_winoff;
 }
 
-int tdraw_keybinds();
-
-// --- Public Functions --- //
-
 int tdraw_keybinds()
 {
     WINDOW* winkeybinds;
 
+    // Menu options
     #define KEYMENULEN 8
     tdraw_menuitem menu[KEYMENULEN] = {
         {.name = "Leftshift",                   .desc = "aA \'KEY_LEFT\'",  .loffset = 1},
@@ -284,32 +307,48 @@ int tdraw_keybinds()
         {.name = "EXIT",                        .desc = "EXIT keybinds",    .loffset = 1}
     };
 
+    // Window height and width constants
     const int winheight = KEYMENULEN + 6;
     const int winwidth = 27;
 
+    // Center window if there is enough space in the console 
     if (win_offsets.draw_height >= winheight && win_offsets.draw_width >= winwidth)
     {
         winkeybinds = newwin(winheight, winwidth, (win_offsets.draw_height - winheight)/2, (win_offsets.draw_width - winwidth)/2);
+        if (!winkeybinds) {
+            return ERROR_NCURSES_WINDOW;
+        }
 
         for (int i = 0; i < KEYMENULEN; i++)
         {
             menu[i].loffset = (winwidth - strlen(menu[i].name))/2;
         }
+
+        // Draw keybinds header
+        mvwaddstr(winkeybinds, 1, (winwidth - 10) / 2, "KEYBINDS:");
     }
+    // Place window at top left of screen if not enough space
     else
     {
         winkeybinds = newwin(win_offsets.draw_height, win_offsets.draw_width, 0, 0);
-    }
+        if (!winkeybinds) {
+            return ERROR_NCURSES_WINDOW;
+        }
 
-    mvwaddstr(winkeybinds, 1, (winwidth - 10) / 2, "KEYBINDS:");
+        // Draw keybinds header
+        mvwaddstr(winkeybinds, 1, 1, "KEYBINDS:");
+    }
+    // Draw border on window, refresh it.
     box(winkeybinds, 0, 0); 
     refresh();
 
+    // ---  Key press handle loop --- //
     char doloop = 1;
     int key;
     int highlight = 0;
     while (doloop)
     {
+        // Draw menu and highlight current selected option
         for (int i = 0; i < KEYMENULEN + 1; i++)
         {
             if (KEYMENULEN == i)
@@ -328,9 +367,9 @@ int tdraw_keybinds()
             wattroff(winkeybinds, A_STANDOUT);
         }
         box(winkeybinds, 0, 0);
-
         wrefresh(winkeybinds);
 
+        // Handle keypress
         key = getch();
         switch (key)
         {
@@ -373,55 +412,77 @@ int tdraw_keybinds()
             break;
         }
 
+        // Reduce resource usage
         usleep(1000);
     }
 
+    // Clean up window and exit
     werase(winkeybinds);
     wrefresh(winkeybinds);
     delwin(winkeybinds);
     tdraw_touchwin();
 
-    return 0;
+    return SUCCESS;
 }
+
+
+// --- Public Functions --- //
 
 int tdraw_start(tetris_game_t* game)
 {
     WINDOW* winstart;
 
+    // Menu options
     #define SMENULEN 3
     tdraw_menuitem menu[SMENULEN] = {
         {.name = "KEYBINDS",    .loffset = 1},
         {.name = "START",       .loffset = 1},
         {.name = "QUIT",        .loffset = 1}
     };
-    
+
+    if (!game) {
+        return ERROR_NULL_INARG;
+    }
+
+    // Window height and width constants
     const int winheight = SMENULEN + 5;
     const int winwidth = 20;
-
+    
+    // Center window if there is enough space in the console 
     if (win_offsets.draw_height >= winheight && win_offsets.draw_width >= winwidth)
     {
         winstart = newwin(winheight, winwidth, (win_offsets.draw_height - winheight)/2, (win_offsets.draw_width - winwidth)/2);
+        if (!winstart) {
+            return ERROR_NCURSES_WINDOW;
+        }
 
         for (int i = 0; i < SMENULEN; i++)
         {
             menu[i].loffset = (winwidth - strlen(menu[i].name))/2;
         }
     }
+    // Place window at top left of screen if not enough space
     else
     {
         winstart = newwin(win_offsets.draw_height, win_offsets.draw_width, 0, 0);
+        if (!winstart) {
+            return ERROR_NCURSES_WINDOW;
+        }
     }
 
+    // Draw header, border. Refresh window.
     mvwaddstr(winstart, 1, 1, "TETRIS START MENU");
     mvwaddstr(winstart, 2, 1, "(ENTER to select)");
     box(winstart, 0, 0);
     refresh();
 
+    // ---  Key press handle loop --- //
     char doloop = 1;
     int key;
     int highlight = 0;
     while (doloop)
     {
+        // Draw menu and highlight current selected option
         for (int i = 0; i < SMENULEN; i++)
         {
             if (highlight == i) 
@@ -432,16 +493,18 @@ int tdraw_start(tetris_game_t* game)
             mvwaddstr(winstart, 4 + i, menu[i].loffset, menu[i].name);
             wattroff(winstart, A_STANDOUT);
         }
-
         wrefresh(winstart);
 
+        // Get keypress
         key = getch();
 
+        // Generate entropy from keypress
         if (key != ERR)
         {
             tetris_rand_entropy(game, key);
         }
 
+        // Handle keypress
         switch (key)
         {
         case ERR:
@@ -494,20 +557,23 @@ int tdraw_start(tetris_game_t* game)
         tetris_tick(game, 1000);
     }
 
+    // Start the tetris game
     tetris_start(game);
 
+    // Clean up window and exit
     werase(winstart);
     wrefresh(winstart);
     delwin(winstart);
     tdraw_touchwin();
 
-    return 0;
+    return SUCCESS;
 }
 
 int tdraw_pause(tetris_game_t* game)
 {
     WINDOW* winpause;
 
+    // Menu options
     #define PMENULEN 3
     tdraw_menuitem menu[PMENULEN] = {
         {.name = "KEYBINDS",    .loffset = 1},
@@ -515,11 +581,18 @@ int tdraw_pause(tetris_game_t* game)
         {.name = "QUIT",        .loffset = 1}
     };
 
+    if (!game) {
+        return ERROR_NULL_INARG;
+    }
+
+    // Pause the tetris game
     tetris_pause(game);
 
+    // Window height and width constants
     const int winheight = PMENULEN + 5;
     const int winwidth = 20;
 
+    // Center window if there is enough space in the console 
     if (win_offsets.draw_height >= winheight && win_offsets.draw_width >= winwidth)
     {
         winpause = newwin(winheight, winwidth, (win_offsets.draw_height - winheight)/2, (win_offsets.draw_width - winwidth)/2);
@@ -529,21 +602,25 @@ int tdraw_pause(tetris_game_t* game)
             menu[i].loffset = (winwidth - strlen(menu[i].name))/2;
         }
     }
+    // Place window at top left of screen if not enough space
     else
     {
         winpause = newwin(win_offsets.draw_height, win_offsets.draw_width, 0, 0);
     }
 
+    // Draw header and window border. Refresh window.
     mvwaddstr(winpause, 1, 1, "TETRIS PAUSE MENU");
     mvwaddstr(winpause, 2, 1, "(ENTER to select)");
     box(winpause, 0, 0);
     refresh();
 
+    // ---  Key press handle loop --- //
     char doloop = 1;
     int key;
     int highlight = 0;
     while (doloop)
     {
+        // Draw menu and highlight current selected option
         for (int i = 0; i < PMENULEN; i++)
         {
             if (highlight == i) 
@@ -554,16 +631,18 @@ int tdraw_pause(tetris_game_t* game)
             mvwaddstr(winpause, 4 + i, menu[i].loffset, menu[i].name);
             wattroff(winpause, A_STANDOUT);
         }
-
         wrefresh(winpause);
 
+        // Get keypress
         key = getch();
 
+        // Generate entropy from keypress
         if (key != ERR)
         {
             tetris_rand_entropy(game, key);
         }
 
+        // Handle keypress
         switch (key)
         {
         case ERR:
@@ -614,20 +693,23 @@ int tdraw_pause(tetris_game_t* game)
         usleep(1000);
     }
 
+    // Clean up window
     werase(winpause);
     wrefresh(winpause);
     delwin(winpause);
     tdraw_touchwin();
 
+    // Unpause game after deleting pause window
     tetris_unpause(game);
 
-    return 0;
+    return SUCCESS;
 }
 
 int tdraw_gameover(tetris_game_t* game)
 {
     WINDOW* wingover;
 
+    // Menu options
     #define GMENULEN 3
     tdraw_menuitem menu[GMENULEN] = {
         {.name = "KEYBINDS",    .loffset = 1},
@@ -635,41 +717,61 @@ int tdraw_gameover(tetris_game_t* game)
         {.name = "QUIT",        .loffset = 1}
     };
 
+    if (!game) {
+        return ERROR_NULL_INARG;
+    }
+
+    // Window height and width constants
     const int winheight = GMENULEN + 6;
     const int winwidth = 20;
 
+    // Center window if there is enough space in the console 
+    char strbuff[18];
+    int sprintret;
     if (win_offsets.draw_height >= winheight && win_offsets.draw_width >= winwidth)
     {
+        // Create window
         wingover = newwin(winheight, winwidth, (win_offsets.draw_height - winheight)/2, (win_offsets.draw_width - winwidth)/2);
 
         for (int i = 0; i < GMENULEN; i++)
         {
             menu[i].loffset = (winwidth - strlen(menu[i].name))/2;
         }
+
+        // Draw game over header
+        mvwaddstr(wingover, 1, (winwidth - 12)/2, "GAME OVER!!");
+
+        // Draw score info
+        sprintret = snprintf(strbuff, 18, "Score: %ld", game->score);
+        mvwaddstr(wingover, 2, (winwidth - sprintret)/2, strbuff);
+        sprintret = snprintf(strbuff, 18, "Level: %d", game->level);
+        mvwaddstr(wingover, 3, (winwidth - sprintret)/2, strbuff);
     }
+    // Place window at top left of screen if not enough space
     else
     {
+        // Create window
         wingover = newwin(win_offsets.draw_height, win_offsets.draw_width, 0, 0);
+
+        // Draw game over header
+        mvwaddstr(wingover, 1, 1, "GAME OVER!!");
+
+        // Draw score info
+        snprintf(strbuff, 18, "Score: %ld", game->score);
+        mvwaddstr(wingover, 2, 1, strbuff);
+        snprintf(strbuff, 18, "Level: %d", game->level);
+        mvwaddstr(wingover, 3, 1, strbuff);
     }
-
-    char strbuff[18];
-    int sprintret;
-    mvwaddstr(wingover, 1, (winwidth - 12)/2, "GAME OVER!!");
-
-    sprintret = snprintf(strbuff, 18, "Score: %ld", game->score);
-    mvwaddstr(wingover, 2, (winwidth - sprintret)/2, strbuff);
-
-    sprintret = snprintf(strbuff, 18, "Level: %d", game->level);
-    mvwaddstr(wingover, 3, (winwidth - sprintret)/2, strbuff);
-
     box(wingover, 0, 0);
     refresh();
 
+    // ---  Key press handle loop --- //
     char doloop = 1;
     int key;
     int highlight = 0;
     while (doloop)
     {
+        // Draw menu and highlight current selected option
         for (int i = 0; i < GMENULEN; i++)
         {
             if (highlight == i) 
@@ -683,13 +785,16 @@ int tdraw_gameover(tetris_game_t* game)
 
         wrefresh(wingover);
 
+        // Get keypress
         key = getch();
 
+        // Generate entropy from keypress
         if (key != ERR)
         {
             tetris_rand_entropy(game, key);
         }
 
+        // Handle keypress
         switch (key)
         {
         case ERR:
@@ -740,34 +845,44 @@ int tdraw_gameover(tetris_game_t* game)
         usleep(1000);
     }
 
-    tetris_reset(game);
-    tetris_start(game);
-
+    // Clean up the window
     werase(wingover);
     wrefresh(wingover);
     delwin(wingover);
     tdraw_touchwin();
 
-    return 0;
+    // Restart the game
+    tetris_reset(game);
+    tetris_start(game);
+
+    return SUCCESS;
 }
 
 int tdraw_pfield(tetris_game_t* game)
 {
-    char fdrawn;
-    int fidx = 0;
+    char fdrawn;    // true if falling tetromino was drawn at current position
+    int fidx = 0;   // Last drawn falling tetromino index. Allows taking advantage of sorted fpos array. 
 
-    if (!win_offsets.pfield.isRendered) {
-        return 1;
+    // Input arg check
+    if (!game) {
+        return ERROR_NULL_INARG;
+    }
+    if (!winpfield) {
+        return ERROR_NULL_GVAR;
     }
 
+    // Draw tetris playfield array
     for (int y = TETRIS_HEIGHT-1; y >= 0; y--)
     {
+        // Move cursor to row position
         wmove(winpfield, TETRIS_HEIGHT - y, 1);
         for (int x = 0; x < TETRIS_WIDTH; x++)
         {
             if (game->board->pf[y][x] == TETRIS_BLANK)
             {
                 fdrawn = 0;
+
+                // Check if falling tetromino is at this coord.
                 for (int i = fidx; i < 4; i++)
                 {
                     if (game->board->fpos[i].h == y && game->board->fpos[i].w == x) {
@@ -778,27 +893,34 @@ int tdraw_pfield(tetris_game_t* game)
                     }
                 }
 
+                // Draw blank pixel if falling tetromino isn't here
                 if (!fdrawn) {
                     tdraw_block(winpfield, TETRIS_BLANK);
                 }
             }
+            // Draw colored pixel here
             else {
                 tdraw_block(winpfield, game->board->pf[y][x]);
             }
         }
     }
 
+    // Reset cursor and refresh window
     wmove(winpfield, 1, 1);
-
+    box(winpfield, 0, 0);
     wrefresh(winpfield);
 
-    return 0;
+    return SUCCESS;
 }
 
 int tdraw_pprev(tetris_game_t* game)
 {
-    if (!win_offsets.pprev.isRendered) {
-        return 1;
+    // Input arg check
+    if (!game) {
+        return ERROR_NULL_INARG;
+    }
+    if (!winpprev) {
+        return ERROR_NULL_GVAR;
     }
 
     const tetris_coord_t PPOFFSET = (tetris_coord_t){
@@ -806,16 +928,17 @@ int tdraw_pprev(tetris_game_t* game)
         .w = ((TETRIS_WIDTH/2)) - 2
     };
 
-    char isOddWidth;
-    tetris_coord_t tmp_coord;
+    char isOddWidth;            // True of tetromino has an odd width
+    tetris_coord_t tmp_coord; 
 
+    // Clear piece preview window
     werase(winpprev);
 
+    // Add separator bar to window
     for (int i = 1; i < 5; i++)
     {
         mvwaddch(winpprev, i, 9, '|');
     }
-    
 
     // Loop through pieces in piece preview 
     for (int ppi = 0; ppi < TETRIS_PP_SIZE; ppi++)
@@ -842,41 +965,51 @@ int tdraw_pprev(tetris_game_t* game)
         }
     }
 
+    // Draw border and refresh window
     box(winpprev, 0, 0);
-
     wrefresh(winpprev);
 
-    return 0;
+    return SUCCESS;
 }
 
 int tdraw_score(tetris_game_t* game)
 {
-    if (!win_offsets.score.isRendered) {
-        return 1;
+    // Input arg check
+    if (!game) {
+        return ERROR_NULL_INARG;
+    }
+    if (!winscore) {
+        return ERROR_NULL_GVAR;
     }
 
+    // Draw score and level info
     mvwprintw(winscore, 1, 1, "Score: %ld", game->score);
     wclrtoeol(winscore);
-
     mvwprintw(winscore, 2, 1, "Level: %d", game->level);
     wclrtoeol(winscore);
 
+    // Draw border and refresh window
     box(winscore, 0, 0);
-
     wrefresh(winscore);
 
-    return 0;
+    return SUCCESS;
 }
 
 int tdraw_ginfo(tetris_game_t* game)
 {
+    // Input arg check
+    if (!game) {
+        return ERROR_NULL_INARG;
+    }
     if (!win_offsets.ginfo.isRendered) {
-        return 1;
+        return ERROR_NULL_GVAR;
     }
 
+    // Erase window and redraw border
     werase(winginfo);
-
     box(winginfo, 0, 0);
+
+    // --- Print Debug Information --- //
 
     mvwprintw(winginfo, 1, 1, "tetris_game: state");
     mvwprintw(winginfo, 2, 3, "Started: %s", game->isStarted ? "true" : "false");
@@ -913,17 +1046,17 @@ int tdraw_ginfo(tetris_game_t* game)
 
     wrefresh(winginfo);
 
-    return 0;
+    return SUCCESS;
 }
 
 int tdraw_initcolor()
 {
-    hascolors = has_colors();
-    if (hascolors)
+    if (has_colors())
     {
+        // Start ncurses color
         start_color();
-        // use_default_colors();
 
+        // Define largest posible numbers for custom colors
         int TCOLOR_CYAN = COLORS-7;
         int TCOLOR_YELLOW = COLORS-6;
         int TCOLOR_BLUE = COLORS-5;
@@ -932,7 +1065,7 @@ int tdraw_initcolor()
         int TCOLOR_PURPLE = COLORS-2;
         int TCOLOR_RED = COLORS-1;
 
-        // init_color(COLOR_BLACK, 0, 0, 0);
+        // Define RGB values for custom colors
         init_color(TCOLOR_CYAN, 0, 900, 900);
         init_color(TCOLOR_YELLOW, 900, 900, 0);
         init_color(TCOLOR_BLUE, 100, 100, 900);
@@ -941,7 +1074,7 @@ int tdraw_initcolor()
         init_color(TCOLOR_PURPLE, 500, 0, 900);
         init_color(TCOLOR_RED, 900, 0, 0);
         
-        
+        // Define color pairs used for drawing tetromino pixels
         init_pair(TETRIS_CYAN+8, TCOLOR_CYAN, TCOLOR_CYAN);
         init_pair(TETRIS_YELLOW+8, TCOLOR_YELLOW, TCOLOR_YELLOW);
         init_pair(TETRIS_BLUE+8, TCOLOR_BLUE, TCOLOR_BLUE);
@@ -951,6 +1084,7 @@ int tdraw_initcolor()
         init_pair(TETRIS_RED+8, TCOLOR_RED, TCOLOR_RED);
         init_pair(TETRIS_BLANK+8, COLOR_BLACK, COLOR_BLACK);
 
+        // Smile because we have color!
         if (win_offsets.debug.isRendered)
         {
             wprintw(debug_window, "Color :)\n");
@@ -959,19 +1093,24 @@ int tdraw_initcolor()
     }
     else 
     {
+        // Cry because we dont have color :(
         if (win_offsets.debug.isRendered)
         {
             wprintw(debug_window, "No color :(\n");
         }
-        return 1;
+        return ERROR_NCURSES_NOCOLOR;
     }
 
-    return 0;
+    return SUCCESS;
 }
 
 int tdraw_wininit()
 {
+    // Calculate offsets
     win_offsets = tdraw_calc_offsets();
+
+
+    // --- Allocate windows and apply offsets --- //
 
     if (win_offsets.title.isRendered)
     {
@@ -1007,14 +1146,11 @@ int tdraw_wininit()
         box(windebug, 0, 0);
         wrefresh(windebug);
 
-        // Create subwindow inside of the box so the box isnt overwritten
-        // debug_window = derwin(windebug, 8, 17, 1, 1);
+        // Create subwindow inside of the box so the border isnt overwritten
         debug_window = newwin(10, 17, getbegy(windebug)+1, getbegx(windebug)+1);
         scrollok(debug_window, true);
         wrefresh(debug_window);
-        
-        // touchwin(windebug);
-    }
+        }
 
     if (win_offsets.ginfo.isRendered)
     {
@@ -1023,14 +1159,18 @@ int tdraw_wininit()
         wrefresh(winginfo);
     }
 
-    return 0;
+    return SUCCESS;
 }
 
 int tdraw_winupdate()
 {
     tdraw_winoff_t new_winoff;
 
+    // Calculate window offsets. 
     new_winoff = tdraw_calc_offsets();
+
+
+    //  --- Apply window offsets. Allocate and delete windows as needed --- //
 
     if (win_offsets.title.isRendered != new_winoff.title.isRendered)
     {
@@ -1130,8 +1270,6 @@ int tdraw_winupdate()
             debug_window = newwin(10, 17, getbegy(windebug)+1, getbegx(windebug)+1);
             scrollok(debug_window, true);
             wrefresh(debug_window);
-
-            // touchwin(windebug);
         }
         // debug window needs to be moved
         else {
@@ -1169,11 +1307,13 @@ int tdraw_winupdate()
 
     refresh();
 
-    return 0;
+    return SUCCESS;
 }
+
 
 int tdraw_touchwin()
 {
+    // Touch and refresh all windows
     if (wintitle != NULL) {
         touchwin(wintitle);
         wrefresh(wintitle);
@@ -1203,6 +1343,5 @@ int tdraw_touchwin()
         wrefresh(winginfo);
     }
 
-    return 0;
+    return SUCCESS;
 }
-

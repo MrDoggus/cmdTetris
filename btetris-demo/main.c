@@ -10,6 +10,7 @@ tetris_game_t _game;
 
 int main()
 {
+    // Pointer to globaly allocated game objects
     tetris_board_t* board = &_board;
     tetris_game_t* game = &_game;
 
@@ -22,39 +23,46 @@ int main()
     // Refreshes screen to match whats in buffer
     refresh();
 
+    // Init UI windows
     tdraw_wininit();
     tdraw_initcolor();
+
+    // Init tetris game objects
     tetris_init(game, board, rand());
 
+    // Open start menu
+    tdraw_start(game);
+
+    // Init time info
     int ch;
     struct timeval tstruct;
     uint64_t trefresh = 0;
     uint64_t tprev = 0;
     uint64_t tnow = 0;
-
-    tdraw_start(game);
-
     gettimeofday(&tstruct, NULL);
     tnow =      (uint64_t)tstruct.tv_sec * 1000000 + (uint64_t)tstruct.tv_usec;
     tprev =     (uint64_t)tstruct.tv_sec * 1000000 + (uint64_t)tstruct.tv_usec;
     trefresh =  (uint64_t)tstruct.tv_sec * 1000000 + (uint64_t)tstruct.tv_usec;
-    
+
+    // Main keypress loop 
+    tetris_error_t tick_result;
     while(true)
     {
+        // Get keypress
         ch = getch();
 
         if (ch != ERR) {
-            mvprintw(0, 0, "%d", ch);
-            clrtoeol();
-
+            // Output char for debug info
             if (debug_window) {
                 wprintw(debug_window, "%s\n", keyname(ch));
                 wrefresh(debug_window);
             }
 
+            // Generate entropy from keypress
             tetris_rand_entropy(game, ch);
         }
 
+        // Handle keypress
         switch (ch)
         {
         case ERR:
@@ -117,23 +125,30 @@ int main()
             break;
         }
 
+        // Get current time 
         gettimeofday(&tstruct, NULL);
         tnow = (uint64_t)tstruct.tv_sec * 1000000 + (uint64_t)tstruct.tv_usec;
+
+        // Tick game 100 times a second
         if (tnow - trefresh > 1000000/100 /*100hz*/)
         {
+            // Tick the game
+            trefresh = tnow;
+            tick_result = tetris_tick(game, tnow - tprev);
+
+            // Draw UI
             tdraw_pfield(game);
             tdraw_pprev(game);
             tdraw_score(game);
             tdraw_ginfo(game);
-
-            trefresh = tnow;
             
-
-            if (tetris_tick(game, tnow - tprev) == TETRIS_ERROR_GAME_OVER)
+            // Handle gameover
+            if (tick_result == TETRIS_ERROR_GAME_OVER)
             {
+                // Draw gameover menu
                 tdraw_gameover(game);
                 
-                // Reset stopwatch
+                // Reset stopwatch after new game starts
                 gettimeofday(&tstruct, NULL);
                 tprev = (uint64_t)tstruct.tv_sec * 1000000 + (uint64_t)tstruct.tv_usec;
             }
@@ -145,7 +160,7 @@ int main()
         usleep(1000);
     }
 
-    //  ends ncurse
+    // ends ncurse
     getch();
     endwin();
 

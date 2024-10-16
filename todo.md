@@ -4,10 +4,17 @@ Demo app:
  - [x] Pause feature
  - [x] Game over feature
  - [x] Sleep during while loops to reduce cpu usage
- - [ ] Do proper error handling in tdraw.c
+ - [x] Do proper error handling in tdraw.c
+   - [x] Function input arg check
+   - [x] Function call return values
+ - [x] Comment demo code
+ - [ ] draw Playfield tetris height optimization
+   - [ ] Blank fill optimization
+   - [ ] falling tetromino optimization
  - [ ] Make sure demo app works with different tetris options
  - [ ] Score saving/leaderboard system
- - [ ] Comment demo code
+ - [ ] Draw title window
+
 
 _______________________________________________________
 Create new file to store and handle gamestate information
