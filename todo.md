@@ -13,7 +13,6 @@ Demo app:
    - [x] falling tetromino optimization
  - [x] Make sure demo app works with different tetris options
  - [x] Draw title window
- - [ ] Score saving/leaderboard system
 
 
 
@@ -41,21 +40,26 @@ Create new file to store and handle gamestate information
  - [x] Consider atomicity issues with shuffling tetrominoes and swaping 
  - [x] Option documentation
  - [x] Look through code and clean up. 
- - [ ] Create a demo app for library
+ - [x] Create a demo app for library
 
 
 ___________________________________________________
 Later Features
  - [x] Non constant tick length feature
- - [ ] Add option to reset function to set randx variable
- - [ ] Better RNG
  - [ ] Super Rotation System 
  - [ ] T-spin scoring
  - [ ] Holding
  - [ ] Lock down
- - [ ] Option for shuffle queue size other than 7
+ - [ ] Perfect clear scoring
+ - [ ] Add option to reset function to set randx variable
  - [ ] Custom random functions
  - [ ] update display event option 
- - [ ] Perfect clear scoring
  - [ ] Option to start game at a level other than 1
  - [ ] Control queueing so falling tetromino is only moved in the tick() thread
+
+
+ ___________________________________________________
+ Low Priority/Don't Care Features
+ - [ ] Better RNG
+ - [ ] Option for shuffle queue size other than 7
+ - [ ] Demo app score saving/leaderboard system
