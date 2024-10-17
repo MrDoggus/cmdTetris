@@ -875,6 +875,100 @@ int tdraw_gameover(tetris_game_t* game)
     return SUCCESS;
 }
 
+int tdraw_title()
+{
+    if (!wintitle) {
+        return ERROR_NULL_GVAR;
+    }
+
+    const chtype bred = ('0'+TETRIS_RED) | COLOR_PAIR(TETRIS_RED+8);
+    const chtype bora = ('0'+TETRIS_ORANGE) | COLOR_PAIR(TETRIS_ORANGE+8);
+    const chtype byel = ('0'+TETRIS_YELLOW) | COLOR_PAIR(TETRIS_YELLOW+8);
+    const chtype bgre = ('0'+TETRIS_GREEN) | COLOR_PAIR(TETRIS_GREEN+8);
+    const chtype bcya = ('0'+TETRIS_CYAN) | COLOR_PAIR(TETRIS_CYAN+8);
+    const chtype bpur = ('0'+TETRIS_PURPLE) | COLOR_PAIR(TETRIS_PURPLE+8);
+    const chtype b___ = (' ');
+
+    // TETRIS
+    #define TITLE_TSTRLEN 10
+    const chtype tr1[TITLE_TSTRLEN] = {bred, bred, bred, bred, bred, bred, bred, bred, b___, '\0'};
+    const chtype tr2[TITLE_TSTRLEN] = {b___, b___, b___, bred, bred, b___, b___, b___, b___, '\0'};
+    const chtype tr3[TITLE_TSTRLEN] = {b___, b___, b___, bred, bred, b___, b___, b___, b___, '\0'};
+    const chtype tr4[TITLE_TSTRLEN] = {b___, b___, b___, bred, bred, b___, b___, b___, b___, '\0'};
+    const chtype tr5[TITLE_TSTRLEN] = {b___, b___, b___, bred, bred, b___, b___, b___, b___, '\0'};
+
+    #define TITLE_ESTRLEN 8
+    const chtype e1[TITLE_ESTRLEN] = {bora, bora, bora, bora, bora, bora, b___, '\0'};
+    const chtype e2[TITLE_ESTRLEN] = {bora, bora, b___, b___, b___, b___, b___, '\0'};
+    const chtype e3[TITLE_ESTRLEN] = {bora, bora, bora, bora, bora, b___, b___, '\0'};
+    const chtype e4[TITLE_ESTRLEN] = {bora, bora, b___, b___, b___, b___, b___, '\0'};
+    const chtype e5[TITLE_ESTRLEN] = {bora, bora, bora, bora, bora, bora, b___, '\0'};
+
+    const chtype ty1[TITLE_TSTRLEN] = {byel, byel, byel, byel, byel, byel, byel, byel, b___, '\0'};
+    const chtype ty2[TITLE_TSTRLEN] = {b___, b___, b___, byel, byel, b___, b___, b___, b___, '\0'};
+    const chtype ty3[TITLE_TSTRLEN] = {b___, b___, b___, byel, byel, b___, b___, b___, b___, '\0'};
+    const chtype ty4[TITLE_TSTRLEN] = {b___, b___, b___, byel, byel, b___, b___, b___, b___, '\0'};
+    const chtype ty5[TITLE_TSTRLEN] = {b___, b___, b___, byel, byel, b___, b___, b___, b___, '\0'};
+
+    #define TITLE_RSTRLEN 9
+    const chtype r1[TITLE_RSTRLEN] = {bgre, bgre, bgre, bgre, bgre, bgre, b___, b___, '\0'};
+    const chtype r2[TITLE_RSTRLEN] = {bgre, bgre, b___, b___, b___, bgre, bgre, b___, '\0'};
+    const chtype r3[TITLE_RSTRLEN] = {bgre, bgre, bgre, bgre, bgre, bgre, b___, b___, '\0'};
+    const chtype r4[TITLE_RSTRLEN] = {bgre, bgre, b___, bgre, bgre, b___, b___, b___, '\0'};
+    const chtype r5[TITLE_RSTRLEN] = {bgre, bgre, b___, b___, bgre, bgre, b___, b___, '\0'};
+
+    #define TITLE_ISTRLEN 10
+    const chtype i1[TITLE_ISTRLEN] = {bcya, bcya, bcya, bcya, bcya, bcya, bcya, bcya, b___, '\0'};
+    const chtype i2[TITLE_ISTRLEN] = {b___, b___, b___, bcya, bcya, b___, b___, b___, b___, '\0'};
+    const chtype i3[TITLE_ISTRLEN] = {b___, b___, b___, bcya, bcya, b___, b___, b___, b___, '\0'};
+    const chtype i4[TITLE_ISTRLEN] = {b___, b___, b___, bcya, bcya, b___, b___, b___, b___, '\0'};
+    const chtype i5[TITLE_ISTRLEN] = {bcya, bcya, bcya, bcya, bcya, bcya, bcya, bcya, b___, '\0'};
+
+    #define TITLE_SSTRLEN 9
+    const chtype s1[TITLE_SSTRLEN] = {b___, bpur, bpur, bpur, bpur, bpur, bpur, '\n', '\0'}; 
+    const chtype s2[TITLE_SSTRLEN] = {bpur, bpur, b___, b___, b___, b___, b___, '\n', '\0'}; 
+    const chtype s3[TITLE_SSTRLEN] = {b___, bpur, bpur, bpur, bpur, bpur, b___, '\n', '\0'}; 
+    const chtype s4[TITLE_SSTRLEN] = {b___, b___, b___, b___, b___, bpur, bpur, '\n', '\0'}; 
+    const chtype s5[TITLE_SSTRLEN] = {bpur, bpur, bpur, bpur, bpur, bpur, b___, '\n', '\0'}; 
+
+    wmove(wintitle, 0, 0); waddchstr(wintitle, tr1); 
+    wmove(wintitle, 0, 9); waddchstr(wintitle, e1); 
+    wmove(wintitle, 0, 16); waddchstr(wintitle, ty1); 
+    wmove(wintitle, 0, 25); waddchstr(wintitle, r1); 
+    wmove(wintitle, 0, 33); waddchstr(wintitle, i1); 
+    wmove(wintitle, 0, 42); waddchstr(wintitle, s1); 
+    
+    wmove(wintitle, 1, 0); waddchstr(wintitle, tr2); 
+    wmove(wintitle, 1, 9); waddchstr(wintitle, e2); 
+    wmove(wintitle, 1, 16); waddchstr(wintitle, ty2); 
+    wmove(wintitle, 1, 25); waddchstr(wintitle, r2); 
+    wmove(wintitle, 1, 33); waddchstr(wintitle, i2); 
+    wmove(wintitle, 1, 42); waddchstr(wintitle, s2); 
+    
+    wmove(wintitle, 2, 0); waddchstr(wintitle, tr3); 
+    wmove(wintitle, 2, 9); waddchstr(wintitle, e3); 
+    wmove(wintitle, 2, 16); waddchstr(wintitle, ty3); 
+    wmove(wintitle, 2, 25); waddchstr(wintitle, r3); 
+    wmove(wintitle, 2, 33); waddchstr(wintitle, i3); 
+    wmove(wintitle, 2, 42); waddchstr(wintitle, s3); 
+
+    wmove(wintitle, 3, 0); waddchstr(wintitle, tr4); 
+    wmove(wintitle, 3, 9); waddchstr(wintitle, e4); 
+    wmove(wintitle, 3, 16); waddchstr(wintitle, ty4); 
+    wmove(wintitle, 3, 25); waddchstr(wintitle, r4); 
+    wmove(wintitle, 3, 33); waddchstr(wintitle, i4); 
+    wmove(wintitle, 3, 42); waddchstr(wintitle, s4); 
+
+    wmove(wintitle, 4, 0); waddchstr(wintitle, tr5); 
+    wmove(wintitle, 4, 9); waddchstr(wintitle, e5); 
+    wmove(wintitle, 4, 16); waddchstr(wintitle, ty5); 
+    wmove(wintitle, 4, 25); waddchstr(wintitle, r5); 
+    wmove(wintitle, 4, 33); waddchstr(wintitle, i5); 
+    wmove(wintitle, 4, 42); waddchstr(wintitle, s5); 
+
+    return SUCCESS;
+}
+
 int tdraw_pfield(tetris_game_t* game)
 {
     // Input arg check
@@ -1123,7 +1217,6 @@ int tdraw_wininit()
     if (win_offsets.title.isRendered)
     {
         wintitle = newwin(TDRAW_TITLE_WHEIGHT, win_offsets.draw_width, win_offsets.title.offset.y, win_offsets.title.offset.x);
-        box(wintitle, 0, 0);
         wrefresh(wintitle);
     }
 
@@ -1190,7 +1283,6 @@ int tdraw_winupdate()
         // There is room to create title window
         else if (!win_offsets.title.isRendered && new_winoff.title.isRendered) {
             wintitle = newwin(TDRAW_TITLE_WHEIGHT, new_winoff.draw_width, new_winoff.title.offset.y, new_winoff.title.offset.x);
-            box(winpfield, 0, 0);
             wrefresh(wintitle);
         }
         else {
@@ -1323,6 +1415,7 @@ int tdraw_touchwin()
 {
     // Touch and refresh all windows
     if (wintitle != NULL) {
+        tdraw_title();
         touchwin(wintitle);
         wrefresh(wintitle);
     }

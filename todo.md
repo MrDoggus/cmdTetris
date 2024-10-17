@@ -12,8 +12,9 @@ Demo app:
    - [x] Blank fill optimization
    - [x] falling tetromino optimization
  - [x] Make sure demo app works with different tetris options
+ - [x] Draw title window
  - [ ] Score saving/leaderboard system
- - [ ] Draw title window
+
 
 
 _______________________________________________________

@@ -32,6 +32,10 @@ int tdraw_pause(tetris_game_t* game);
 /// @return Error value
 int tdraw_gameover(tetris_game_t* game);
 
+/// @brief Draws tetris title. 
+/// @return Error value
+int tdraw_title();
+
 /// @brief Draws tetris playfield. 
 /// @param game Game object
 /// @return Error value
