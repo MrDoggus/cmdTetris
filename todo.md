@@ -11,7 +11,7 @@ Demo app:
  - [x] draw Playfield tetris height optimization
    - [x] Blank fill optimization
    - [x] falling tetromino optimization
- - [ ] Make sure demo app works with different tetris options
+ - [x] Make sure demo app works with different tetris options
  - [ ] Score saving/leaderboard system
  - [ ] Draw title window
 

@@ -5,13 +5,30 @@
 
 // --- DEFINITIONS --- //
 
-#define TDRAW_PLAYFIELD_XOFFSET (TETRIS_WIDTH*2 + 2 + 1)
-#define TDRAW_PLAYFIELD_YOFFSET (TETRIS_HEIGHT + 2 + 1)
-#define TDRAW_TITLE_YOFFSET 6
-#define TDRAW_PPREVIEW_XOFFSET 20
-#define TDRAW_PPREVIEW_YOFFSET 6
-#define TDRAW_SCORE_YOFFSET 4
-#define TDRAW_GINFO_XOFFSET 32
+#define TDRAW_PLAYFIELD_WWIDTH (TETRIS_WIDTH*2 + 2)
+#define TDRAW_PLAYFIELD_WHEIGHT (TETRIS_HEIGHT + 2)
+#define TDRAW_PLAYFIELD_XOFFSET (TDRAW_PLAYFIELD_WWIDTH + 1)
+#define TDRAW_PLAYFIELD_YOFFSET (TDRAW_PLAYFIELD_WHEIGHT + 1)
+
+#define TDRAW_TITLE_WHEIGHT 6
+#define TDRAW_TITLE_YOFFSET (TDRAW_TITLE_WHEIGHT)
+
+#define TDRAW_PPREVIEW_WWIDTH (1 + 9 * TETRIS_PP_SIZE)
+#define TDRAW_PPREVIEW_WHEIGHT 6
+#define TDRAW_PPREVIEW_XOFFSET (TDRAW_PPREVIEW_WWIDTH + 1)
+#define TDRAW_PPREVIEW_YOFFSET (TDRAW_PPREVIEW_WHEIGHT)
+
+#define TDRAW_SCORE_WHEIGHT 4
+#define TDRAW_SCORE_YOFFSET (TDRAW_SCORE_WHEIGHT)
+
+#define TDRAW_DEBUG_WHEIGHT 12
+#define TDRAW_DEBUG_YOFFSET (TDRAW_DEBUG_WHEIGHT)
+
+#define TDRAW_GINFO_WWIDTH 32
+#define TDRAW_GINFO_WHEIGHT 22
+#define TDRAW_GINFO_XOFFSET (TDRAW_GINFO_WWIDTH)
+#define TDRAW_GINFO_YOFFSET (TDRAW_GINFO_WHEIGHT)
+
 
 typedef union tdraw_coord {
     uint32_t isRendered;
@@ -1105,47 +1122,47 @@ int tdraw_wininit()
 
     if (win_offsets.title.isRendered)
     {
-        wintitle = newwin(6, 42, win_offsets.title.offset.y, win_offsets.title.offset.x);
+        wintitle = newwin(TDRAW_TITLE_WHEIGHT, win_offsets.draw_width, win_offsets.title.offset.y, win_offsets.title.offset.x);
         box(wintitle, 0, 0);
         wrefresh(wintitle);
     }
 
     if (win_offsets.pfield.isRendered)
     {
-        winpfield = newwin(TETRIS_HEIGHT + 2, TETRIS_WIDTH*2 + 2, win_offsets.pfield.offset.y, win_offsets.pfield.offset.x);
+        winpfield = newwin(TDRAW_PLAYFIELD_WHEIGHT, TDRAW_PLAYFIELD_WWIDTH, win_offsets.pfield.offset.y, win_offsets.pfield.offset.x);
         box(winpfield, 0, 0);
         wrefresh(winpfield);
     }
 
     if (win_offsets.pprev.isRendered)
     {
-        winpprev = newwin(6, 19, win_offsets.pprev.offset.y, win_offsets.pprev.offset.x);
+        winpprev = newwin(TDRAW_PPREVIEW_WHEIGHT, TDRAW_PPREVIEW_WWIDTH, win_offsets.pprev.offset.y, win_offsets.pprev.offset.x);
         box(winpprev, 0, 0);
         wrefresh(winpprev);
     }
 
     if (win_offsets.score.isRendered)
     {
-        winscore = newwin(4, 19, win_offsets.score.offset.y, win_offsets.score.offset.x);
+        winscore = newwin(TDRAW_SCORE_WHEIGHT, TDRAW_PPREVIEW_WWIDTH, win_offsets.score.offset.y, win_offsets.score.offset.x);
         box(winscore, 0, 0);
         wrefresh(winscore);
     }
 
     if (win_offsets.debug.isRendered)
     {
-        windebug = newwin(12, 19, win_offsets.debug.offset.y, win_offsets.debug.offset.x);
+        windebug = newwin(TDRAW_DEBUG_WHEIGHT, TDRAW_PPREVIEW_WWIDTH, win_offsets.debug.offset.y, win_offsets.debug.offset.x);
         box(windebug, 0, 0);
         wrefresh(windebug);
 
         // Create subwindow inside of the box so the border isnt overwritten
-        debug_window = newwin(10, 17, getbegy(windebug)+1, getbegx(windebug)+1);
+        debug_window = newwin(TDRAW_DEBUG_WHEIGHT-2, TDRAW_PPREVIEW_WWIDTH-2, getbegy(windebug)+1, getbegx(windebug)+1);
         scrollok(debug_window, true);
         wrefresh(debug_window);
         }
 
     if (win_offsets.ginfo.isRendered)
     {
-        winginfo = newwin(22, 31, win_offsets.ginfo.offset.y, win_offsets.ginfo.offset.x);
+        winginfo = newwin(TDRAW_GINFO_WHEIGHT, TDRAW_GINFO_WWIDTH, win_offsets.ginfo.offset.y, win_offsets.ginfo.offset.x);
         box(winginfo, 0, 0);
         wrefresh(winginfo);
     }
@@ -1172,7 +1189,7 @@ int tdraw_winupdate()
         }
         // There is room to create title window
         else if (!win_offsets.title.isRendered && new_winoff.title.isRendered) {
-            wintitle = newwin(6, 42, new_winoff.title.offset.y, new_winoff.title.offset.x);
+            wintitle = newwin(TDRAW_TITLE_WHEIGHT, new_winoff.draw_width, new_winoff.title.offset.y, new_winoff.title.offset.x);
             box(winpfield, 0, 0);
             wrefresh(wintitle);
         }
@@ -1191,7 +1208,7 @@ int tdraw_winupdate()
         }
         // There is room to create playfield window
         else if (!win_offsets.pfield.isRendered && new_winoff.pfield.isRendered) {
-            winpfield = newwin(TETRIS_HEIGHT + 2, TETRIS_WIDTH*2 + 2, new_winoff.pfield.offset.y, new_winoff.pfield.offset.x);
+            winpfield = newwin(TDRAW_PLAYFIELD_WHEIGHT, TDRAW_PLAYFIELD_WWIDTH, new_winoff.pfield.offset.y, new_winoff.pfield.offset.x);
             box(winpfield, 0, 0);
             wrefresh(winpfield);
         }
@@ -1211,7 +1228,7 @@ int tdraw_winupdate()
         }
         // There is room to create piece preview window
         else if (!win_offsets.pprev.isRendered && new_winoff.pprev.isRendered) {
-            winpprev = newwin(6, 19, new_winoff.pprev.offset.y, new_winoff.pprev.offset.x);
+            winpprev = newwin(TDRAW_PPREVIEW_WHEIGHT, TDRAW_PPREVIEW_WWIDTH, new_winoff.pprev.offset.y, new_winoff.pprev.offset.x);
             box(winpprev, 0, 0);
             wrefresh(winpprev);
         }
@@ -1231,7 +1248,7 @@ int tdraw_winupdate()
         }
         // There is room to create score window
         else if (!win_offsets.score.isRendered && new_winoff.score.isRendered) {
-            winscore = newwin(4, 19, new_winoff.score.offset.y, new_winoff.score.offset.x);
+            winscore = newwin(TDRAW_SCORE_WHEIGHT, TDRAW_PPREVIEW_WWIDTH, new_winoff.score.offset.y, new_winoff.score.offset.x);
             box(winscore, 0, 0);
             wrefresh(winscore);
         }
@@ -1253,12 +1270,12 @@ int tdraw_winupdate()
         }
         // There is room to create debug window
         else if (!win_offsets.debug.isRendered && new_winoff.debug.isRendered) {
-            windebug = newwin(12, 19, new_winoff.debug.offset.y, new_winoff.debug.offset.x);
+            windebug = newwin(TDRAW_DEBUG_WHEIGHT, TDRAW_PPREVIEW_WWIDTH, new_winoff.debug.offset.y, new_winoff.debug.offset.x);
             box(windebug, 0, 0);
             wrefresh(windebug);
 
             // Create subwindow inside of the box so the box isnt overwritten
-            debug_window = newwin(10, 17, getbegy(windebug)+1, getbegx(windebug)+1);
+            debug_window = newwin(TDRAW_DEBUG_WHEIGHT-2, TDRAW_PPREVIEW_WWIDTH-2, getbegy(windebug)+1, getbegx(windebug)+1);
             scrollok(debug_window, true);
             wrefresh(debug_window);
         }
@@ -1282,7 +1299,7 @@ int tdraw_winupdate()
 
         // There is room to create score window
         else if (!win_offsets.ginfo.isRendered && new_winoff.ginfo.isRendered) {
-            winginfo = newwin(22, 31, new_winoff.ginfo.offset.y, new_winoff.ginfo.offset.x);
+            winginfo = newwin(TDRAW_GINFO_WHEIGHT, TDRAW_GINFO_WWIDTH, new_winoff.ginfo.offset.y, new_winoff.ginfo.offset.x);
             box(winginfo, 0, 0);
             wrefresh(winginfo);
         }

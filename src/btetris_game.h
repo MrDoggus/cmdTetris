@@ -9,7 +9,7 @@
 // Piece preview array size
 #ifndef TETRIS_PP_SIZE
     #define TETRIS_PP_SIZE 2
-#elif TETRIS_PP_SIZE <= 1
+#elif TETRIS_PP_SIZE < 1
     #error invalid piece preview size, too small
 #elif TETRIS_PP_SIZE > 6
     #error invalid piece preview size, too large

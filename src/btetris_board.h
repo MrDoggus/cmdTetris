@@ -9,7 +9,7 @@
 // Width of tetris board
 #ifndef  TETRIS_WIDTH
     #define TETRIS_WIDTH 10         
-#elif TETRIS_WIDTH <= 4
+#elif TETRIS_WIDTH < 4
     #error invalid width, too small
 #elif TETRIS_WIDTH > 127
     #error invalid width, too large
@@ -18,7 +18,7 @@
 // Height of tetris board
 #ifndef TETRIS_HEIGHT
     #define TETRIS_HEIGHT 20        
-#elif TETRIS_HEIGHT <= 4
+#elif TETRIS_HEIGHT < 4
     #error invalid height, too small
 #elif TETRIS_HEIGHT > 127-TETRIS_HEIGHT_BUFF
     #error invalid height, too large

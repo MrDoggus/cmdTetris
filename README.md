@@ -70,11 +70,16 @@ These functions are described in the list below:
  - `tetris_hdrop()`: Drops the falling tetromino as far as it can, then locks it in place. 
 
 
-## Options
+## Configuration
 
 There are various defines created to allow small tweaks to the library. 
-To configure these options, simply redefine the definition before the include headers or through compiler arguments.
-These defines are described below: 
+To configure these options, simply redefine the definition before the include headers or through compiler arguments. 
+
+If you configure these options before the include headers, make sure every object file is compiled with the new definition or you will run into memory issues. 
+For example, if you define the new option in the main file of the tetris frontend and no where else, the compiled btetris library will not be updated and will behave incorrectly. 
+For this reason, I recommend using compiler arguements to define configuration values to avoid modifying library code.  
+
+These congfiguration defines are listed below: 
 
  - `TETRIS_WIDTH`: Width of the tetris playfield. 
    - Default := `10`
