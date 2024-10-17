@@ -549,6 +549,9 @@ tetris_color_t tetris_tqueue_pop(tetris_game_t* game)
     if (game->qidx > 6) 
     {
         tetris_tqueue_swap(game);
+
+        // Reset queue length
+        game->qidx = 0;
     }
 
     return retval;
@@ -565,9 +568,6 @@ void tetris_tqueue_swap(tetris_game_t* game)
         game->queue[i] = game->shuffle_queue[i];
         game->shuffle_queue[i] = tempc;
     }
-
-    // Reset queue length
-    game->qidx = 0;
 }
 
 // tick() calls per line drop
