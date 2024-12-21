@@ -286,7 +286,7 @@ tetris_error_t tetris_tick(tetris_game_t* game, uint64_t tmicro)
         int row_cidx = 0;
         int row_clist[4] = {-1, -1, -1, -1};
 
-        // Loop through tetromino coords
+        // Loop through tetromino coords, find rows to clear
         for (int i = 0; i < 4; i++) 
         {
             row_curr = board->fpos[i].h;
@@ -344,7 +344,7 @@ tetris_error_t tetris_tick(tetris_game_t* game, uint64_t tmicro)
             break;
         }
 
-        // Update combo scoring
+        // Update combo count
         if (row_ccnt == 0) {
             game->combo = -1;
         }
@@ -352,11 +352,13 @@ tetris_error_t tetris_tick(tetris_game_t* game, uint64_t tmicro)
             game->combo += 1;
         }
         
+        // Update combo scoring
         if (game->combo >= 0)
         {
             game->score += 50 * game->combo * game->level;
         }
 
+        // Update level
         game->lines += row_ccnt;
         if (game->lines >= 10) 
         {
