@@ -50,9 +50,21 @@ tetris_error_t tetris_calcGhostCoords(tetris_game_t* game);
  * Block transformations for clockwise rotations. 
  * Indexed [Color][CurrRotation][BlockIdx].
  * Inverse can be applied for counter-clockwise rotations. 
- * 
- * If there is a better way to make this more readable, I would love to know 
  */
 extern const tetris_coord_t TETRIS_TETROMINO_ROTATE[8][4][4];
+
+/* https://tetris.wiki/Super_Rotation_System
+ * Wall Kick offsets for J, L, S, T, and Z tetrominoes. 
+ * Indexed [TestNumber][StartingRotation][CounterClockwise]
+ * - TestNumber: There are 5 test for SRS. The first is the original position for the rotation, and isnt included in the array. 
+ * - StartingRotation: frot value
+ * - CounterClockwise: if rotation is clockwise, idx = 0. CounterClockwise, idx = 1. 
+ */
+extern const tetris_coord_t TETRIS_TETROMINO_DEFAULTKICK[4][4][2];
+
+/* https://tetris.wiki/Super_Rotation_System
+ * Wall Kick offsets for the I tetromino. 
+ */
+extern const tetris_coord_t TETRIS_TETROMINO_IKICK[4][4][2];
 
 #endif

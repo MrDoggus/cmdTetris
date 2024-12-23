@@ -48,14 +48,13 @@ Later Features
  - [x] Non constant tick length feature
  - [ ] Super Rotation System 
  - [ ] T-spin scoring
- - [ ] Holding
- - [ ] Lock down
  - [ ] Perfect clear scoring
+ - [ ] Lock down
+ - [ ] Holding
  - [ ] Add option to reset function to set randx variable
+ - [ ] Option to start game at a level other than 1
  - [ ] Custom random functions
  - [ ] update display event option 
- - [ ] Option to start game at a level other than 1
- - [ ] Control queueing so falling tetromino is only moved in the tick() thread
 
 
  ___________________________________________________
