@@ -76,8 +76,55 @@ tetris_error_t tetris_rotcw(tetris_game_t* game)
     // Check if there is room for rotation
     rotPossible = tetris_collisionCheck(board, tmpT);
 
-    // Apply transformation if there are no collisions
-    if (rotPossible) 
+    // Check for wall kicks if the default rotation is results in collisions. 
+    tetris_coord_t tmp_kick[4];
+    if (!rotPossible)
+    {
+        // Copy rotated tmp tetromino to new temp tetromino to test wall kicks. 
+        tmp_kick[0] = tmpT[0];
+        tmp_kick[1] = tmpT[1];
+        tmp_kick[2] = tmpT[2];
+        tmp_kick[3] = tmpT[3];
+
+        // Loop through wall kick tests
+        for (int k = 0; k < 4; k++)
+        {
+            // Loop through tetromino pixels
+            for (int i = 0; i < 4; i++) 
+            {
+                // Choose between I tetromino and default wall kick offsets
+                if (board->fcol == TETRIS_CYAN) {
+                    tmp_kick[i] = tetris_addCoord(tmpT[i], TETRIS_TETROMINO_IKICK[k][board->frot][0]);
+                }
+                else {
+                    tmp_kick[i] = tetris_addCoord(tmpT[i], TETRIS_TETROMINO_DEFAULTKICK[k][board->frot][0]);
+                }
+            }
+
+            // Check if rotation works 
+            rotPossible = tetris_collisionCheck(board, tmp_kick);
+            if (rotPossible) 
+            {
+                // Update rotation 
+                board->frot = MOD4(board->frot+1);
+
+                // Update falling tetromino
+                board->fpos[0] = tmp_kick[0];
+                board->fpos[1] = tmp_kick[1];
+                board->fpos[2] = tmp_kick[2];
+                board->fpos[3] = tmp_kick[3];
+
+                break;
+            }
+        }
+
+        // If rotation is still not possible after wall kick tests, return collision error
+        if (!rotPossible) {
+            return TETRIS_ERROR_COLLISION;
+        }
+    }
+    // If rotation doesn't result in collisions
+    else 
     {
         board->frot = MOD4(board->frot+1);
 
@@ -85,10 +132,6 @@ tetris_error_t tetris_rotcw(tetris_game_t* game)
         board->fpos[1] = tmpT[1];
         board->fpos[2] = tmpT[2];
         board->fpos[3] = tmpT[3];
-    }
-    // Indicate that operation is not possible due to a colision
-    else {
-        return TETRIS_ERROR_COLLISION;
     }
 
     // Invalidate ghost piece cache
@@ -151,19 +194,62 @@ tetris_error_t tetris_rotcntrcw(tetris_game_t* game)
     // Check if there is room for rotation
     rotPossible = tetris_collisionCheck(board, tmpT);
 
-    // Apply transformation if there are no collisions
-    if (rotPossible) 
+    // Check for wall kicks if the default rotation is results in collisions. 
+    tetris_coord_t tmp_kick[4];
+    if (!rotPossible)
     {
-        board->frot = MOD4(board->frot-1);    // Update rotation
+        // Copy rotated tmp tetromino to new temp tetromino to test wall kicks. 
+        tmp_kick[0] = tmpT[0];
+        tmp_kick[1] = tmpT[1];
+        tmp_kick[2] = tmpT[2];
+        tmp_kick[3] = tmpT[3];
+
+        // Loop through wall kick tests
+        for (int k = 0; k < 4; k++)
+        {
+            // Loop through tetromino pixels
+            for (int i = 0; i < 4; i++) 
+            {
+                // Choose between I tetromino and default wall kick offsets
+                if (board->fcol == TETRIS_CYAN) {
+                    tmp_kick[i] = tetris_addCoord(tmpT[i], TETRIS_TETROMINO_IKICK[k][board->frot][1]);
+                }
+                else {
+                    tmp_kick[i] = tetris_addCoord(tmpT[i], TETRIS_TETROMINO_DEFAULTKICK[k][board->frot][1]);
+                }
+            }
+
+            // Check if rotation works 
+            rotPossible = tetris_collisionCheck(board, tmp_kick);
+            if (rotPossible) 
+            {
+                // Update rotation 
+                board->frot = MOD4(board->frot-1);
+
+                // Update falling tetromino
+                board->fpos[0] = tmp_kick[0];
+                board->fpos[1] = tmp_kick[1];
+                board->fpos[2] = tmp_kick[2];
+                board->fpos[3] = tmp_kick[3];
+
+                break;
+            }
+        }
+
+        // If rotation is still not possible after wall kick tests, return collision error
+        if (!rotPossible) {
+            return TETRIS_ERROR_COLLISION;
+        }
+    }
+    // If rotation doesn't result in collisions
+    else 
+    {
+        board->frot = MOD4(board->frot-1);
 
         board->fpos[0] = tmpT[0];
         board->fpos[1] = tmpT[1];
         board->fpos[2] = tmpT[2];
         board->fpos[3] = tmpT[3];
-    }
-    // Indicate that operation is not possible due to a colision
-    else {
-        return TETRIS_ERROR_COLLISION;
     }
 
     // Invalidate ghost piece cache
