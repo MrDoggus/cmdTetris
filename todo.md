@@ -47,15 +47,18 @@ ___________________________________________________
 Later Features
  - [x] Non constant tick length feature
  - [x] Super Rotation System 
- - [ ] T-spin scoring
+ - [-] T-spin scoring
  - [ ] Perfect clear scoring
+ - [ ] Hard drop/Soft drop scoring
  - [ ] Lock down
+ - [ ] Ghost Piece feature in demo app
  - [ ] Holding
  - [ ] Add option to reset function to set randx variable
  - [ ] Option to start game at a level other than 1
  - [ ] Custom random functions
  - [ ] update display event option 
-
+ - [ ] Difficult line clear scoring
+ - [ ] T-spin clear scoring
 
  ___________________________________________________
  Low Priority/Don't Care Features

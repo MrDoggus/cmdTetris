@@ -7,6 +7,8 @@
 // Used to keep rotation in the range of [0,3]
 #define MOD4(val) ((val) & 0b0011)
 
+#define isCollision(board, h, w) ((h) < 0 || (h) >= TETRIS_HEIGHT+TETRIS_HEIGHT_BUFF || (w) < 0 || (w) >= TETRIS_WIDTH || board->pf[(h)][(w)] != TETRIS_BLANK)
+
 // --- Function Declarations --- //
 
 /// @brief Checks if a given tetromino has any collisions with the playfield
@@ -19,6 +21,10 @@ int8_t tetris_collisionCheck(tetris_board_t* board, tetris_coord_t tetromino[4])
 /// @param board Board object
 void tetris_lockTetromino(tetris_board_t* board);
 
+/// @brief Determines if rotation was a tspin or not.
+/// @param board Board object
+/// @return True if tspin, false if not tspin
+int8_t tetris_tspinCheck(tetris_board_t* board);
 
 // --- Function Definitions --- //
 
@@ -114,6 +120,11 @@ tetris_error_t tetris_rotcw(tetris_game_t* game)
                 board->fpos[2] = tmp_kick[2];
                 board->fpos[3] = tmp_kick[3];
 
+                // Tspin check
+                if (board->fcol == TETRIS_PURPLE && tetris_tspinCheck(board)) {
+                    game->score += game->level * 100;
+                }
+
                 break;
             }
         }
@@ -132,6 +143,11 @@ tetris_error_t tetris_rotcw(tetris_game_t* game)
         board->fpos[1] = tmpT[1];
         board->fpos[2] = tmpT[2];
         board->fpos[3] = tmpT[3];
+
+        // Tspin check
+        if (board->fcol == TETRIS_PURPLE && tetris_tspinCheck(board)) {
+            game->score += game->level * 400;
+        }
     }
 
     // Invalidate ghost piece cache
@@ -232,6 +248,11 @@ tetris_error_t tetris_rotcntrcw(tetris_game_t* game)
                 board->fpos[2] = tmp_kick[2];
                 board->fpos[3] = tmp_kick[3];
 
+                // Mini tspin check
+                if (board->fcol == TETRIS_PURPLE && tetris_tspinCheck(board)) {
+                    game->score += game->level * 100;
+                }
+
                 break;
             }
         }
@@ -250,6 +271,11 @@ tetris_error_t tetris_rotcntrcw(tetris_game_t* game)
         board->fpos[1] = tmpT[1];
         board->fpos[2] = tmpT[2];
         board->fpos[3] = tmpT[3];
+
+        // Tspin check
+        if (board->fcol == TETRIS_PURPLE && tetris_tspinCheck(board)) {
+            game->score += game->level * 400;
+        }
     }
 
     // Invalidate ghost piece cache
@@ -569,28 +595,13 @@ tetris_error_t tetris_calcGhostCoords(tetris_game_t* game)
     return TETRIS_SUCCESS;
 }
 
-
 // Checks if a given tetromino has any collisions with the playfield
 int8_t tetris_collisionCheck(tetris_board_t* board, tetris_coord_t tetromino[4]) 
 {
     // NOTE: Checked in reverse because coord array is sorted from highest to lowest. Lower blocks are more likely to have a colision. 
-
-    // Check collisions with locked/fallen tetrominos
     for (int i = 3; i >= 0; i--) 
     {
-        if (board->pf[tetromino[i].h][tetromino[i].w] != TETRIS_BLANK) {
-            return 0;
-        }
-    }
-
-    // Check border bounds collisions before checking playfield array
-    for (int i = 3; i >= 0; i--) 
-    {
-        if (tetromino[i].h < 0 || tetromino[i].h >= TETRIS_HEIGHT+TETRIS_HEIGHT_BUFF) {
-            return 0;
-        }
-
-        if (tetromino[i].w < 0 || tetromino[i].w >= TETRIS_WIDTH) {
+        if (isCollision(board, tetromino[i].h, tetromino[i].w)) {
             return 0;
         }
     }
@@ -619,6 +630,44 @@ void tetris_lockTetromino(tetris_board_t* board)
     }
 
     return;
+}
+
+// Determines if rotation was a tspin or not.
+int8_t tetris_tspinCheck(tetris_board_t* board) 
+{
+    // Locate center of T tetromino
+    tetris_coord_t toffset;
+    int cidx; 
+    toffset = tetris_subCoord(board->fpos[0], board->fpos[1]);
+    if (toffset.h == 1 && toffset.w == 1) {
+        cidx = 2;
+    }
+    else {
+        cidx = 1;
+    }
+
+    // Check corners
+    int cornerCnt = 0; 
+    if (isCollision(board, board->fpos[cidx].h + 1, board->fpos[cidx].w + 1)) {
+        cornerCnt++;
+    }
+    if (isCollision(board, board->fpos[cidx].h - 1, board->fpos[cidx].w + 1)) {
+        cornerCnt++;
+    }
+    if (isCollision(board, board->fpos[cidx].h + 1, board->fpos[cidx].w - 1)) {
+        cornerCnt++;
+    }
+    if (isCollision(board, board->fpos[cidx].h - 1, board->fpos[cidx].w - 1)) {
+        cornerCnt++;
+    }
+
+    // It is a tspin if there are three corners around the T tetromino. 
+    if (cornerCnt == 3) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
 }
 
 /// @brief Block transformations for clockwise rotations. 
