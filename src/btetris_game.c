@@ -323,22 +323,24 @@ tetris_error_t tetris_tick(tetris_game_t* game, uint64_t tmicro)
         }
 
         int row_ccnt = row_cidx;    // Number of rows to clear
+        int isPerfectClr;           // 1 if perfect clear, 0 if not
         row_cidx = 0;               // Reset cidx
+        isPerfectClr = (board->pf_height - row_ccnt) < 1;
 
         // Update line clear score
         switch (row_ccnt)
         {
         case 1:
-            game->score += 100 * game->level;
+            game->score += (100 + isPerfectClr * 800) * game->level;
             break;
         case 2: 
-            game->score += 300 * game->level;
+            game->score += (300 + isPerfectClr * 1200) * game->level;
             break;
         case 3: 
-            game->score += 500 * game->level;
+            game->score += (500 + isPerfectClr * 1800) * game->level;
             break;
         case 4:
-            game->score += 800 * game->level;
+            game->score += (800 + isPerfectClr * 2000) * game->level;
             break;
         default:
             break;

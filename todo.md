@@ -47,8 +47,8 @@ ___________________________________________________
 Later Features
  - [x] Non constant tick length feature
  - [x] Super Rotation System 
- - [-] T-spin scoring
- - [ ] Perfect clear scoring
+ - [x] T-spin scoring
+ - [x] Perfect clear scoring
  - [ ] Hard drop/Soft drop scoring
  - [ ] Lock down
  - [ ] Ghost Piece feature in demo app
