@@ -46,7 +46,7 @@ Create new file to store and handle gamestate information
 ___________________________________________________
 Later Features
  - [x] Non constant tick length feature
- - [-] Super Rotation System 
+ - [x] Super Rotation System 
  - [ ] T-spin scoring
  - [ ] Perfect clear scoring
  - [ ] Lock down
